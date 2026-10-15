@@ -289,10 +289,1249 @@ th.name { text-align: left; }
 .lead { font-size: 14px; }
 .dash td, .dash th { font-size: 13px; }
 
+/* ===== 着せ替え（テーマ色）：--skin の色でヘッダーとボタンの色を変える ===== */
+:root[data-skin] { --bar: var(--skin); --accent: var(--skin); --accent-soft: color-mix(in srgb, var(--skin) 12%, #ffffff); }
+@media (prefers-color-scheme: dark) {
+  :root[data-skin]:not([data-theme="light"]) { --bar: color-mix(in srgb, var(--skin) 72%, #000000); --accent: color-mix(in srgb, var(--skin) 55%, #ffffff); --accent-soft: color-mix(in srgb, var(--skin) 28%, #1b232e); }
+}
+.wrap.wide { max-width: 940px; }
+.center { text-align: center; justify-content: center; }
+.btn.small { padding: 6px 12px; font-size: 13px; border-radius: 10px; }
+.link-btn.small { padding: 2px 10px; font-size: 12px; }
+.save .gain { font-weight: 800; color: var(--orange); }
+
+/* ホームの自分カード（アバター・級） */
+.me-top { flex-wrap: nowrap; justify-content: flex-start; }
+.me-av { position: relative; flex: none; border: 0; background: none; padding: 0; line-height: 0; border-radius: 50%; box-shadow: 0 2px 10px rgba(20, 30, 60, .18); }
+.me-av .av-edit { position: absolute; right: -4px; bottom: -2px; background: var(--surface); border-radius: 50%; font-size: 13px; line-height: 1; padding: 4px; box-shadow: var(--shadow); }
+.me-info { flex: 1; min-width: 0; }
+.lv-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.lv-chip { display: inline-flex; align-items: center; gap: 4px; background: linear-gradient(135deg, #3b2f2f, #6b4f3a); color: #ffe8a3; font-weight: 900; font-size: 14px; padding: 3px 10px; border-radius: 99px; letter-spacing: .04em; }
+.lv-chip.small { font-size: 12px; padding: 2px 8px; }
+.lv-next { font-size: 12px; color: var(--muted); font-weight: 700; }
+.lv-bar { height: 8px; border-radius: 99px; background: var(--chip); overflow: hidden; margin-top: 6px; }
+.lv-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), var(--orange)); border-radius: 99px; }
+.lv-row.big .lv-chip { font-size: 18px; padding: 5px 14px; }
+.me-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+.stat { min-width: 0; }
+.lv-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.lv-list span { display: flex; flex-direction: column; align-items: center; min-width: 52px; padding: 4px 6px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line); font-size: 13px; font-weight: 800; color: var(--muted); }
+.lv-list span small { font-size: 10px; font-weight: 600; }
+.lv-list span.got { background: color-mix(in srgb, var(--gold) 18%, var(--surface)); border-color: color-mix(in srgb, var(--gold) 50%, transparent); color: var(--ink); }
+
+/* ホームのメニュー */
+.quick-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; margin-bottom: 14px; }
+.quick { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 6px 10px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow); }
+.q-ico { font-size: 26px; line-height: 1.1; }
+.q-label { font-size: 13px; font-weight: 800; }
+.q-note { position: absolute; top: -6px; right: -4px; background: var(--orange); color: #fff; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 99px; }
+.q-note.new { background: var(--ng); }
+
+/* アバター選び・着せ替え */
+.av-pick-box { width: min(560px, 100%); max-height: 92vh; overflow-y: auto; text-align: center; }
+.av-pick-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 8px; }
+@media (max-width: 520px) { .av-pick-grid { grid-template-columns: repeat(4, 1fr); } }
+.av-pick { display: flex; flex-direction: column; align-items: center; gap: 2px; background: var(--surface-2); border: 3px solid transparent; border-radius: 14px; padding: 6px 2px; font-size: 12px; font-weight: 700; }
+.av-pick.active { border-color: var(--accent); background: var(--accent-soft); }
+.av-skins, .av-bgs { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 10px 0 0; flex-wrap: wrap; }
+.skin { width: 32px; height: 32px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 1px var(--line); padding: 0; }
+.skin.active { box-shadow: 0 0 0 3px var(--accent); }
+.bgpick { padding: 0; border: 3px solid transparent; border-radius: 50%; background: none; line-height: 0; }
+.bgpick.active { border-color: var(--accent); }
+.av-big { margin: 8px 0; min-height: 10px; }
+.nick-row { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; font-size: 12px; color: var(--muted); font-weight: 700; text-align: left; }
+.nick-row input, input.full { font: inherit; font-size: 16px; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); width: 100%; }
+.av-editor { display: grid; grid-template-columns: 250px 1fr; gap: 18px; align-items: start; }
+@media (max-width: 700px) { .av-editor { grid-template-columns: 1fr; } .av-stage { position: static !important; } }
+.av-stage { text-align: center; position: sticky; top: 70px; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px; box-shadow: var(--shadow); }
+.av-points { margin: 8px 0; font-size: 15px; font-weight: 700; }
+.av-points b { font-size: 22px; color: var(--orange); }
+.btn-row.center { justify-content: center; }
+.btn-row.center .btn { flex: none; }
+.nick-box { margin-top: 14px; text-align: left; font-size: 13px; font-weight: 700; color: var(--muted); }
+.nick-box .url-row { margin-top: 4px; }
+.nick-box input { font-size: 15px; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.seg button { border: 1px solid var(--line); background: var(--surface); border-radius: 99px; padding: 6px 12px; font-size: 13px; font-weight: 800; color: var(--muted); }
+.seg button.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.seg.center { justify-content: center; }
+.av-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
+.av-item { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; border: 3px solid transparent; border-radius: 16px; background: var(--surface); padding: 6px 4px; box-shadow: var(--shadow); }
+.av-item .nm, .theme-item .nm, .shop-item .nm { font-size: 12px; font-weight: 800; line-height: 1.25; text-align: center; }
+.av-item.active, .theme-item.active { border-color: var(--accent); background: var(--accent-soft); }
+.av-item.locked .avatar-svg { filter: grayscale(1) brightness(.8); opacity: .5; }
+.av-item.locked[data-shop] { cursor: pointer; }
+.lock { font-size: 11px; color: var(--muted); text-align: center; line-height: 1.25; }
+.av-item:disabled { opacity: 1; }
+.maker-parts { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 12px; }
+.mk-row { margin-bottom: 8px; }
+.mk-label { font-weight: 800; font-size: 13px; margin: 4px 0; }
+.mk-opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.mk-opt { display: flex; flex-direction: column; align-items: center; border: 2px solid var(--line); border-radius: 12px; background: var(--surface); padding: 3px 4px; }
+.mk-opt small { font-size: 10px; line-height: 1.1; }
+.mk-opt.active { border-color: var(--accent); background: var(--accent-soft); }
+.mk-color { width: 30px; height: 30px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 1px var(--line); padding: 0; }
+.mk-color.active { box-shadow: 0 0 0 3px var(--accent); }
+.theme-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+.theme-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; border-radius: 16px; border: 3px solid transparent; background: var(--surface); box-shadow: var(--shadow); }
+.theme-item.locked .swatch { filter: grayscale(.9); opacity: .45; }
+.swatch { display: inline-block; width: 40px; height: 40px; border-radius: 12px; box-shadow: inset 0 0 0 3px rgba(255,255,255,.5); }
+.swatch.big { width: 64px; height: 64px; border-radius: 16px; }
+
+/* お店 */
+.shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+.shop-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; border-radius: 16px; background: color-mix(in srgb, var(--gold) 8%, var(--surface)); border: 1px solid color-mix(in srgb, var(--gold) 35%, transparent); }
+.shop-item.have { opacity: .65; }
+
+/* おみくじ英文 */
+.om-sentence { background: linear-gradient(180deg, #fffdf6, #fff6e0); border: 2px solid #f1d58a; border-radius: 18px; padding: 18px 16px; margin-bottom: 12px; text-align: center; color: #2b2118; }
+.om-cat { display: inline-block; font-size: 12px; font-weight: 800; color: #9a6b00; background: #fff3bf; border-radius: 99px; padding: 2px 12px; }
+.om-ja { font-size: 16px; color: #5c4a2a; margin-top: 10px; }
+.om-en { font-size: 28px; font-weight: 800; margin: 4px 0 8px; line-height: 1.35; font-family: Georgia, "Times New Roman", serif; }
+.om-words { font-size: 22px; font-family: Georgia, "Times New Roman", serif; margin-bottom: 6px; }
+.om-words .ok { color: var(--ok); } .om-words .ng { color: var(--ng); text-decoration: underline wavy; }
+.omikuji-box { min-height: 150px; display: flex; align-items: center; justify-content: center; }
+.omikuji-tube { font-size: 64px; }
+.omikuji-box.shake .omikuji-tube { animation: shake .15s linear infinite; }
+@keyframes shake { 0% { transform: rotate(-12deg); } 50% { transform: rotate(12deg); } 100% { transform: rotate(-12deg); } }
+.om-result { max-width: 420px; margin: 0 auto; padding: 16px 18px 18px; text-align: center; color: #2b2118; border-radius: 12px; background: #fffdf6 repeating-linear-gradient(0deg, transparent 0 26px, rgba(232,197,107,.12) 26px 27px); border: 3px double #d9a520; box-shadow: 0 6px 20px rgba(160,110,0,.18); animation: popIn .45s cubic-bezier(.2,1.4,.4,1); }
+.om-top { font-size: 13px; letter-spacing: .5em; color: #b5121b; font-weight: 800; border-bottom: 2px solid #b5121b; display: inline-block; padding: 0 0 2px .5em; }
+.fortune { font-size: 50px; font-weight: 900; letter-spacing: .2em; margin: 6px 0 2px; }
+.fortune.f0 { color: #d93a3a; text-shadow: 0 0 14px rgba(255,200,0,.8); } .fortune.f1 { color: #e0703a; } .fortune.f2 { color: #2a9d8f; } .fortune.f3 { color: #1769aa; }
+.om-msg { font-weight: 700; margin: 4px 0 12px; }
+.om-lucks { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 14px; text-align: left; margin: 0 auto 12px; max-width: 320px; }
+.om-luck { display: flex; justify-content: space-between; font-size: 14px; border-bottom: 1px dotted #e8c56b; padding: 2px 0; }
+.om-luck b { color: #f08c00; } .om-luck b i { color: #e9ecef; font-style: normal; }
+.om-lucky { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.om-lucky > div { background: #fff; border: 1px solid #f1d58a; border-radius: 10px; padding: 6px 4px; display: flex; flex-direction: column; gap: 2px; }
+.om-lucky small { font-size: 11px; color: #9a6b00; font-weight: 700; }
+.om-lucky b { font-family: Georgia, "Times New Roman", serif; font-size: 16px; }
+.om-lucky span { font-size: 12px; color: #7a6a55; }
+.om-dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 4px; vertical-align: middle; border: 1px solid rgba(0,0,0,.15); }
+@media (max-width: 480px) { .om-lucky { grid-template-columns: 1fr; } .om-en { font-size: 23px; } }
+
+/* ランキング */
+.rank-row { display: flex; align-items: center; gap: 10px; padding: 8px 6px; border-top: 1px solid var(--line); }
+.rank-row:first-child { border-top: 0; }
+.rank-row.me { background: var(--accent-soft); border-radius: 12px; }
+.rank-no { width: 34px; text-align: center; font-weight: 900; font-size: 18px; color: var(--muted); flex: none; }
+.rank-name { flex: 1; min-width: 0; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rank-name small { color: var(--muted); font-weight: 600; }
+.rank-val { font-weight: 900; font-size: 17px; min-width: 52px; text-align: right; }
+.rank-gap { text-align: center; color: var(--muted); }
+
+/* スタンプ帳 */
+.stamp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 12px; }
+.stamp-item { display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; padding: 8px 4px; border-radius: 14px; background: var(--surface-2); }
+.stamp-item.teacher { background: color-mix(in srgb, #e64980 8%, var(--surface)); }
+.st-note { font-size: 12px; font-weight: 800; }
+.st-msg { font-size: 12px; color: var(--ink); }
+.st-date { font-size: 11px; color: var(--muted); }
+.stamp-svg { overflow: visible; }
+.gift-art { line-height: 0; animation: stampIn .7s ease-out; }
+.gift-items { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+
+/* 先生スタンプ */
+.stamp-editor { display: grid; grid-template-columns: 170px 1fr; gap: 14px; align-items: start; }
+@media (max-width: 600px) { .stamp-editor { grid-template-columns: 1fr; } }
+.stamp-preview { text-align: center; padding: 8px; border-radius: 16px; background: var(--surface-2); }
+.stamp-pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); gap: 6px; max-height: 320px; overflow-y: auto; padding: 2px; }
+.stamp-opt { border: 3px solid transparent; border-radius: 14px; background: var(--surface-2); padding: 2px; line-height: 0; }
+.stamp-opt.active { border-color: var(--accent); background: var(--accent-soft); }
+.maker-form { display: grid; gap: 10px; }
+.maker-form label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 800; }
+.maker-form label.check { flex-direction: row; }
+.maker-form select, .maker-form input[type=text] { font: inherit; font-size: 15px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.people-pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 6px; max-height: 360px; overflow-y: auto; }
+.person { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 12px; border: 1px solid var(--line); font-size: 14px; font-weight: 700; }
+.person.on { border-color: var(--accent); background: var(--accent-soft); }
+.person small { display: block; color: var(--muted); font-weight: 600; font-size: 11px; }
+.person input { width: 18px; height: 18px; }
+.sent-list { display: grid; gap: 8px; }
+.sent-row { display: flex; gap: 10px; align-items: center; font-size: 14px; }
+table.people td, table.people th { vertical-align: middle; }
+
 </style>
 </head>
 <body>
 <div id="app"></div>
+<script>
+
+/*
+ * スタンプの絵（このアプリ用のオリジナルのイラスト。すべて SVG で描いています）
+ *  ・ゆるかわステッカー：キャラクター × ポーズ × 表情 の組み合わせ
+ *  ・先生のハンコ：はなまる・丸・二重丸・角印・さくら（インクのかすれつき）
+ *  ・キラキラ・ポップ：バースト・リボン・星・ふきだし・メダル
+ *  ・ライブ表彰：1位はトロフィー・王冠・後光・月桂樹・紙ふぶき（動きつき）
+ */
+(function (root) {
+  'use strict';
+  var FONT = "'M PLUS Rounded 1c','Hiragino Maru Gothic ProN','Hiragino Maru Gothic Pro','Arial Rounded MT Bold','Yu Gothic UI','Meiryo',sans-serif";
+  var uid = 0;
+  function nid(p) { return (p || 'a') + (++uid).toString(36); }
+  function esc(t) { return String(t === undefined || t === null ? '' : t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function tint(hex, amt) {
+    var m = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex || ''); if (!m) return '#fff';
+    return '#' + [1, 2, 3].map(function (i) { var v = parseInt(m[i], 16); v = Math.round(amt >= 0 ? v + (255 - v) * amt : v * (1 + amt)); return ('0' + Math.max(0, Math.min(255, v)).toString(16)).slice(-2); }).join('');
+  }
+  // 文字の幅のめやす（em）
+  function emWidth(t) {
+    var w = 0;
+    for (var i = 0; i < t.length; i++) {
+      var ch = t.charAt(i);
+      if (/[　-鿿＀-￯]/.test(ch)) w += 1;
+      else if (/[A-Z0-9%]/.test(ch)) w += 0.7;
+      else if (/[a-z]/.test(ch)) w += 0.58;
+      else if (ch === ' ') w += 0.28;
+      else w += 0.36;
+    }
+    return w || 1;
+  }
+  function fit(t, maxW, maxSize, minSize) { return Math.max(minSize || 9, Math.min(maxSize, maxW / emWidth(t))); }
+  // ふちどりつきの太い文字
+  function bigText(t, x, y, size, fill, stroke, sw, extra) {
+    return '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-family="' + FONT + '" font-weight="900" font-size="' + size.toFixed(1) + '" fill="' + fill + '"' +
+      (stroke ? ' stroke="' + stroke + '" stroke-width="' + sw.toFixed(1) + '" stroke-linejoin="round" paint-order="stroke"' : '') + (extra || '') + '>' + esc(t) + '</text>';
+  }
+  function svgOpen(size, label, cls) {
+    var s = size || 96;
+    return '<svg class="stamp-svg' + (cls ? ' ' + cls : '') + '" width="' + s + '" height="' + s + '" viewBox="0 0 120 120" role="img" aria-label="' + esc(label || 'スタンプ') + '">';
+  }
+  function sparkle(x, y, r, col, anim) {
+    var p = 'M' + x + ' ' + (y - r) + ' Q' + x + ' ' + y + ' ' + (x + r) + ' ' + y + ' Q' + x + ' ' + y + ' ' + x + ' ' + (y + r) + ' Q' + x + ' ' + y + ' ' + (x - r) + ' ' + y + ' Q' + x + ' ' + y + ' ' + x + ' ' + (y - r) + 'Z';
+    return '<path d="' + p + '" fill="' + col + '">' + (anim ? '<animate attributeName="opacity" values="1;.15;1" dur="' + anim + 's" repeatCount="indefinite"/>' : '') + '</path>';
+  }
+  function starPath(cx, cy, ro, ri, n, rot) {
+    var d = '', i;
+    n = n || 5; rot = rot || -90;
+    for (i = 0; i < n * 2; i++) {
+      var r = i % 2 ? ri : ro, a = (rot + i * 180 / n) * Math.PI / 180;
+      d += (i ? 'L' : 'M') + (cx + r * Math.cos(a)).toFixed(1) + ' ' + (cy + r * Math.sin(a)).toFixed(1);
+    }
+    return d + 'Z';
+  }
+  function heartPath(cx, cy, s) {
+    return 'M' + cx + ' ' + (cy + 9 * s) + ' C' + (cx - 14 * s) + ' ' + (cy) + ' ' + (cx - 12 * s) + ' ' + (cy - 10 * s) + ' ' + (cx - 5 * s) + ' ' + (cy - 9 * s) +
+      ' C' + (cx - 2 * s) + ' ' + (cy - 9 * s) + ' ' + cx + ' ' + (cy - 6 * s) + ' ' + cx + ' ' + (cy - 4 * s) +
+      ' C' + cx + ' ' + (cy - 6 * s) + ' ' + (cx + 2 * s) + ' ' + (cy - 9 * s) + ' ' + (cx + 5 * s) + ' ' + (cy - 9 * s) +
+      ' C' + (cx + 12 * s) + ' ' + (cy - 10 * s) + ' ' + (cx + 14 * s) + ' ' + cy + ' ' + cx + ' ' + (cy + 9 * s) + 'Z';
+  }
+
+  // =================== ゆるかわキャラクター ===================
+  var SP = {
+    cat: { f: '#ffc078', l: '#c96f1e', in: '#ffc9d6', mz: '#fff4e6', name: 'ねこ' },
+    rabbit: { f: '#ffffff', l: '#d66f98', in: '#ffc9de', mz: '#ffffff', name: 'うさぎ' },
+    bear: { f: '#c08457', l: '#7a4a28', in: '#f5d7b8', mz: '#f5d7b8', name: 'くま' },
+    dog: { f: '#fffaf0', l: '#a8743f', in: '#c8925e', mz: '#ffffff', name: 'いぬ' },
+    panda: { f: '#ffffff', l: '#343a40', in: '#343a40', mz: '#ffffff', name: 'パンダ' },
+    chick: { f: '#ffe066', l: '#d99a00', in: '#ffd43b', mz: '#ffe066', name: 'ひよこ' },
+    penguin: { f: '#4263eb', l: '#1c2f8a', in: '#ffffff', mz: '#ffffff', name: 'ペンギン' },
+    frog: { f: '#8ce99a', l: '#2b8a3e', in: '#ebfbee', mz: '#ebfbee', name: 'かえる' },
+    hamster: { f: '#ffd8a8', l: '#c4782d', in: '#ffc9d6', mz: '#ffffff', name: 'ハムスター' },
+    shiba: { f: '#ffa94d', l: '#c2410c', in: '#ffffff', mz: '#ffffff', name: 'しばいぬ' },
+    star: { f: '#ffd43b', l: '#e67700', in: '#fff3bf', mz: '#ffd43b', name: 'ほし' },
+    heart: { f: '#ff8fab', l: '#d6336c', in: '#ffdeeb', mz: '#ff8fab', name: 'ハート' },
+    boy: { f: '#ffe3cc', l: '#c98b5e', shirt: '#4dabf7', shirtL: '#1971c2', hair: '#4a2f1d', human: 1, name: '男の子' },
+    girl: { f: '#ffe3cc', l: '#c98b5e', shirt: '#f783ac', shirtL: '#c2255c', hair: '#6b3a1f', human: 1, name: '女の子' },
+    kid2: { f: '#ffe3cc', l: '#c98b5e', shirt: '#69db7c', shirtL: '#2b8a3e', hair: '#2b2118', human: 1, name: 'くるくる髪の子' },
+    kid3: { f: '#ffe3cc', l: '#c98b5e', shirt: '#ffd43b', shirtL: '#e67700', hair: '#8a4b14', human: 1, name: 'おだんご髪の子' },
+    robot: { f: '#d0dbe8', l: '#566573', in: '#74c0fc', mz: '#e7f5ff', name: 'ロボット' },
+    ghost: { f: '#ffffff', l: '#8f9bb3', in: '#f1f3f5', mz: '#ffffff', name: 'おばけ' },
+    dragon: { f: '#69db7c', l: '#2b8a3e', in: '#ffe066', mz: '#d3f9d8', name: 'ドラゴン' },
+    alien: { f: '#b2f2bb', l: '#2f9e44', in: '#e6fcf5', mz: '#b2f2bb', name: 'うちゅうじん' },
+    unicorn: { f: '#ffffff', l: '#b07cc6', in: '#ffc9de', mz: '#ffffff', name: 'ユニコーン' }
+  };
+  var POSES = { banzai: 'ばんざい', wave: '手をふる', heart: 'ハートを持つ', star: 'ほしを持つ' };
+  var ALLPOSES = { banzai: 1, wave: 1, heart: 1, star: 1, stand: 1 };
+  var EXPRS = { happy: 'にっこり', sparkle: 'キラキラ', wink: 'ウインク' };
+  var DARK = '#3a2e2a';
+  function arm(x1, y1, x2, y2, s) {
+    var d = 'M' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2;
+    return '<path d="' + d + '" stroke="' + s.l + '" stroke-width="12" stroke-linecap="round" fill="none"/><path d="' + d + '" stroke="' + s.f + '" stroke-width="8" stroke-linecap="round" fill="none"/>';
+  }
+  function eyes(ex, y, white) {
+    var c = white ? '#fff' : DARK, out = '';
+    function happy(x) { return '<path d="M' + (x - 5) + ' ' + (y + 1.5) + ' Q' + x + ' ' + (y - 5.5) + ' ' + (x + 5) + ' ' + (y + 1.5) + '" stroke="' + c + '" stroke-width="3" fill="none" stroke-linecap="round"/>'; }
+    function spark(x) {
+      return '<ellipse cx="' + x + '" cy="' + y + '" rx="4.6" ry="5.6" fill="' + (white ? '#fff' : DARK) + '"/>' + (white ? '<ellipse cx="' + x + '" cy="' + (y + 0.5) + '" rx="2.8" ry="3.6" fill="' + DARK + '"/>' : '') +
+        '<circle cx="' + (x + 1.5) + '" cy="' + (y - 2) + '" r="1.9" fill="#fff"/><circle cx="' + (x - 1.6) + '" cy="' + (y + 2) + '" r=".9" fill="#fff"/>';
+    }
+    if (ex === 'happy') out = happy(48) + happy(72);
+    else if (ex === 'wink') out = spark(48) + '<path d="M67 ' + (y - 3) + ' L75 ' + y + ' L67 ' + (y + 3) + '" stroke="' + c + '" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
+    else out = spark(48) + spark(72);
+    return out;
+  }
+  function mouth(ex, sp, y) {
+    if (sp === 'chick' || sp === 'penguin') return '<path d="M55 ' + (y - 2) + ' L65 ' + (y - 2) + ' L60 ' + (y + 5) + 'Z" fill="#ff922b" stroke="#e8590c" stroke-width="1.2" stroke-linejoin="round"/>';
+    if (sp === 'frog') return '<path d="M47 ' + (y - 2) + ' Q60 ' + (y + 10) + ' 73 ' + (y - 2) + '" stroke="' + DARK + '" stroke-width="2.8" fill="#ff8787" stroke-linecap="round"/>';
+    if (ex === 'sparkle' && (sp === 'cat' || sp === 'shiba' || sp === 'rabbit' || sp === 'hamster')) {
+      return '<path d="M54 ' + y + ' q3 4 6 0 q3 4 6 0" stroke="' + DARK + '" stroke-width="2.4" fill="none" stroke-linecap="round"/>';
+    }
+    return '<path d="M54.5 ' + (y - 1) + ' Q60 ' + (y + 8) + ' 65.5 ' + (y - 1) + ' Z" fill="#c92a2a" stroke="' + DARK + '" stroke-width="2" stroke-linejoin="round"/><ellipse cx="60" cy="' + (y + 3.6) + '" rx="3" ry="1.8" fill="#ff8fab"/>';
+  }
+  function cheeks(y, gap) { return '<ellipse cx="' + (60 - gap) + '" cy="' + y + '" rx="6" ry="3.8" fill="#ff8fab" opacity=".6"/><ellipse cx="' + (60 + gap) + '" cy="' + y + '" rx="6" ry="3.8" fill="#ff8fab" opacity=".6"/>'; }
+  function prop(po, s) {
+    if (po === 'heart') return '<path d="' + heartPath(60, 95, 1.25) + '" fill="#ff6b8a" stroke="#c2255c" stroke-width="2.2"/><ellipse cx="54" cy="89" rx="3" ry="2" fill="#fff" opacity=".7"/>' +
+      '<circle cx="45" cy="96" r="5.5" fill="' + s.f + '" stroke="' + s.l + '" stroke-width="2.4"/><circle cx="75" cy="96" r="5.5" fill="' + s.f + '" stroke="' + s.l + '" stroke-width="2.4"/>';
+    if (po === 'star') return '<path d="M100 60 L104 34" stroke="#c79100" stroke-width="2.6"/><path d="' + starPath(104, 30, 11, 5) + '" fill="#ffd43b" stroke="#e67700" stroke-width="2" stroke-linejoin="round"/>' +
+      sparkle(114, 16, 4, '#fab005') + sparkle(92, 18, 3, '#fab005');
+    return '';
+  }
+  // キャラクター本体（120×120 の中に描く）
+  // キャラクターの目の高さ・頭のてっぺん（着せ替えアイテムの位置あわせ）
+  function anchors(sp) {
+    if (sp === 'frog') return { ey: 30, top: 18 };
+    if (sp === 'ghost') return { ey: 58, top: 30 };
+    if (sp === 'robot') return { ey: 56, top: 30 };
+    if (sp === 'star') return { ey: 60, top: 14 };
+    if (sp === 'heart') return { ey: 52, top: 20 };
+    return { ey: 56, top: 28 };
+  }
+  function character(sp, po, ex, opt) {
+    opt = opt || {};
+    var s = SP[sp] || SP.cat; po = ALLPOSES[po] ? po : 'banzai'; ex = EXPRS[ex] ? ex : 'sparkle';
+    if (s.human) { var sk = /^#[0-9a-f]{6}$/i.test(opt.skin || '') ? opt.skin : s.f; s = { f: sk, l: tint(sk, -0.38), shirt: s.shirt, shirtL: s.shirtL, hair: s.hair, human: 1, in: '#ffc9d6', mz: sk }; }
+    var back = '', front = '', head = '', face = '', body = '', armsBack = '', armsFront = '';
+    var ey = 56, my = 66;
+    // 腕
+    if (po === 'banzai') armsBack = arm(46, 90, 20, 50, s) + arm(74, 90, 100, 50, s) +
+      '<path d="M10 44 l-5 -4 M12 36 l-6 -1 M110 44 l5 -4 M108 36 l6 -1" stroke="' + s.l + '" stroke-width="2.2" stroke-linecap="round"/>';
+    else if (po === 'wave') { armsBack = arm(74, 90, 101, 52, s) + '<path d="M108 40 q5 5 3 12 M113 34 q7 7 4 17" stroke="' + s.l + '" stroke-width="2.2" fill="none" stroke-linecap="round"/>'; armsFront = arm(46, 92, 37, 104, s); }
+    else if (po === 'star') { armsBack = arm(74, 90, 100, 60, s); armsFront = arm(46, 92, 37, 104, s); }
+    else if (po === 'stand') armsFront = arm(46, 90, 39, 104, s) + arm(74, 90, 81, 104, s);
+    else armsFront = arm(45, 90, 46, 96, s) + arm(75, 90, 74, 96, s);
+    // 耳など（頭の後ろ）
+    if (sp === 'cat' || sp === 'shiba') back += '<path d="M33 46 L36 16 L58 32 Z" fill="' + s.f + '" stroke="' + s.l + '" stroke-width="2.6" stroke-linejoin="round"/><path d="M87 46 L84 16 L62 32 Z" fill="' + s.f + '" stroke="' + s.l + '" stroke-width="2.6" stroke-linejoin="round"/>' +
+      '<path d="M39 36 L40 24 L50 32 Z" fill="' + (sp === 'shiba' ? '#fff' : s.in) + '"/><path d="M81 36 L80 24 L70 32 Z" fill="' + (sp === 'shiba' ? '#fff' : s.in) + '"/>';
+    if (sp === 'rabbit') back += '<ellipse cx="47" cy="20" rx="9" ry="21" fill="#fff" stroke="' + s.l + '" stroke-width="2.6" transform="rotate(-10 47 20)"/><ellipse cx="74" cy="20" rx="9" ry="21" fill="#fff" stroke="' + s.l + '" stroke-width="2.6" transform="rotate(14 74 20)"/>' +
+      '<ellipse cx="47" cy="22" rx="4" ry="14" fill="' + s.in + '" transform="rotate(-10 47 20)"/><ellipse cx="74" cy="22" rx="4" ry="14" fill="' + s.in + '" transform="rotate(14 74 20)"/>';
+    if (sp === 'bear' || sp === 'panda' || sp === 'hamster') {
+      var er = sp === 'hamster' ? 8 : 11, ec = sp === 'panda' ? s.in : s.f;
+      back += '<circle cx="35" cy="32" r="' + er + '" fill="' + ec + '" stroke="' + s.l + '" stroke-width="2.6"/><circle cx="85" cy="32" r="' + er + '" fill="' + ec + '" stroke="' + s.l + '" stroke-width="2.6"/>' +
+        (sp !== 'panda' ? '<circle cx="35" cy="32" r="' + (er * 0.5) + '" fill="' + (sp === 'hamster' ? s.in : s.in) + '"/><circle cx="85" cy="32" r="' + (er * 0.5) + '" fill="' + s.in + '"/>' : '');
+    }
+    if (sp === 'frog') back += '<circle cx="44" cy="30" r="12" fill="' + s.f + '" stroke="' + s.l + '" stroke-width="2.6"/><circle cx="76" cy="30" r="12" fill="' + s.f + '" stroke="' + s.l + '" stroke-width="2.6"/>';
+    if (sp === 'chick') back += '<path d="M54 30 q-2 -12 6 -6 q2 -10 8 -2" fill="none" stroke="' + s.l + '" stroke-width="3" stroke-linecap="round"/>';
+    // 体
+    if (sp !== 'star' && sp !== 'heart') {
+      body = '<ellipse cx="51" cy="110" rx="8" ry="5" fill="' + (sp === 'chick' || sp === 'penguin' ? '#ff922b' : s.f) + '" stroke="' + s.l + '" stroke-width="2.4"/>' +
+        '<ellipse cx="69" cy="110" rx="8" ry="5" fill="' + (sp === 'chick' || sp === 'penguin' ? '#ff922b' : s.f) + '" stroke="' + s.l + '" stroke-width="2.4"/>' +
+        '<ellipse cx="60" cy="94" rx="22" ry="17" fill="' + s.f + '" stroke="' + s.l + '" stroke-width="2.6"/>' +
+        '<ellipse cx="60" cy="97" rx="12" ry="10" fill="' + (sp === 'penguin' ? '#fff' : tint(s.f, 0.5)) + '"/>';
+      head = '<ellipse cx="60" cy="56" rx="' + (sp === 'frog' ? 34 : 32) + '" ry="' + (sp === 'chick' ? 30 : 28) + '" fill="' + s.f + '" stroke="' + s.l + '" stroke-width="2.8"/>';
+    }
+    // 顔のもよう
+    if (sp === 'penguin') face += '<path d="M60 44 C46 36 32 46 34 60 C36 74 50 80 60 80 C70 80 84 74 86 60 C88 46 74 36 60 44Z" fill="#fff"/>';
+    if (sp === 'shiba') face += '<ellipse cx="47" cy="68" rx="13" ry="10" fill="#fff"/><ellipse cx="73" cy="68" rx="13" ry="10" fill="#fff"/><ellipse cx="60" cy="72" rx="12" ry="9" fill="#fff"/>' +
+      '<ellipse cx="46" cy="46" rx="3" ry="2" fill="#fff4e6"/><ellipse cx="74" cy="46" rx="3" ry="2" fill="#fff4e6"/>';
+    if (sp === 'cat') face += '<path d="M54 30 v7 M60 29 v8 M66 30 v7" stroke="' + s.l + '" stroke-width="2.6" stroke-linecap="round"/>' +
+      '<path d="M22 62 h10 M23 69 l9 -3 M98 62 h-10 M97 69 l-9 -3" stroke="' + s.l + '" stroke-width="1.8" stroke-linecap="round"/>';
+    if (sp === 'dog') face += '<ellipse cx="72" cy="52" rx="10" ry="9" fill="#f1c69d" opacity=".8"/>';
+    if (sp === 'bear' || sp === 'dog' || sp === 'hamster') face += '<ellipse cx="60" cy="67" rx="12" ry="8.5" fill="' + s.mz + '"/>';
+    if (sp === 'panda') face += '<ellipse cx="47" cy="56" rx="8" ry="10" fill="' + s.in + '" transform="rotate(25 47 56)"/><ellipse cx="73" cy="56" rx="8" ry="10" fill="' + s.in + '" transform="rotate(-25 73 56)"/>';
+    // ---- 人・ロボット・おばけ・ドラゴン・うちゅうじん・ユニコーン ----
+    if (s.human) {
+      body = body.replace(/fill="[^"]+" stroke="[^"]+" stroke-width="2.4"\/>/g, 'fill="#495057" stroke="#343a40" stroke-width="2.4"/>')
+        .replace('<ellipse cx="60" cy="94" rx="22" ry="17" fill="' + s.f + '" stroke="' + s.l + '"', '<ellipse cx="60" cy="94" rx="22" ry="17" fill="' + s.shirt + '" stroke="' + s.shirtL + '"')
+        .replace('fill="' + tint(s.f, 0.5) + '"/>', 'fill="' + tint(s.shirt, 0.45) + '"/>');
+      back += '<circle cx="28" cy="60" r="6.5" fill="' + s.f + '" stroke="' + s.l + '" stroke-width="2.4"/><circle cx="92" cy="60" r="6.5" fill="' + s.f + '" stroke="' + s.l + '" stroke-width="2.4"/>';
+      var hc = s.hair, hl = tint(s.hair, -0.35);
+      if (sp === 'girl') back += '<path d="M27 58 C20 28 42 18 60 20 C80 18 102 28 93 58 L97 94 C88 100 80 94 81 82 L39 82 C40 94 32 100 23 94Z" fill="' + hc + '" stroke="' + hl + '" stroke-width="2.4" stroke-linejoin="round"/>';
+      if (sp === 'kid3') back += '<circle cx="60" cy="18" r="12" fill="' + hc + '" stroke="' + hl + '" stroke-width="2.4"/>';
+      if (sp === 'kid2') {
+        var cs = ''; [[30, 44], [34, 32], [44, 24], [56, 20], [68, 21], [79, 25], [88, 34], [91, 46]].forEach(function (c) { cs += '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="10" fill="' + hc + '" stroke="' + hl + '" stroke-width="2.2"/>'; });
+        front += cs + '<path d="M36 40 Q60 30 84 40" stroke="' + hc + '" stroke-width="10" fill="none" stroke-linecap="round"/>';
+      } else if (sp === 'girl') front += '<path d="M29 50 C30 30 48 24 62 25 C78 25 92 33 91 50 C84 40 74 36 67 41 C62 34 48 36 29 50Z" fill="' + hc + '" stroke="' + hl + '" stroke-width="2.2" stroke-linejoin="round"/>' +
+        '<circle cx="84" cy="34" r="5" fill="#ff6b8a" stroke="#c2255c" stroke-width="1.6"/>';
+      else if (sp === 'kid3') front += '<path d="M29 52 C28 30 46 23 60 24 C76 23 93 31 91 52 C86 46 80 40 72 39 L66 46 L60 38 L54 46 L47 39 C40 41 33 46 29 52Z" fill="' + hc + '" stroke="' + hl + '" stroke-width="2.2" stroke-linejoin="round"/>';
+      else front += '<path d="M28 54 C24 28 46 20 60 22 C78 20 98 30 92 54 C88 44 80 38 72 40 L74 32 L64 38 L58 30 L52 39 C42 38 33 44 28 54Z" fill="' + hc + '" stroke="' + hl + '" stroke-width="2.2" stroke-linejoin="round"/>';
+    }
+    if (sp === 'robot') {
+      back = '<path d="M60 30 V14" stroke="' + s.l + '" stroke-width="3"/><circle cx="60" cy="12" r="5" fill="#ff6b6b" stroke="#c92a2a" stroke-width="2"/>' +
+        '<rect x="22" y="48" width="8" height="18" rx="3" fill="' + s.in + '" stroke="' + s.l + '" stroke-width="2"/><rect x="90" y="48" width="8" height="18" rx="3" fill="' + s.in + '" stroke="' + s.l + '" stroke-width="2"/>';
+      head = '<rect x="28" y="28" width="64" height="56" rx="16" fill="' + s.f + '" stroke="' + s.l + '" stroke-width="2.8"/><rect x="34" y="38" width="52" height="38" rx="11" fill="' + s.mz + '" stroke="' + s.l + '" stroke-width="1.6"/>';
+      body = body.replace(/<ellipse cx="60" cy="94" rx="22" ry="17"[^>]*>/, '<rect x="39" y="79" width="42" height="30" rx="9" fill="' + s.f + '" stroke="' + s.l + '" stroke-width="2.6"/>')
+        .replace(/<ellipse cx="60" cy="97" rx="12" ry="10"[^>]*>/, '<circle cx="52" cy="92" r="3" fill="#ff6b6b"/><circle cx="60" cy="92" r="3" fill="#ffd43b"/><circle cx="68" cy="92" r="3" fill="#51cf66"/><rect x="50" y="98" width="20" height="4" rx="2" fill="' + s.in + '"/>');
+    }
+    if (sp === 'ghost') {
+      back = ''; armsBack = ''; armsFront = '<ellipse cx="27" cy="74" rx="7" ry="5" fill="#fff" stroke="' + s.l + '" stroke-width="2.4" transform="rotate(-30 27 74)"/><ellipse cx="93" cy="74" rx="7" ry="5" fill="#fff" stroke="' + s.l + '" stroke-width="2.4" transform="rotate(30 93 74)"/>';
+      body = ''; head = '<path d="M28 62 C26 30 94 30 92 62 L92 102 Q86 112 80 102 Q74 112 68 102 Q62 112 56 102 Q50 112 44 102 Q38 112 32 102 Q28 108 28 102Z" fill="#fff" stroke="' + s.l + '" stroke-width="2.8" stroke-linejoin="round"/>' +
+        '<ellipse cx="44" cy="40" rx="7" ry="4" fill="#e7f5ff" transform="rotate(-25 44 40)"/>';
+      ey = 58; my = 70;
+    }
+    if (sp === 'dragon') {
+      back += '<path d="M24 92 Q10 70 22 64 Q26 78 36 82Z M96 92 Q110 70 98 64 Q94 78 84 82Z" fill="' + tint(s.f, 0.25) + '" stroke="' + s.l + '" stroke-width="2.4" stroke-linejoin="round"/>' +
+        '<path d="M44 30 L48 12 L54 28Z M76 30 L72 12 L66 28Z" fill="#fff3bf" stroke="#e0a800" stroke-width="2" stroke-linejoin="round"/>' +
+        '<path d="M50 29 L56 20 L60 28 L64 20 L70 29Z" fill="' + s.l + '"/>';
+      face += '<ellipse cx="60" cy="68" rx="13" ry="8" fill="' + s.mz + '"/><circle cx="56" cy="64" r="1.5" fill="' + DARK + '"/><circle cx="64" cy="64" r="1.5" fill="' + DARK + '"/>';
+      body = body.replace('fill="' + tint(s.f, 0.5) + '"/>', 'fill="' + s.in + '"/>');
+    }
+    if (sp === 'alien') {
+      back += '<path d="M46 32 L36 10 M74 32 L84 10" stroke="' + s.l + '" stroke-width="2.6" stroke-linecap="round"/><circle cx="36" cy="9" r="5" fill="#ffd43b" stroke="#e67700" stroke-width="2"/><circle cx="84" cy="9" r="5" fill="#ffd43b" stroke="#e67700" stroke-width="2"/>';
+      head = '<path d="M60 26 C90 26 98 50 92 66 C86 82 72 86 60 86 C48 86 34 82 28 66 C22 50 30 26 60 26Z" fill="' + s.f + '" stroke="' + s.l + '" stroke-width="2.8"/>';
+    }
+    if (sp === 'unicorn') {
+      back += '<path d="M34 46 L38 22 L52 34Z M86 46 L82 22 L68 34Z" fill="#fff" stroke="' + s.l + '" stroke-width="2.4" stroke-linejoin="round"/>' +
+        ['#ff8787', '#ffc078', '#ffe066', '#8ce99a', '#74c0fc', '#b197fc'].map(function (c, i) { return '<circle cx="' + (30 + i * 3) + '" cy="' + (40 + i * 9) + '" r="9" fill="' + c + '"/>'; }).join('');
+      front += '<path d="M55 30 L60 6 L65 30Z" fill="#ffe066" stroke="#e0a800" stroke-width="2" stroke-linejoin="round"/><path d="M57 22 L63 20 M56 26 L64 24 M58 16 L62 15" stroke="#e0a800" stroke-width="1.4"/>';
+    }
+    var white = sp === 'panda';
+    if (sp === 'star') {
+      head = '<path d="' + starPath(60, 62, 56, 30, 5) + '" fill="' + s.f + '" stroke="' + s.l + '" stroke-width="3" stroke-linejoin="round"/>';
+      ey = 60; my = 72; armsBack = ''; armsFront = ''; back = '';
+    }
+    if (sp === 'heart') {
+      head = '<path d="' + heartPath(60, 58, 4.4) + '" fill="' + s.f + '" stroke="' + s.l + '" stroke-width="3"/><ellipse cx="38" cy="30" rx="7" ry="4" fill="#fff" opacity=".6" transform="rotate(-30 38 30)"/>';
+      ey = 52; my = 64; armsBack = ''; armsFront = ''; back = '';
+    }
+    face += sp === 'frog' ? eyes(ex, 30) : eyes(ex, ey, white);
+    if (sp === 'frog') my = 64;
+    face += cheeks(my - 1, 22);
+    if (sp === 'cat' || sp === 'rabbit' || sp === 'hamster') face += '<path d="M57.5 ' + (my - 6) + ' h5 l-2.5 3 z" fill="#f06595"/>';
+    if (sp === 'bear' || sp === 'dog' || sp === 'panda' || sp === 'shiba') face += '<ellipse cx="60" cy="' + (my - 5) + '" rx="4.6" ry="3.2" fill="' + DARK + '"/>';
+    face += mouth(ex, sp, my);
+    if (sp === 'dog') front += '<ellipse cx="30" cy="56" rx="10" ry="17" fill="' + s.in + '" stroke="' + s.l + '" stroke-width="2.6" transform="rotate(18 30 56)"/><ellipse cx="90" cy="56" rx="10" ry="17" fill="' + s.in + '" stroke="' + s.l + '" stroke-width="2.6" transform="rotate(-18 90 56)"/>';
+    var pr = sp === 'star' || sp === 'heart' ? '' : prop(po, s);
+    var deco = sp === 'star' || sp === 'heart' ? sparkle(14, 20, 6, '#fab005') + sparkle(106, 24, 5, '#ff8fab') + sparkle(108, 96, 4, '#74c0fc') : '';
+    return armsBack + back + body + head + face + front + (po === 'heart' ? pr : armsFront + pr) + deco;
+  }
+
+  // ---- パーツを組み合わせて作るキャラクター ----
+  function makerChar(mk) {
+    var D = (root.AvatarSet && root.AvatarSet.MAKER_DEFAULT) || {};
+    mk = mk || {};
+    function g(k) { return mk[k] || D[k]; }
+    var skin = /^#[0-9a-f]{6}$/i.test(g('sk')) ? g('sk') : '#ffe3cc', sl = tint(skin, -0.38);
+    var hc = /^#[0-9a-f]{6}$/i.test(g('hc')) ? g('hc') : '#5c3a1e', hl = tint(hc, -0.35);
+    var cl = /^#[0-9a-f]{6}$/i.test(g('cl')) ? g('cl') : '#4dabf7', cll = tint(cl, -0.35);
+    var sh = g('sh'), hs = g('hs'), ey = g('ey'), br = g('br'), mo = g('mo'), ch = g('ch'), ea = g('ea');
+    var s = { f: skin, l: sl };
+    var back = '', front = '', face = '';
+    // 耳
+    if (ea === 'cat') back += '<path d="M32 46 L35 14 L58 32 Z M88 46 L85 14 L62 32 Z" fill="' + skin + '" stroke="' + sl + '" stroke-width="2.6" stroke-linejoin="round"/><path d="M39 36 L40 24 L50 32 Z M81 36 L80 24 L70 32 Z" fill="#ffc9d6"/>';
+    else if (ea === 'bear') back += '<circle cx="35" cy="32" r="11" fill="' + skin + '" stroke="' + sl + '" stroke-width="2.6"/><circle cx="85" cy="32" r="11" fill="' + skin + '" stroke="' + sl + '" stroke-width="2.6"/><circle cx="35" cy="32" r="5" fill="#ffc9d6"/><circle cx="85" cy="32" r="5" fill="#ffc9d6"/>';
+    else if (ea === 'rabbit') back += '<ellipse cx="46" cy="18" rx="8" ry="20" fill="' + skin + '" stroke="' + sl + '" stroke-width="2.6" transform="rotate(-10 46 18)"/><ellipse cx="74" cy="18" rx="8" ry="20" fill="' + skin + '" stroke="' + sl + '" stroke-width="2.6" transform="rotate(10 74 18)"/><ellipse cx="46" cy="20" rx="3.5" ry="13" fill="#ffc9d6" transform="rotate(-10 46 18)"/><ellipse cx="74" cy="20" rx="3.5" ry="13" fill="#ffc9d6" transform="rotate(10 74 18)"/>';
+    else if (ea === 'elf') back += '<path d="M30 56 L10 40 L30 66Z M90 56 L110 40 L90 66Z" fill="' + skin + '" stroke="' + sl + '" stroke-width="2.4" stroke-linejoin="round"/>';
+    else back += '<circle cx="28" cy="60" r="6.5" fill="' + skin + '" stroke="' + sl + '" stroke-width="2.4"/><circle cx="92" cy="60" r="6.5" fill="' + skin + '" stroke="' + sl + '" stroke-width="2.4"/>';
+    // 後ろの髪
+    if (hs === 'long') back += '<path d="M27 58 C20 28 42 18 60 20 C80 18 102 28 93 58 L97 96 C88 100 80 94 81 82 L39 82 C40 94 32 100 23 96Z" fill="' + hc + '" stroke="' + hl + '" stroke-width="2.4" stroke-linejoin="round"/>';
+    if (hs === 'bob') back += '<path d="M26 60 C20 26 42 18 60 20 C80 18 100 26 94 60 L96 78 C86 82 34 82 24 78Z" fill="' + hc + '" stroke="' + hl + '" stroke-width="2.4" stroke-linejoin="round"/>';
+    if (hs === 'bun') back += '<circle cx="60" cy="18" r="12" fill="' + hc + '" stroke="' + hl + '" stroke-width="2.4"/>';
+    if (hs === 'twin') back += '<path d="M28 46 C12 50 8 76 18 92 C24 80 26 64 32 56Z M92 46 C108 50 112 76 102 92 C96 80 94 64 88 56Z" fill="' + hc + '" stroke="' + hl + '" stroke-width="2.4" stroke-linejoin="round"/>';
+    if (hs === 'pony') back += '<path d="M86 34 C110 36 112 66 102 84 C98 70 96 54 84 46Z" fill="' + hc + '" stroke="' + hl + '" stroke-width="2.4" stroke-linejoin="round"/>';
+    // 体
+    var body = '<ellipse cx="51" cy="110" rx="8" ry="5" fill="#495057" stroke="#343a40" stroke-width="2.4"/><ellipse cx="69" cy="110" rx="8" ry="5" fill="#495057" stroke="#343a40" stroke-width="2.4"/>' +
+      '<ellipse cx="60" cy="94" rx="22" ry="17" fill="' + cl + '" stroke="' + cll + '" stroke-width="2.6"/><ellipse cx="60" cy="97" rx="12" ry="10" fill="' + tint(cl, 0.45) + '"/>';
+    var arms = arm(46, 90, 39, 104, s) + arm(74, 90, 81, 104, s);
+    // 顔の形
+    var head = sh === 'oval' ? '<ellipse cx="60" cy="56" rx="28" ry="31" fill="' + skin + '" stroke="' + sl + '" stroke-width="2.8"/>'
+      : sh === 'square' ? '<rect x="29" y="28" width="62" height="56" rx="18" fill="' + skin + '" stroke="' + sl + '" stroke-width="2.8"/>'
+      : sh === 'wide' ? '<ellipse cx="60" cy="58" rx="35" ry="26" fill="' + skin + '" stroke="' + sl + '" stroke-width="2.8"/>'
+      : '<ellipse cx="60" cy="56" rx="32" ry="28" fill="' + skin + '" stroke="' + sl + '" stroke-width="2.8"/>';
+    // 目
+    var EY = 56;
+    function pairs(fn) { return fn(48) + fn(72); }
+    if (ey === 'dot') face += pairs(function (x) { return '<ellipse cx="' + x + '" cy="' + EY + '" rx="2.8" ry="3.4" fill="' + DARK + '"/>'; });
+    else if (ey === 'round') face += pairs(function (x) { return '<circle cx="' + x + '" cy="' + EY + '" r="6" fill="#fff" stroke="' + DARK + '" stroke-width="1.6"/><circle cx="' + x + '" cy="' + (EY + 0.5) + '" r="3.4" fill="' + DARK + '"/><circle cx="' + (x + 1.2) + '" cy="' + (EY - 1) + '" r="1.2" fill="#fff"/>'; });
+    else if (ey === 'sleepy') face += pairs(function (x) { return '<path d="M' + (x - 5) + ' ' + EY + ' Q' + x + ' ' + (EY + 4) + ' ' + (x + 5) + ' ' + EY + '" stroke="' + DARK + '" stroke-width="3" fill="none" stroke-linecap="round"/>'; });
+    else if (ey === 'star') face += pairs(function (x) { return '<path d="' + starPath(x, EY, 6.5, 3, 5) + '" fill="#fab005" stroke="' + DARK + '" stroke-width="1.2" stroke-linejoin="round"/>'; });
+    else if (ey === 'sparkle') { var mg = nid('me'); face += chibiGrad(mg, '#7a4a1e') + pairs(function (x) { return '<g transform="translate(' + x + ' ' + (EY + 1) + ') scale(.8) translate(' + (-x) + ' ' + (-(EY + 1)) + ')">' + chibiEye(x, EY + 1, '#7a4a1e', mg) + '</g>'; }); }
+    else face += eyes(ey === 'happy' ? 'happy' : ey === 'wink' ? 'wink' : 'sparkle', EY);
+    // まゆ
+    if (br === 'normal') face += '<path d="M42 45 Q48 42 54 45 M66 45 Q72 42 78 45" stroke="' + hl + '" stroke-width="2.4" fill="none" stroke-linecap="round"/>';
+    else if (br === 'thick') face += '<path d="M41 46 Q48 40 55 45 M65 45 Q72 40 79 46" stroke="' + hl + '" stroke-width="4.4" fill="none" stroke-linecap="round"/>';
+    else if (br === 'angry') face += '<path d="M42 43 L54 47 M78 43 L66 47" stroke="' + hl + '" stroke-width="3.2" stroke-linecap="round"/>';
+    else if (br === 'worried') face += '<path d="M42 47 L54 43 M78 47 L66 43" stroke="' + hl + '" stroke-width="3" stroke-linecap="round"/>';
+    // ほっぺ
+    if (ch === 'pink') face += cheeks(65, 22);
+    else if (ch === 'freckles') face += [[38, 64], [42, 67], [45, 63], [75, 63], [78, 67], [82, 64]].map(function (p) { return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="1.3" fill="' + tint(skin, -0.45) + '"/>'; }).join('');
+    else if (ch === 'hearts') face += '<path d="' + heartPath(38, 66, 0.45) + '" fill="#ff6b8a"/><path d="' + heartPath(82, 66, 0.45) + '" fill="#ff6b8a"/>';
+    // 口
+    var MY = 68;
+    if (mo === 'open') face += '<path d="M54 ' + (MY - 2) + ' Q60 ' + (MY + 8) + ' 66 ' + (MY - 2) + ' Z" fill="#c92a2a" stroke="' + DARK + '" stroke-width="2" stroke-linejoin="round"/><ellipse cx="60" cy="' + (MY + 2) + '" rx="3" ry="1.8" fill="#ff8fab"/>';
+    else if (mo === 'cat') face += '<path d="M54 ' + MY + ' q3 4 6 0 q3 4 6 0" stroke="' + DARK + '" stroke-width="2.4" fill="none" stroke-linecap="round"/>';
+    else if (mo === 'tongue') face += '<path d="M53 ' + MY + ' Q60 ' + (MY + 4) + ' 67 ' + MY + '" stroke="' + DARK + '" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M58 ' + (MY + 2) + ' q2 7 5 0" fill="#ff6b8a" stroke="#c2255c" stroke-width="1.4"/>';
+    else if (mo === 'oh') face += '<ellipse cx="60" cy="' + (MY + 1) + '" rx="3.6" ry="4.4" fill="#c92a2a" stroke="' + DARK + '" stroke-width="1.8"/>';
+    else if (mo === 'grin') face += '<path d="M51 ' + (MY - 2) + ' H69 Q68 ' + (MY + 8) + ' 60 ' + (MY + 8) + ' Q52 ' + (MY + 8) + ' 51 ' + (MY - 2) + 'Z" fill="#fff" stroke="' + DARK + '" stroke-width="2" stroke-linejoin="round"/><path d="M51 ' + (MY + 1) + ' H69" stroke="' + DARK + '" stroke-width="1"/>';
+    else face += '<path d="M53 ' + MY + ' Q60 ' + (MY + 6) + ' 67 ' + MY + '" stroke="' + DARK + '" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+    // 前髪
+    if (hs === 'short') front += '<path d="M28 54 C24 28 46 20 60 22 C78 20 98 30 92 54 C88 44 80 38 72 40 L74 32 L64 38 L58 30 L52 39 C42 38 33 44 28 54Z" fill="' + hc + '" stroke="' + hl + '" stroke-width="2.2" stroke-linejoin="round"/>';
+    else if (hs === 'spiky') front += '<path d="M28 54 L24 36 L36 38 L36 22 L48 30 L54 14 L62 28 L72 14 L76 30 L88 22 L86 38 L96 36 L92 54 C86 42 74 38 60 38 C46 38 34 42 28 54Z" fill="' + hc + '" stroke="' + hl + '" stroke-width="2.2" stroke-linejoin="round"/>';
+    else if (hs === 'bob' || hs === 'long' || hs === 'twin' || hs === 'pony') front += '<path d="M29 50 C30 30 48 24 62 25 C78 25 92 33 91 50 C84 40 74 36 67 41 C62 34 48 36 29 50Z" fill="' + hc + '" stroke="' + hl + '" stroke-width="2.2" stroke-linejoin="round"/>';
+    else if (hs === 'curly') { [[30, 44], [34, 32], [44, 24], [56, 20], [68, 21], [79, 25], [88, 34], [91, 46]].forEach(function (c) { front += '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="10" fill="' + hc + '" stroke="' + hl + '" stroke-width="2.2"/>'; }); front += '<path d="M36 40 Q60 30 84 40" stroke="' + hc + '" stroke-width="10" fill="none" stroke-linecap="round"/>'; }
+    else if (hs === 'bun') front += '<path d="M29 52 C28 30 46 23 60 24 C76 23 93 31 91 52 C86 46 80 40 72 39 L66 46 L60 38 L54 46 L47 39 C40 41 33 46 29 52Z" fill="' + hc + '" stroke="' + hl + '" stroke-width="2.2" stroke-linejoin="round"/>';
+    else if (hs === 'mohawk') front += '<path d="M50 34 C48 18 56 6 60 4 C64 6 72 18 70 34 C66 30 54 30 50 34Z" fill="' + hc + '" stroke="' + hl + '" stroke-width="2.2" stroke-linejoin="round"/>';
+    return back + body + head + face + front + arms;
+  }
+  // ステッカー（白いふち＋影）
+  function stickerFilter(id) {
+    return '<filter id="' + id + '" x="-15%" y="-15%" width="130%" height="130%"><feMorphology in="SourceAlpha" operator="dilate" radius="3.4" result="d"/>' +
+      '<feFlood flood-color="#fff"/><feComposite in2="d" operator="in" result="w"/>' +
+      '<feGaussianBlur in="d" stdDeviation="2.2" result="b"/><feOffset in="b" dy="2" result="o"/><feFlood flood-color="#000" flood-opacity=".22"/><feComposite in2="o" operator="in" result="sh"/>' +
+      '<feMerge><feMergeNode in="sh"/><feMergeNode in="w"/><feMergeNode in="SourceGraphic"/></feMerge></filter>';
+  }
+  function sticker(d, size) {
+    var f = nid('sk'), t = String(d.t || ''), col = d.c || '#ff6b6b';
+    var hasT = !!t, fs = fit(t, 112, 27, 11), two = null;
+    // 長い言葉は2行にして、文字を大きくする
+    if (hasT && fs < 17 && t.length > 4) {
+      var cut = t.indexOf(' ', Math.floor(t.length / 3));
+      if (cut < 0 || cut > t.length * 2 / 3) cut = Math.ceil(t.length / 2);
+      two = [t.slice(0, cut).trim(), t.slice(cut).trim()];
+      fs = Math.min(fit(two[0], 112, 22, 10), fit(two[1], 112, 22, 10));
+    }
+    var tr = !hasT ? 'translate(6,7) scale(.9)' : two ? 'translate(16,2) scale(.73)' : 'translate(9,3) scale(.85)';
+    var txt = !hasT ? '' : two ? bigText(two[0], 60, 97, fs, col, '#fff', fs * 0.34) + bigText(two[1], 60, 116, fs, col, '#fff', fs * 0.34) : bigText(t, 60, 114, fs, col, '#fff', fs * 0.34);
+    return svgOpen(size, t, 'st-stamp') + '<defs>' + stickerFilter(f) + '</defs>' +
+      '<g filter="url(#' + f + ')"><g transform="' + tr + '">' + character(d.sp, d.po, d.ex) + '</g></g>' +
+      (hasT ? '<g transform="rotate(-5 60 106)">' + txt + '</g>' : '') + '</svg>';
+  }
+
+  // =================== 先生のハンコ ===================
+  function inkFilter(id, seed) {
+    return '<filter id="' + id + '" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="' + seed + '" result="n"/>' +
+      '<feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.5 1.6" result="m"/>' +
+      '<feComposite in="SourceGraphic" in2="m" operator="in" result="t"/>' +
+      '<feTurbulence type="turbulence" baseFrequency=".06" numOctaves="1" seed="' + (seed + 3) + '" result="w"/><feDisplacementMap in="t" in2="w" scale="2.2"/></filter>';
+  }
+  function lines(t) { return String(t || '').split('/'); }
+  // ハンコの文字（太め・白いふちどり）
+  function inkText(t, x, y, size, ink) {
+    return '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-family="' + FONT + '" font-weight="900" font-size="' + size.toFixed(1) + '" fill="' + ink + '" stroke="' + ink + '" stroke-width="' + (size * 0.07).toFixed(2) + '" stroke-linejoin="round">' + esc(t) + '</text>';
+  }
+  function inkFace(kind, col) {
+    if (kind === 'bear') return '<g fill="none" stroke="' + col + '" stroke-width="2.4" stroke-linecap="round"><circle cx="49" cy="25" r="5"/><circle cx="71" cy="25" r="5"/><ellipse cx="60" cy="34" rx="14" ry="12" fill="#fff"/>' +
+      '<path d="M55 33 v.5 M65 33 v.5" stroke-width="3.4"/><path d="M56 39 q4 3.5 8 0"/></g>';
+    return '<g fill="none" stroke="' + col + '" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M47 30 L48 18 L55 25 M73 30 L72 18 L65 25"/><ellipse cx="60" cy="33" rx="14" ry="11" fill="#fff"/>' +
+      '<path d="M54 31 q2 -2.5 4 0 M62 31 q2 -2.5 4 0"/><path d="M57 37 q1.5 2 3 0 q1.5 2 3 0"/></g>';
+  }
+  function hanko(d, size) {
+    var f = nid('ink'), ink = d.ink || '#e03131', seed = (d.id || 'x').length * 7 + 3, body = '';
+    var sh = d.sh || 'circle', t = String(d.t || '');
+    if (sh === 'hanamaru') {
+      var pts = [], i, n = 11, cx = 60, cy = 52;
+      for (i = 0; i <= n; i++) {
+        var a1 = (i / n) * 2 * Math.PI - Math.PI / 2, a2 = ((i + 0.5) / n) * 2 * Math.PI - Math.PI / 2;
+        pts.push((i ? ' Q' : 'M') + (i ? (cx + 58 * Math.cos(a2 - Math.PI / n)).toFixed(1) + ' ' + (cy + 46 * Math.sin(a2 - Math.PI / n)).toFixed(1) + ' ' : '') + (cx + 40 * Math.cos(a1)).toFixed(1) + ' ' + (cy + 32 * Math.sin(a1)).toFixed(1));
+      }
+      var sp = '', k;
+      for (k = 0; k <= 140; k++) { var aa = k / 140 * Math.PI * 2 * 3.1, rr = 2 + k / 140 * 25; sp += (k ? 'L' : 'M') + (cx + rr * Math.cos(aa)).toFixed(1) + ' ' + (cy + rr * 0.82 * Math.sin(aa)).toFixed(1); }
+      body = '<path d="' + pts.join('') + '" fill="none" stroke="' + ink + '" stroke-width="4.2" stroke-linejoin="round"/>' +
+        '<path d="' + sp + '" fill="none" stroke="' + ink + '" stroke-width="4.4" stroke-linecap="round"/>' +
+        bigText(t, 60, 113, fit(t, 108, 24, 12), ink, '#fff', 5);
+    } else if (sh === 'sakura') {
+      var pet = '', j;
+      for (j = 0; j < 5; j++) {
+        pet += '<path d="M60 60 C40 52 36 22 50 6 Q55 11 60 15 Q65 11 70 6 C84 22 80 52 60 60Z" transform="rotate(' + (j * 72) + ' 60 60)"/>';
+      }
+      var ls = lines(t);
+      body = '<g fill="#fff" stroke="' + ink + '" stroke-width="3.8" stroke-linejoin="round">' + pet + '</g>' +
+        '<g fill="none" stroke="' + ink + '" stroke-width="1.4" opacity=".6">' + [0, 72, 144, 216, 288].map(function (a) { return '<path d="M60 60 L60 30" transform="rotate(' + a + ' 60 60)"/>'; }).join('') + '</g>' +
+        ls.map(function (x, i2) { var fs = fit(x, 92, 28, 11); return bigText(x, 60, 60 + (i2 - (ls.length - 1) / 2) * fs * 1.05 + fs * 0.36, fs, ink, '#fff', fs * 0.3); }).join('');
+    } else if (sh === 'rect') {
+      var l1 = String(d.t || ''), l2 = String(d.t2 || '');
+      body = '<rect x="12" y="14" width="96" height="92" rx="12" fill="#fff" stroke="' + ink + '" stroke-width="5"/><rect x="19" y="21" width="82" height="78" rx="7" fill="none" stroke="' + ink + '" stroke-width="1.8"/>' +
+        inkText(l1, 60, 68, fit(l1, 76, 32, 12), ink) + (l2 ? inkText(l2, 60, 91, fit(l2, 70, 16, 9), ink) : '') +
+        '<path d="M34 34 h52" stroke="' + ink + '" stroke-width="1.6"/><text x="60" y="31" text-anchor="middle" font-family="' + FONT + '" font-weight="900" font-size="10" fill="' + ink + '">★ ★ ★</text>';
+    } else if (sh === 'double') {
+      var a = String(d.t || ''), b = String(d.t2 || '');
+      body = '<circle cx="60" cy="60" r="54" fill="#fff" stroke="' + ink + '" stroke-width="4.5"/><circle cx="60" cy="60" r="47" fill="none" stroke="' + ink + '" stroke-width="2"/>' +
+        '<g transform="translate(12,2) scale(.8)">' + inkFace('cat', ink) + '</g>' +
+        inkText(a, 60, 60, fit(a, 60, 15, 9), ink) + lines(b).map(function (x, i4) { return inkText(x, 60, 82 + i4 * 21, fit(x, 76, 22, 10), ink); }).join('');
+    } else {
+      var ls2 = lines(t);
+      body = '<circle cx="60" cy="60" r="54" fill="#fff" stroke="' + ink + '" stroke-width="5"/><circle cx="60" cy="60" r="47" fill="none" stroke="' + ink + '" stroke-width="1.6" stroke-dasharray="2 3"/>' +
+        inkFace(d.face || 'cat', ink) +
+        ls2.map(function (x, i3) { return inkText(x, 60, 84 + i3 * 20 - (ls2.length - 1) * 9, fit(x, 84, 27, 10), ink); }).join('');
+    }
+    return svgOpen(size, (t + (d.t2 ? ' ' + d.t2 : '')).replace('/', ''), 'hk-stamp') + '<defs>' + inkFilter(f, seed) + '</defs>' +
+      '<g filter="url(#' + f + ')" opacity=".93" transform="rotate(' + (d.rot || 0) + ' 60 60)">' + body + '</g></svg>';
+  }
+
+  // =================== キラキラ・ポップ ===================
+  function multi(t, cy, maxW, maxS, fill, stroke, sw) {
+    var ls = lines(t), fs = Math.min.apply(null, ls.map(function (x) { return fit(x, maxW, maxS, 10); }));
+    return ls.map(function (x, i) { return bigText(x, 60, cy + (i - (ls.length - 1) / 2) * fs * 1.02 + fs * 0.36, fs, fill, stroke, sw === undefined ? fs * 0.18 : sw); }).join('');
+  }
+  function pop(d, size) {
+    var g = nid('pg'), t = String(d.t || ''), c1 = d.c1 || '#ffe066', c2 = d.c2 || '#f08c00', c3 = d.c3 || tint(c2, -0.35), body = '';
+    var defs = '<radialGradient id="' + g + '" cx="50%" cy="40%" r="65%"><stop offset="0" stop-color="' + c1 + '"/><stop offset="1" stop-color="' + c2 + '"/></radialGradient>';
+    var sw = '<g>' + sparkle(16, 18, 7, '#ffd43b') + sparkle(104, 14, 5, '#ff8fab') + sparkle(108, 100, 6, '#74c0fc') + sparkle(12, 98, 4.5, '#b197fc') + '</g>';
+    if (d.sh === 'burst') {
+      body = '<path d="' + starPath(60, 60, 57, 44, 16, -90) + '" fill="url(#' + g + ')" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>' +
+        '<path d="' + starPath(60, 60, 57, 44, 16, -90) + '" fill="none" stroke="' + c3 + '" stroke-width="1.6" stroke-linejoin="round" opacity=".6"/>' +
+        '<ellipse cx="44" cy="34" rx="16" ry="7" fill="#fff" opacity=".35" transform="rotate(-25 44 34)"/>' +
+        multi(t, 60, 84, 34, '#fff', c3) + sw;
+    } else if (d.sh === 'ribbon') {
+      var arcs = ['#ff6b6b', '#ffa94d', '#ffd43b', '#69db7c', '#4dabf7', '#9775fa'].map(function (c, i) {
+        var r = 50 - i * 6; return '<path d="M' + (60 - r) + ' 62 A' + r + ' ' + r + ' 0 0 1 ' + (60 + r) + ' 62" fill="none" stroke="' + c + '" stroke-width="6"/>';
+      }).join('');
+      body = arcs + '<g fill="#fff" stroke="#d0ebff" stroke-width="2"><circle cx="16" cy="62" r="10"/><circle cx="26" cy="58" r="11"/><circle cx="94" cy="58" r="11"/><circle cx="104" cy="62" r="10"/></g>' +
+        '<path d="M2 80 L14 74 L14 100 L2 94 L8 87 Z M118 80 L106 74 L106 100 L118 94 L112 87 Z" fill="' + c3 + '"/>' +
+        '<rect x="12" y="72" width="96" height="30" rx="6" fill="url(#' + g + ')" stroke="#fff" stroke-width="3"/>' +
+        bigText(t, 60, 94, fit(t, 90, 22, 10), '#fff', c3, 4.5) + sparkle(60, 22, 6, '#ffd43b');
+    } else if (d.sh === 'star') {
+      body = '<path d="' + starPath(60, 54, 54, 26, 5) + '" fill="url(#' + g + ')" stroke="#fff" stroke-width="5" stroke-linejoin="round"/>' +
+        '<path d="' + starPath(60, 54, 54, 26, 5) + '" fill="none" stroke="' + c3 + '" stroke-width="2" stroke-linejoin="round"/>' +
+        '<path d="M48 36 L56 20" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".7"/>' + eyes('happy', 54) + cheeks(60, 14) +
+        '<path d="M6 86 L18 82 L18 106 L6 102 L11 94Z M114 86 L102 82 L102 106 L114 102 L109 94Z" fill="' + c3 + '"/>' +
+        '<rect x="14" y="80" width="92" height="28" rx="14" fill="' + c3 + '" stroke="#fff" stroke-width="3"/>' +
+        bigText(t, 60, 101, fit(t, 84, 22, 10), '#fff') + sparkle(14, 18, 6, '#ffd43b') + sparkle(106, 18, 5, '#ff8fab');
+    } else if (d.sh === 'bubble') {
+      body = '<path d="M20 14 H100 Q112 14 112 26 V74 Q112 86 100 86 H58 L38 106 L42 86 H20 Q8 86 8 74 V26 Q8 14 20 14Z" fill="' + c1 + '" stroke="' + c2 + '" stroke-width="4" stroke-linejoin="round"/>' +
+        '<path d="M18 24 Q18 20 24 20 H40" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none"/>' +
+        multi(t, 50, 94, 30, c2, '#fff', 4) +
+        '<path d="' + heartPath(92, 104, 0.9) + '" fill="#ff6b8a"/><path d="' + heartPath(106, 96, 0.6) + '" fill="#ffa8c5"/>' + sparkle(80, 104, 4.5, '#ffd43b');
+    } else { // medal
+      body = '<path d="M40 84 L28 116 L42 110 L48 120 L58 88Z M80 84 L92 116 L78 110 L72 120 L62 88Z" fill="' + c2 + '" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>' +
+        '<circle cx="60" cy="54" r="46" fill="url(#' + g + ')" stroke="#fff" stroke-width="4"/><circle cx="60" cy="54" r="38" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="3 4" opacity=".8"/>' +
+        '<path d="' + starPath(60, 26, 8, 3.6, 5) + '" fill="#fff"/>' +
+        multi(t, 56, 70, 30, '#fff', c3) + sparkle(104, 20, 6, '#ffd43b') + sparkle(14, 28, 5, '#fff3bf');
+    }
+    return svgOpen(size, t, 'pp-stamp') + '<defs>' + defs + '</defs>' + body + '</svg>';
+  }
+
+  // =================== ライブ表彰 ===================
+  function laurel(col, col2) {
+    var out = '', i;
+    for (i = 0; i < 8; i++) {
+      var a = 200 - i * 18, r = 50, x = 60 + r * Math.cos(a * Math.PI / 180), y = 62 + r * Math.sin(a * Math.PI / 180) * -1;
+      out += '<ellipse cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" rx="8" ry="3.6" fill="' + (i % 2 ? col : col2) + '" transform="rotate(' + (-a + 60) + ' ' + x.toFixed(1) + ' ' + y.toFixed(1) + ')"/>';
+      var x2 = 120 - x;
+      out += '<ellipse cx="' + x2.toFixed(1) + '" cy="' + y.toFixed(1) + '" rx="8" ry="3.6" fill="' + (i % 2 ? col : col2) + '" transform="rotate(' + (a - 60) + ' ' + x2.toFixed(1) + ' ' + y.toFixed(1) + ')"/>';
+    }
+    return out;
+  }
+  function rays(id, c1, c2, n, spin) {
+    var out = '', i;
+    for (i = 0; i < n; i++) {
+      var a1 = i * 360 / n, a2 = a1 + 360 / n / 2;
+      var p = 'M60 60 L' + (60 + 80 * Math.cos(a1 * Math.PI / 180)).toFixed(1) + ' ' + (60 + 80 * Math.sin(a1 * Math.PI / 180)).toFixed(1) +
+        ' L' + (60 + 80 * Math.cos(a2 * Math.PI / 180)).toFixed(1) + ' ' + (60 + 80 * Math.sin(a2 * Math.PI / 180)).toFixed(1) + 'Z';
+      out += '<path d="' + p + '" fill="' + c2 + '"/>';
+    }
+    return '<g clip-path="url(#' + id + ')"><circle cx="60" cy="60" r="58" fill="' + c1 + '"/><g>' + out +
+      (spin ? '<animateTransform attributeName="transform" type="rotate" from="0 60 60" to="360 60 60" dur="' + spin + 's" repeatCount="indefinite"/>' : '') + '</g></g>';
+  }
+  function trophy(gid) {
+    return '<path d="M38 36 C24 36 24 58 42 60" fill="none" stroke="#e0a800" stroke-width="5" stroke-linecap="round"/><path d="M82 36 C96 36 96 58 78 60" fill="none" stroke="#e0a800" stroke-width="5" stroke-linecap="round"/>' +
+      '<path d="M36 30 H84 V44 C84 62 74 70 60 70 C46 70 36 62 36 44Z" fill="url(#' + gid + ')" stroke="#b07d00" stroke-width="2.2"/>' +
+      '<rect x="55" y="69" width="10" height="9" fill="#e0a800" stroke="#b07d00" stroke-width="1.6"/>' +
+      '<path d="M44 86 H76 L72 77 H48Z" fill="url(#' + gid + ')" stroke="#b07d00" stroke-width="2"/>' +
+      '<path d="M42 38 C42 52 46 60 52 64" stroke="#fff" stroke-width="3.4" fill="none" stroke-linecap="round" opacity=".75"/>' +
+      bigText('1', 60, 60, 26, '#fff', '#b07d00', 3.5);
+  }
+  function crown(x, y, s) {
+    return '<g transform="translate(' + x + ',' + y + ') scale(' + s + ')"><path d="M-22 10 L-26 -12 L-12 0 L0 -18 L12 0 L26 -12 L22 10Z" fill="#ffd43b" stroke="#c99200" stroke-width="2.2" stroke-linejoin="round"/>' +
+      '<rect x="-22" y="8" width="44" height="7" rx="2" fill="#fab005" stroke="#c99200" stroke-width="2"/>' +
+      '<circle cx="0" cy="-18" r="3.4" fill="#ff6b6b"/><circle cx="-26" cy="-12" r="2.8" fill="#4dabf7"/><circle cx="26" cy="-12" r="2.8" fill="#4dabf7"/><circle cx="0" cy="11.5" r="2.4" fill="#e64980"/></g>';
+  }
+  function liveStamp(d, size) {
+    var clip = nid('lc'), gid = nid('lg'), mid = nid('lm'), rank = d.rank || 10, t = String(d.t || ''), t2 = String(d.t2 || '');
+    var defs = '<clipPath id="' + clip + '"><circle cx="60" cy="60" r="58"/></clipPath>' +
+      '<linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3bf"/><stop offset=".45" stop-color="#ffd43b"/><stop offset="1" stop-color="#e0a800"/></linearGradient>';
+    var body;
+    if (rank === 1) {
+      body = '<path d="' + starPath(60, 60, 60, 52, 24, -90) + '" fill="#ffd43b" stroke="#c99200" stroke-width="2"/>' +
+        rays(clip, '#fff3bf', '#ffe066', 18, 14) + laurel('#5c940d', '#82c91e') +
+        '<g transform="translate(0,4)">' + trophy(gid) + '</g>' + crown(60, 22, 0.78) +
+        '<path d="M2 88 L16 82 L16 110 L2 104 L8 96Z M118 88 L104 82 L104 110 L118 104 L112 96Z" fill="#a61e4d"/>' +
+        '<path d="M12 84 H108 L104 96 L108 108 H12 L16 96Z" fill="#e03131" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/>' +
+        bigText(t, 60, 104, fit(t, 84, 24, 12), '#fff', '#a61e4d', 4) +
+        bigText(t2, 60, 13, fit(t2, 80, 12, 8), '#c92a2a', '#fff', 3.5) +
+        sparkle(14, 30, 7, '#fff', 1.4) + sparkle(106, 34, 6, '#fff', 1.9) + sparkle(98, 70, 5, '#fff', 1.1) + sparkle(22, 70, 4.5, '#fff', 1.7);
+      return svgOpen(size, '1位 ' + t, 'lv-stamp lv1') + '<defs>' + defs + '</defs>' + body + '</svg>';
+    }
+    var metal = rank === 2 ? ['#f1f3f5', '#adb5bd', '#868e96', '#495057'] : rank === 3 ? ['#ffe8cc', '#e8a067', '#c27c3a', '#8a4b14'] : ['#d0ebff', '#4dabf7', '#1c7ed6', '#1864ab'];
+    var mg = '<radialGradient id="' + mid + '" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="' + metal[0] + '"/><stop offset=".6" stop-color="' + metal[1] + '"/><stop offset="1" stop-color="' + metal[2] + '"/></radialGradient>';
+    var who = rank === 2 ? { sp: 'rabbit', po: 'banzai', ex: 'sparkle' } : rank === 3 ? { sp: 'cat', po: 'banzai', ex: 'happy' } : { sp: 'chick', po: 'banzai', ex: 'sparkle' };
+    var tails = '<path d="M36 80 L22 118 L38 110 L44 120 L56 86Z M84 80 L98 118 L82 110 L76 120 L64 86Z" fill="' + (rank === 10 ? '#e03131' : metal[3]) + '" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/>';
+    var frame = rank === 10 ? '<path d="' + starPath(60, 54, 50, 44, 20, -90) + '" fill="url(#' + mid + ')" stroke="#fff" stroke-width="3"/>'
+      : '<circle cx="60" cy="54" r="48" fill="url(#' + mid + ')" stroke="#fff" stroke-width="3.5"/><circle cx="60" cy="54" r="41" fill="none" stroke="#fff" stroke-width="1.6" stroke-dasharray="3 3" opacity=".9"/>';
+    body = tails + frame +
+      '<g transform="translate(24,10) scale(.6)">' + character(who.sp, who.po, who.ex) + '</g>' +
+      '<rect x="12" y="72" width="96" height="28" rx="14" fill="' + (rank === 10 ? '#e03131' : metal[3]) + '" stroke="#fff" stroke-width="2.5"/>' +
+      bigText(t, 60, 93, fit(t, 88, 22, 10), '#fff') +
+      bigText(t2, 60, 114, fit(t2, 74, 13, 8), metal[3], '#fff', 3.5) +
+      sparkle(14, 20, 6, '#ffd43b', 1.6) + sparkle(106, 22, 5, '#ffd43b', 2.1);
+    return svgOpen(size, t, 'lv-stamp lv' + rank) + '<defs>' + defs + mg + '</defs>' + body + '</svg>';
+  }
+
+
+  // =================== アバター用：キラキラ目の2頭身キャラクター ===================
+  // 120×120 の中に描く。頭の中心 (60,54)、目の高さ 60、首 86
+  var CH = {
+    cat: { f: '#ffc078', l: '#d9822b', b: '#fff4e6', e: '#8a4b14', m: 'cat', n: 'pink' },
+    dog: { f: '#fff3e0', l: '#b07a45', b: '#ffffff', e: '#5c3b24', m: 'open', n: 'dark' },
+    rabbit: { f: '#ffffff', l: '#e599b7', b: '#fff0f6', e: '#c2255c', m: 'cat', n: 'pink' },
+    panda: { f: '#ffffff', l: '#495057', b: '#ffffff', e: '#a0703a', m: 'open', n: 'dark', arm: '#343a40' },
+    penguin: { f: '#4c6ef5', l: '#2b3f9e', b: '#ffffff', e: '#1c2f8a', m: 'beak' },
+    hamster: { f: '#ffcf99', l: '#d08a43', b: '#fffaf3', e: '#5c3b24', m: 'cat', n: 'pink' },
+    shiba: { f: '#f4a259', l: '#c0622a', b: '#fff8ee', e: '#5c3b24', m: 'cat', n: 'dark' },
+    chick: { f: '#ffe066', l: '#e0a800', b: '#fff3bf', e: '#7a4a1e', m: 'beak' },
+    bear: { f: '#c08457', l: '#7a4a28', b: '#f5d7b8', e: '#4a2c17', m: 'cat', n: 'dark' },
+    koala: { f: '#b8c1cc', l: '#6c7782', b: '#f1f3f5', e: '#3d4652', m: 'smile', n: 'koala' },
+    fox: { f: '#ff922b', l: '#d9480f', b: '#fff8f0', e: '#8a3b0c', m: 'cat', n: 'dark' },
+    seal: { f: '#eef1f5', l: '#97a3b3', b: '#ffffff', e: '#3d4652', m: 'cat', n: 'dark' },
+    redpanda: { f: '#dd6b3d', l: '#9c3b1c', b: '#fff8f0', e: '#5c2410', m: 'cat', n: 'dark', arm: '#6b2f17' },
+    sheep: { f: '#fff4e6', l: '#c9a27c', b: '#ffffff', e: '#6b4a2b', m: 'open', n: 'pink' },
+    frog: { f: '#8ce99a', l: '#2f9e44', b: '#ebfbee', e: '#2b6b3a', m: 'wide' },
+    boy: { f: '#ffe3cc', hair: '#4a2f1d', shirt: '#4dabf7', e: '#5c3b24', m: 'open', human: 1 },
+    girl: { f: '#ffe3cc', hair: '#7b4321', shirt: '#f783ac', e: '#8a4b2a', m: 'open', human: 1, lash: 1 },
+    kid2: { f: '#ffe3cc', hair: '#2b2118', shirt: '#69db7c', e: '#3d2a1c', m: 'open', human: 1 },
+    kid3: { f: '#ffe3cc', hair: '#8a4b14', shirt: '#ffd43b', e: '#7a4a1e', m: 'open', human: 1, lash: 1 },
+    robot: { f: '#dfe7f0', l: '#6b7a8b', b: '#c5d3e3', e: '#3bc9db', m: 'robot' },
+    ghost: { f: '#ffffff', l: '#a5a4d4', b: '#ffffff', e: '#5f3dc4', m: 'open' },
+    alien: { f: '#a9e34b', l: '#5c940d', b: '#d8f5a2', e: '#5f3dc4', m: 'open' },
+    dragon: { f: '#69db7c', l: '#2b8a3e', b: '#fff3bf', e: '#e67700', m: 'open', n: 'dragon' },
+    unicorn: { f: '#ffffff', l: '#c39bd3', b: '#fff0f6', e: '#9c36b5', m: 'cat', lash: 1 }
+  };
+  function chibiEye(x, y, col, gid, lash) {
+    var D = '#2a1a14';
+    return '<ellipse cx="' + x + '" cy="' + y + '" rx="7.6" ry="9.4" fill="url(#' + gid + ')"/>' +
+      '<ellipse cx="' + x + '" cy="' + (y + 5) + '" rx="4.4" ry="2.5" fill="' + tint(col, 0.55) + '" opacity=".85"/>' +
+      '<path d="M' + (x - 8.6) + ' ' + (y - 3) + ' Q' + x + ' ' + (y - 13.4) + ' ' + (x + 8.6) + ' ' + (y - 3) + '" stroke="' + D + '" stroke-width="2.8" fill="none" stroke-linecap="round"/>' +
+      (lash ? '<path d="M' + (x + (x < 60 ? -8.2 : 8.2)) + ' ' + (y - 3.8) + ' l' + (x < 60 ? -3.6 : 3.6) + ' -2.6" stroke="' + D + '" stroke-width="2.2" stroke-linecap="round"/>' : '') +
+      '<circle cx="' + (x + 2.6) + '" cy="' + (y - 3.6) + '" r="3.3" fill="#fff"/><circle cx="' + (x - 2.9) + '" cy="' + (y + 3.8) + '" r="1.5" fill="#fff"/>' +
+      '<path d="' + starPath(x - 2.8, y - 4.6, 2, 0.7, 4) + '" fill="#fff"/>';
+  }
+  function chibiGrad(gid, col) {
+    return '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22140e"/><stop offset=".55" stop-color="' + col + '"/><stop offset="1" stop-color="' + tint(col, 0.35) + '"/></linearGradient></defs>';
+  }
+  function chibiMouth(t, y) {
+    var D = '#3a2420';
+    if (t === 'cat') return '<path d="M54 ' + y + ' q3 3.6 6 0 q3 3.6 6 0" stroke="' + D + '" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
+    if (t === 'smile') return '<path d="M55 ' + y + ' Q60 ' + (y + 5) + ' 65 ' + y + '" stroke="' + D + '" stroke-width="2.2" fill="none" stroke-linecap="round"/>';
+    if (t === 'beak') return '<path d="M54 ' + (y - 4) + ' Q60 ' + (y - 7) + ' 66 ' + (y - 4) + ' Q63 ' + (y + 2) + ' 60 ' + (y + 2.5) + ' Q57 ' + (y + 2) + ' 54 ' + (y - 4) + 'Z" fill="#ff922b" stroke="#d9480f" stroke-width="1.4" stroke-linejoin="round"/><path d="M55.5 ' + (y - 3) + ' Q60 ' + (y - 1) + ' 64.5 ' + (y - 3) + '" stroke="#d9480f" stroke-width="1" fill="none"/>';
+    if (t === 'wide') return '<path d="M48 ' + (y - 1) + ' Q60 ' + (y + 9) + ' 72 ' + (y - 1) + ' Q60 ' + (y + 3) + ' 48 ' + (y - 1) + 'Z" fill="#e8505b" stroke="' + D + '" stroke-width="2" stroke-linejoin="round"/>';
+    if (t === 'robot') return '<path d="M54 ' + y + ' Q60 ' + (y + 5) + ' 66 ' + y + '" stroke="#66e3ff" stroke-width="2.6" fill="none" stroke-linecap="round"/>';
+    return '<path d="M55 ' + (y - 1) + ' Q60 ' + (y + 7.5) + ' 65 ' + (y - 1) + ' Q60 ' + (y + 1) + ' 55 ' + (y - 1) + 'Z" fill="#e8505b" stroke="' + D + '" stroke-width="1.8" stroke-linejoin="round"/><ellipse cx="60" cy="' + (y + 3.4) + '" rx="2.6" ry="1.5" fill="#ff9bb5"/>';
+  }
+  function chibiBlush(y) {
+    var o = '';
+    [37, 83].forEach(function (x) {
+      o += '<ellipse cx="' + x + '" cy="' + y + '" rx="7.2" ry="4.2" fill="#ff8fab" opacity=".55"/>' +
+        '<path d="M' + (x - 3.5) + ' ' + (y + 1.5) + ' l2 -3.4 M' + (x - 0.5) + ' ' + (y + 1.5) + ' l2 -3.4 M' + (x + 2.5) + ' ' + (y + 1.5) + ' l2 -3.4" stroke="#ff6f91" stroke-width="1.1" stroke-linecap="round" opacity=".8"/>';
+    });
+    return o;
+  }
+  function chibi(sp, opt) {
+    opt = opt || {};
+    var c = CH[sp] || CH.cat, f = c.f, l = c.l, gid = nid('ce');
+    if (c.human) { f = /^#[0-9a-f]{6}$/i.test(opt.skin || '') ? opt.skin : c.f; l = tint(f, -0.4); }
+    var sw = ' stroke="' + l + '" stroke-width="2.6" stroke-linejoin="round"';
+    var back = '', body = '', head = '', mark = '', front = '', top = '', ey = 60, my = 73, eyes = true;
+    var HEAD = '<ellipse cx="60" cy="54" rx="37" ry="32" fill="' + f + '"' + sw + '/>';
+    // 体と腕（下の方は丸い枠で切れる）
+    var shirt = c.human ? c.shirt : f, shirtL = c.human ? tint(c.shirt, -0.35) : l, armC = c.human ? f : (c.arm || f);
+    body = '<path d="M36 124 C36 98 45 85 60 85 C75 85 84 98 84 124Z" fill="' + shirt + '" stroke="' + shirtL + '" stroke-width="2.6"/>' +
+      (c.human ? '<path d="M52 86 L60 95 L68 86" fill="#fff" stroke="' + shirtL + '" stroke-width="2" stroke-linejoin="round"/>'
+        : '<ellipse cx="60" cy="108" rx="13" ry="13" fill="' + c.b + '"/>') +
+      '<ellipse cx="41" cy="104" rx="7" ry="9.5" fill="' + armC + '" stroke="' + (c.arm ? tint(c.arm, -0.3) : l) + '" stroke-width="2.4" transform="rotate(18 41 104)"/>' +
+      '<ellipse cx="79" cy="104" rx="7" ry="9.5" fill="' + armC + '" stroke="' + (c.arm ? tint(c.arm, -0.3) : l) + '" stroke-width="2.4" transform="rotate(-18 79 104)"/>';
+    head = HEAD;
+    function ears(path, inner, innerCol) { return '<path d="' + path + '" fill="' + f + '"' + sw + '/>' + (inner ? '<path d="' + inner + '" fill="' + (innerCol || '#ffc9d6') + '"/>' : ''); }
+    function round(cx, cy, r, inC, ir) { return '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + f + '"' + sw + '/>' + (inC ? '<circle cx="' + cx + '" cy="' + (cy + 1) + '" r="' + (ir || r * 0.5) + '" fill="' + inC + '"/>' : ''); }
+    switch (sp) {
+      case 'cat':
+        back = ears('M27 46 L29 9 L56 27Z M93 46 L91 9 L64 27Z', 'M33 38 L34 19 L48 29Z M87 38 L86 19 L72 29Z');
+        mark = '<path d="M53 25 v6 M60 24 v8 M67 25 v6" stroke="' + l + '" stroke-width="2.6" stroke-linecap="round"/>';
+        front = '<path d="M16 66 h11 M17 74 l10 -3.5 M104 66 h-11 M103 74 l-10 -3.5" stroke="' + l + '" stroke-width="1.8" stroke-linecap="round"/>';
+        break;
+      case 'dog':
+        mark = '<ellipse cx="75" cy="56" rx="12" ry="11" fill="#f0c79a"/><ellipse cx="60" cy="72" rx="12" ry="8" fill="#fff"/>';
+        front = '<ellipse cx="25" cy="52" rx="11" ry="21" fill="#c8915c"' + sw + ' transform="rotate(20 25 52)"/><ellipse cx="95" cy="52" rx="11" ry="21" fill="#c8915c"' + sw + ' transform="rotate(-20 95 52)"/>';
+        break;
+      case 'rabbit':
+        back = '<ellipse cx="45" cy="12" rx="9.5" ry="22" fill="' + f + '"' + sw + ' transform="rotate(-8 45 12)"/><ellipse cx="75" cy="12" rx="9.5" ry="22" fill="' + f + '"' + sw + ' transform="rotate(8 75 12)"/>' +
+          '<ellipse cx="45" cy="14" rx="4.5" ry="15" fill="#ffc9de" transform="rotate(-8 45 12)"/><ellipse cx="75" cy="14" rx="4.5" ry="15" fill="#ffc9de" transform="rotate(8 75 12)"/>';
+        break;
+      case 'panda':
+        back = '<circle cx="29" cy="27" r="11.5" fill="#343a40"/><circle cx="91" cy="27" r="11.5" fill="#343a40"/>';
+        mark = '<ellipse cx="45" cy="61" rx="11" ry="13" fill="#343a40" transform="rotate(22 45 61)"/><ellipse cx="75" cy="61" rx="11" ry="13" fill="#343a40" transform="rotate(-22 75 61)"/>';
+        break;
+      case 'penguin':
+        mark = '<path d="M60 38 C48 28 26 36 28 60 C30 80 46 86 60 86 C74 86 90 80 92 60 C94 36 72 28 60 38Z" fill="#fff"/>';
+        top = '<path d="M56 23 q2 -9 8 -10 q-2 5 1 10" fill="' + f + '"' + sw + '/>';
+        break;
+      case 'hamster':
+        back = round(31, 29, 8.5, '#ffc9d6') + round(89, 29, 8.5, '#ffc9d6');
+        mark = '<ellipse cx="60" cy="73" rx="28" ry="13" fill="' + c.b + '"/><path d="M56 23 Q60 33 64 23" fill="' + tint(f, -0.12) + '"/>';
+        break;
+      case 'shiba':
+        back = ears('M28 44 L31 10 L55 28Z M92 44 L89 10 L65 28Z', 'M34 36 L36 20 L48 30Z M86 36 L84 20 L72 30Z', '#fff8ee');
+        mark = '<path d="M25 64 Q40 90 60 86 Q80 90 95 64 Q80 74 60 69 Q40 74 25 64Z" fill="' + c.b + '"/><ellipse cx="45" cy="45" rx="3.6" ry="2.3" fill="' + c.b + '"/><ellipse cx="75" cy="45" rx="3.6" ry="2.3" fill="' + c.b + '"/>';
+        break;
+      case 'chick':
+        top = '<path d="M55 24 q-4 -13 5 -9 q3 -11 9 -1" fill="none" stroke="' + l + '" stroke-width="3" stroke-linecap="round"/>';
+        break;
+      case 'bear':
+        back = round(29, 27, 11.5, c.b, 6);
+        back += round(91, 27, 11.5, c.b, 6);
+        mark = '<ellipse cx="60" cy="72" rx="12" ry="8.5" fill="' + c.b + '"/>';
+        break;
+      case 'koala':
+        back = '<circle cx="24" cy="36" r="16" fill="' + f + '"' + sw + '/><circle cx="96" cy="36" r="16" fill="' + f + '"' + sw + '/><circle cx="25" cy="38" r="9" fill="#f8f9fa"/><circle cx="95" cy="38" r="9" fill="#f8f9fa"/>';
+        my = 79;
+        break;
+      case 'fox':
+        back = ears('M28 46 L25 4 L55 27Z M92 46 L95 4 L65 27Z', 'M33 37 L32 15 L47 29Z M87 37 L88 15 L73 29Z', '#fff3e0') +
+          '<path d="M26.5 16 L25 4 L35 11Z M93.5 16 L95 4 L85 11Z" fill="#5c2b0c"/>';
+        mark = '<path d="M23 62 Q38 92 60 86 Q82 92 97 62 Q82 75 60 70 Q38 75 23 62Z" fill="' + c.b + '"/>';
+        break;
+      case 'seal':
+        mark = '<ellipse cx="54.5" cy="72" rx="6.5" ry="5" fill="#fff"/><ellipse cx="65.5" cy="72" rx="6.5" ry="5" fill="#fff"/>' +
+          '<circle cx="52" cy="72" r=".9" fill="#97a3b3"/><circle cx="55" cy="74" r=".9" fill="#97a3b3"/><circle cx="65" cy="74" r=".9" fill="#97a3b3"/><circle cx="68" cy="72" r=".9" fill="#97a3b3"/>';
+        front = '<path d="M20 68 l10 1 M21 75 l9 -2 M100 68 l-10 1 M99 75 l-9 -2" stroke="#97a3b3" stroke-width="1.6" stroke-linecap="round"/>';
+        my = 78;
+        break;
+      case 'redpanda':
+        back = ears('M26 42 C22 22 34 12 50 24Z M94 42 C98 22 86 12 70 24Z', 'M30 36 C28 24 36 18 45 25Z M90 36 C92 24 84 18 75 25Z', '#fff8f0');
+        mark = '<ellipse cx="37" cy="72" rx="12" ry="9" fill="' + c.b + '"/><ellipse cx="83" cy="72" rx="12" ry="9" fill="' + c.b + '"/><ellipse cx="60" cy="73" rx="10" ry="8" fill="' + c.b + '"/>' +
+          '<ellipse cx="44" cy="44" rx="6.5" ry="3.6" fill="' + c.b + '"/><ellipse cx="76" cy="44" rx="6.5" ry="3.6" fill="' + c.b + '"/>';
+        break;
+      case 'sheep':
+        back = '<ellipse cx="20" cy="58" rx="10" ry="5.5" fill="' + f + '"' + sw + ' transform="rotate(-15 20 58)"/><ellipse cx="100" cy="58" rx="10" ry="5.5" fill="' + f + '"' + sw + ' transform="rotate(15 100 58)"/>';
+        [[26, 48], [28, 32], [40, 21], [54, 16], [68, 16], [81, 21], [92, 32], [94, 48]].forEach(function (p) { back += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="12" fill="#fff" stroke="#d9cbbb" stroke-width="2.2"/>'; });
+        [[36, 34], [48, 29], [60, 28], [72, 29], [84, 34]].forEach(function (p) { front += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="9" fill="#fff" stroke="#d9cbbb" stroke-width="2"/>'; });
+        body = body.replace('fill="' + f + '" stroke="' + l + '" stroke-width="2.6"/>', 'fill="#fff" stroke="#d9cbbb" stroke-width="2.6"/>');
+        break;
+      case 'frog':
+        back = round(40, 27, 13, tint(f, 0.6), 7) + round(80, 27, 13, tint(f, 0.6), 7);
+        break;
+      case 'robot':
+        back = '<path d="M60 22 V8" stroke="' + l + '" stroke-width="3"/><circle cx="60" cy="7" r="5.5" fill="#ff6b6b" stroke="#c92a2a" stroke-width="2"/>' +
+          '<rect x="12" y="44" width="10" height="22" rx="4" fill="' + c.b + '"' + sw + '/><rect x="98" y="44" width="10" height="22" rx="4" fill="' + c.b + '"' + sw + '/>';
+        head = '<rect x="19" y="20" width="82" height="66" rx="22" fill="' + f + '"' + sw + '/><rect x="27" y="31" width="66" height="47" rx="15" fill="#1f2d3d" stroke="' + l + '" stroke-width="1.6"/>';
+        body = body.replace('<ellipse cx="60" cy="108" rx="13" ry="13" fill="' + c.b + '"/>', '<circle cx="52" cy="102" r="3" fill="#ff6b6b"/><circle cx="60" cy="102" r="3" fill="#ffd43b"/><circle cx="68" cy="102" r="3" fill="#51cf66"/>');
+        break;
+      case 'ghost':
+        head = '<path d="M23 60 C21 18 99 18 97 60 L97 108 Q90 118 83 108 Q76 118 69 108 Q62 118 55 108 Q48 118 41 108 Q34 118 27 108 Q23 114 23 108Z" fill="#fff"' + sw + '/>' +
+          '<ellipse cx="40" cy="34" rx="8" ry="4.5" fill="#f3f0ff" transform="rotate(-25 40 34)"/>';
+        body = '<ellipse cx="22" cy="80" rx="8" ry="5.5" fill="#fff"' + sw + ' transform="rotate(-30 22 80)"/><ellipse cx="98" cy="80" rx="8" ry="5.5" fill="#fff"' + sw + ' transform="rotate(30 98 80)"/>';
+        break;
+      case 'alien':
+        back = '<path d="M44 26 L32 6 M76 26 L88 6" stroke="' + l + '" stroke-width="2.6" stroke-linecap="round"/><circle cx="32" cy="6" r="5.5" fill="#ffd43b" stroke="#e67700" stroke-width="2"/><circle cx="88" cy="6" r="5.5" fill="#ffd43b" stroke="#e67700" stroke-width="2"/>';
+        head = '<path d="M60 20 C94 20 100 46 95 64 C90 82 74 88 60 88 C46 88 30 82 25 64 C20 46 26 20 60 20Z" fill="' + f + '"' + sw + '/>';
+        break;
+      case 'dragon':
+        back = '<path d="M20 100 Q4 76 16 68 Q22 84 34 88Z M100 100 Q116 76 104 68 Q98 84 86 88Z" fill="' + tint(f, 0.3) + '"' + sw + '/>' +
+          '<path d="M40 30 L38 8 L52 24Z M80 30 L82 8 L68 24Z" fill="#fff3bf" stroke="#e0a800" stroke-width="2.2" stroke-linejoin="round"/>';
+        top = '<path d="M50 24 L55 15 L60 23 L65 15 L70 24Z" fill="' + l + '"/>';
+        mark = '<ellipse cx="60" cy="74" rx="13" ry="8" fill="' + tint(f, 0.55) + '"/><circle cx="56" cy="71" r="1.5" fill="' + l + '"/><circle cx="64" cy="71" r="1.5" fill="' + l + '"/>';
+        my = 77;
+        break;
+      case 'unicorn':
+        back = ears('M28 42 L30 14 L50 28Z M92 42 L90 14 L70 28Z', 'M33 36 L34 21 L45 29Z M87 36 L86 21 L75 29Z');
+        ['#ff8787', '#ffc078', '#ffe066', '#8ce99a', '#74c0fc', '#b197fc'].forEach(function (cc, i) { back += '<circle cx="' + (92 + (i % 2) * 4) + '" cy="' + (34 + i * 10) + '" r="10" fill="' + cc + '"/>'; });
+        front = '<path d="M30 46 C30 28 46 20 62 22 C56 28 52 34 54 40 C46 34 38 38 30 46Z" fill="#b197fc" stroke="#9775fa" stroke-width="1.6"/><path d="M36 40 C38 30 48 26 56 26 C50 30 48 34 49 37 C44 34 40 36 36 40Z" fill="#ff8fab"/>' +
+          '<path d="M55 24 L60 0 L65 24Z" fill="#ffe066" stroke="#e0a800" stroke-width="2" stroke-linejoin="round"/><path d="M57 17 L63 15 M56.5 21 L63.5 19 M58 11 L62 10" stroke="#e0a800" stroke-width="1.4"/>';
+        break;
+    }
+    // ---- 人 ----
+    if (c.human) {
+      var hc = c.hair, hl = tint(hc, -0.35), hs = ' fill="' + hc + '" stroke="' + hl + '" stroke-width="2.4" stroke-linejoin="round"';
+      back += '<circle cx="23" cy="63" r="6.5" fill="' + f + '" stroke="' + l + '" stroke-width="2.2"/><circle cx="97" cy="63" r="6.5" fill="' + f + '" stroke="' + l + '" stroke-width="2.2"/>';
+      if (sp === 'boy') {
+        back = '<path d="M21 58 C17 22 44 12 62 13 C84 12 104 26 99 58Z"' + hs + '/>' + back;
+        front = '<path d="M23 56 C21 30 40 19 60 19 C82 19 99 30 97 56 C92 46 86 41 79 42 L77 33 L69 41 L62 31 L55 41 L47 33 L44 43 C36 42 28 47 23 56Z"' + hs + '/>' +
+          '<path d="M52 15 L56 5 L61 14 L67 7 L69 17" fill="' + hc + '" stroke="' + hl + '" stroke-width="2.2" stroke-linejoin="round"/>';
+      } else if (sp === 'girl') {
+        back = '<path d="M19 58 C13 20 40 10 60 11 C80 10 107 20 101 58 L105 108 C96 116 86 110 86 98 L34 98 C34 110 24 116 15 108Z"' + hs + '/>' + back;
+        front = '<path d="M23 58 C23 30 41 19 60 19 C80 19 97 30 97 58 C93 46 85 38 75 40 C70 47 63 48 57 44 C51 40 45 38 39 42 C31 46 26 51 23 58Z"' + hs + '/>' +
+          '<g transform="translate(88,25) rotate(15)"><path d="M0 0 L-11 -8 L-11 8Z M0 0 L11 -8 L11 8Z" fill="#ff6b8a" stroke="#c2255c" stroke-width="2" stroke-linejoin="round"/><circle r="3.6" fill="#ff8fab" stroke="#c2255c" stroke-width="1.8"/></g>';
+      } else if (sp === 'kid2') {
+        var cs = '';
+        [[22, 58], [22, 42], [29, 28], [42, 18], [60, 14], [78, 18], [91, 28], [98, 42], [98, 58]].forEach(function (p) { cs += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="12"' + hs + '/>'; });
+        back = cs + back;
+        [[32, 34], [45, 27], [60, 25], [75, 27], [88, 34]].forEach(function (p) { front += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="9.5"' + hs + '/>'; });
+      } else if (sp === 'kid3') {
+        back = '<circle cx="60" cy="12" r="13"' + hs + '/><path d="M48 21 Q60 26 72 21" stroke="#ff6b8a" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M21 58 C17 24 42 15 60 16 C78 15 103 24 99 58Z"' + hs + '/>' + back;
+        front = '<path d="M23 60 C21 31 40 20 60 20 C80 20 99 31 97 60 C95 51 92 45 88 41 C80 39 71 41 60 39 C49 41 40 39 32 41 C28 45 25 51 23 60Z"' + hs + '/>' +
+          '<path d="M23 58 C22 66 24 74 28 78 L30 56Z M97 58 C98 66 96 74 92 78 L90 56Z"' + hs + '/>';
+      }
+    }
+    // ---- 目・ほっぺ・鼻・口 ----
+    var face = chibiGrad(gid, c.e);
+    if (sp === 'robot') {
+      face += '<g>' + [47, 73].map(function (x) { return '<ellipse cx="' + x + '" cy="' + ey + '" rx="7" ry="9" fill="#66e3ff"/><circle cx="' + (x + 2.4) + '" cy="' + (ey - 3.4) + '" r="2.8" fill="#fff"/><circle cx="' + (x - 2.4) + '" cy="' + (ey + 3.6) + '" r="1.3" fill="#fff"/>'; }).join('') + '</g>' +
+        '<ellipse cx="36" cy="70" rx="6" ry="3.5" fill="#ff8fab" opacity=".55"/><ellipse cx="84" cy="70" rx="6" ry="3.5" fill="#ff8fab" opacity=".55"/>';
+    } else {
+      face += chibiEye(47, ey, c.e, gid, c.lash) + chibiEye(73, ey, c.e, gid, c.lash) + chibiBlush(70);
+      if (sp === 'panda') face = face.replace(/stroke="#2a1a14" stroke-width="2.8"/g, 'stroke="#fff" stroke-width="2.4"');
+    }
+    var nose = '';
+    if (c.n === 'pink') nose = '<path d="M57 ' + (my - 6) + ' h6 l-3 3.4z" fill="#f06595" stroke="#d6336c" stroke-width="1" stroke-linejoin="round"/>';
+    else if (c.n === 'dark') nose = '<ellipse cx="60" cy="' + (my - 5) + '" rx="4.2" ry="3" fill="#2a1a14"/><ellipse cx="58.8" cy="' + (my - 6) + '" rx="1.3" ry=".8" fill="#fff" opacity=".8"/>';
+    else if (c.n === 'koala') nose = '<ellipse cx="60" cy="' + (my - 10) + '" rx="6.5" ry="8" fill="#3d4652"/><ellipse cx="57.5" cy="' + (my - 13) + '" rx="1.8" ry="2.4" fill="#fff" opacity=".6"/>';
+    var mouthY = c.m === 'beak' ? my : my;
+    return back + body + head + mark + top + front + face + nose + chibiMouth(c.m, mouthY);
+  }
+  function chibiAnchors(sp) {
+    if (sp === 'robot') return { ey: 60, top: 21, ny: 86, hs: 1.12 };
+    if (sp === 'ghost') return { ey: 60, top: 24, ny: 92, hs: 1.12 };
+    return { ey: 60, top: 23, ny: 86, hs: 1.15 };
+  }
+
+  // =================== アバター ===================
+  function bgArt(id, clip) {
+    var g = nid('bgg'), o = '';
+    function grad(a, b) { return '<defs><linearGradient id="' + g + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + a + '"/><stop offset="1" stop-color="' + b + '"/></linearGradient></defs><rect x="0" y="0" width="120" height="120" fill="url(#' + g + ')"/>'; }
+    function dots(c) { var d = ''; for (var i = 0; i < 14; i++) d += '<circle cx="' + ((i * 37) % 120) + '" cy="' + ((i * 53) % 120) + '" r="' + (3 + i % 3) + '" fill="' + c + '" opacity=".55"/>'; return d; }
+    if (id === 'bg_pink') o = grad('#fff0f6', '#fcc2d7') + dots('#fff');
+    else if (id === 'bg_mint') o = grad('#e6fcf5', '#96f2d7') + dots('#fff');
+    else if (id === 'bg_lemon') o = grad('#fff9db', '#ffe066') + dots('#fff');
+    else if (id === 'bg_class') o = '<rect width="120" height="120" fill="#fff4e6"/><rect x="10" y="10" width="100" height="48" rx="4" fill="#2f6b4f" stroke="#a0522d" stroke-width="4"/>' +
+      '<text x="24" y="32" font-family="' + FONT + '" font-size="12" font-weight="800" fill="#fff" opacity=".85">ABC</text><path d="M66 28 q6 -8 12 0 t12 0" stroke="#fff" stroke-width="2" fill="none" opacity=".7"/><rect x="0" y="96" width="120" height="24" fill="#d4a373"/>';
+    else if (id === 'bg_rainbow') o = grad('#e7f5ff', '#fff') + ['#ff8787', '#ffc078', '#ffe066', '#8ce99a', '#74c0fc', '#b197fc'].map(function (c, i) { var r = 62 - i * 7; return '<path d="M' + (60 - r) + ' 120 A' + r + ' ' + r + ' 0 0 1 ' + (60 + r) + ' 120" fill="none" stroke="' + c + '" stroke-width="7"/>'; }).join('');
+    else if (id === 'bg_sakura') { o = grad('#fff0f6', '#ffdeeb'); for (var i = 0; i < 12; i++) o += '<ellipse cx="' + ((i * 41 + 7) % 120) + '" cy="' + ((i * 29 + 11) % 120) + '" rx="4.5" ry="2.8" fill="#faa2c1" transform="rotate(' + (i * 40) + ' ' + ((i * 41 + 7) % 120) + ' ' + ((i * 29 + 11) % 120) + ')"/>'; }
+    else if (id === 'bg_sea') o = grad('#a5d8ff', '#1971c2') + '<path d="M0 92 Q15 84 30 92 T60 92 T90 92 T120 92 V120 H0Z" fill="#4dabf7" opacity=".8"/><circle cx="20" cy="40" r="4" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="100" cy="30" r="6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="92" cy="54" r="3" fill="none" stroke="#fff" stroke-width="1.5"/>';
+    else if (id === 'bg_space') { o = grad('#1b1f3b', '#3b2f7a'); for (var j = 0; j < 22; j++) o += '<circle cx="' + ((j * 47 + 5) % 120) + '" cy="' + ((j * 31 + 9) % 120) + '" r="' + (j % 4 ? 0.9 : 1.6) + '" fill="#fff"/>'; o += '<circle cx="98" cy="24" r="10" fill="#ffa94d"/><ellipse cx="98" cy="24" rx="16" ry="4" fill="none" stroke="#ffe066" stroke-width="2" transform="rotate(-20 98 24)"/>'; }
+    else if (id === 'bg_stage') o = '<rect width="120" height="120" fill="#2b0f16"/><path d="M60 0 L20 120 H100Z" fill="#fff3bf" opacity=".35"/><path d="M0 0 H26 Q20 60 30 120 H0Z M120 0 H94 Q100 60 90 120 H120Z" fill="#c92a2a"/><path d="M0 0 H120 V12 Q60 22 0 12Z" fill="#a61e4d"/>';
+    else if (id === 'bg_gold') { o = '<rect width="120" height="120" fill="#fff3bf"/>'; for (var k = 0; k < 16; k++) { var a1 = k * 22.5 * Math.PI / 180, a2 = (k * 22.5 + 11) * Math.PI / 180; o += '<path d="M60 60 L' + (60 + 90 * Math.cos(a1)).toFixed(1) + ' ' + (60 + 90 * Math.sin(a1)).toFixed(1) + ' L' + (60 + 90 * Math.cos(a2)).toFixed(1) + ' ' + (60 + 90 * Math.sin(a2)).toFixed(1) + 'Z" fill="#ffd43b"/>'; } o += sparkle(18, 22, 6, '#fff') + sparkle(102, 26, 5, '#fff'); }
+    else o = grad('#d0ebff', '#e7f5ff') + '<g fill="#fff"><ellipse cx="24" cy="30" rx="16" ry="7"/><ellipse cx="34" cy="26" rx="10" ry="7"/><ellipse cx="94" cy="44" rx="14" ry="6"/></g>';
+    return '<g clip-path="url(#' + clip + ')">' + o + '</g>';
+  }
+  function headItem(id, a) {
+    var t = a.top, o = '';
+    if (id === 'h_ribbon') o = '<g transform="translate(80,' + (t + 4) + ')"><path d="M0 0 L-14 -9 L-14 9Z M0 0 L14 -9 L14 9Z" fill="#ff6b8a" stroke="#c2255c" stroke-width="2" stroke-linejoin="round"/><circle r="4" fill="#ff8fab" stroke="#c2255c" stroke-width="2"/></g>';
+    else if (id === 'h_cap') o = '<path d="M30 ' + (t + 14) + ' C30 ' + (t - 8) + ' 90 ' + (t - 8) + ' 90 ' + (t + 14) + 'Z" fill="#ff6b6b" stroke="#c92a2a" stroke-width="2.4"/><path d="M84 ' + (t + 12) + ' Q102 ' + (t + 10) + ' 110 ' + (t + 18) + ' Q96 ' + (t + 20) + ' 84 ' + (t + 17) + 'Z" fill="#c92a2a"/><circle cx="60" cy="' + (t - 3) + '" r="3.4" fill="#fff"/><path d="M46 ' + (t + 6) + ' h28" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".6"/>';
+    else if (id === 'h_flower') { var c = ['#ff8fab', '#ffd43b', '#74c0fc', '#b197fc', '#ff8fab']; for (var i = 0; i < 5; i++) { var x = 34 + i * 13, y = t + 4 - Math.sin(i / 4 * Math.PI) * 8; o += '<circle cx="' + x + '" cy="' + y + '" r="6" fill="' + c[i] + '" stroke="#fff" stroke-width="2"/><circle cx="' + x + '" cy="' + y + '" r="2" fill="#fff3bf"/>'; } o = '<path d="M30 ' + (t + 8) + ' Q60 ' + (t - 10) + ' 90 ' + (t + 8) + '" stroke="#51cf66" stroke-width="3" fill="none"/>' + o; }
+    else if (id === 'h_star') o = '<path d="' + starPath(82, t + 8, 10, 4.5, 5) + '" fill="#ffd43b" stroke="#e67700" stroke-width="2" stroke-linejoin="round"/>';
+    else if (id === 'h_party') o = '<path d="M46 ' + (t + 6) + ' L62 ' + (t - 26) + ' L76 ' + (t + 4) + 'Z" fill="#74c0fc" stroke="#1971c2" stroke-width="2.2" stroke-linejoin="round"/><path d="M52 ' + (t - 4) + ' L70 ' + (t - 8) + ' M56 ' + (t - 14) + ' L67 ' + (t - 17) + '" stroke="#ffd43b" stroke-width="3"/><circle cx="62" cy="' + (t - 28) + '" r="5" fill="#ff6b8a"/>';
+    else if (id === 'h_phones') o = '<path d="M26 60 C24 ' + (t - 14) + ' 96 ' + (t - 14) + ' 94 60" stroke="#495057" stroke-width="5" fill="none"/><rect x="18" y="50" width="12" height="20" rx="6" fill="#ff6b6b" stroke="#495057" stroke-width="2.4"/><rect x="90" y="50" width="12" height="20" rx="6" fill="#ff6b6b" stroke="#495057" stroke-width="2.4"/>';
+    else if (id === 'h_beret') o = '<ellipse cx="56" cy="' + (t + 2) + '" rx="28" ry="10" fill="#e03131" stroke="#a61e1e" stroke-width="2.2" transform="rotate(-10 56 ' + (t + 2) + ')"/><path d="M54 ' + (t - 8) + ' l2 -6" stroke="#a61e1e" stroke-width="3" stroke-linecap="round"/>';
+    else if (id === 'h_chef') o = '<rect x="40" y="' + (t - 2) + '" width="40" height="12" rx="3" fill="#fff" stroke="#adb5bd" stroke-width="2"/><path d="M40 ' + (t - 2) + ' C30 ' + (t - 14) + ' 40 ' + (t - 30) + ' 52 ' + (t - 22) + ' C56 ' + (t - 34) + ' 70 ' + (t - 32) + ' 70 ' + (t - 22) + ' C82 ' + (t - 28) + ' 90 ' + (t - 12) + ' 80 ' + (t - 2) + 'Z" fill="#fff" stroke="#adb5bd" stroke-width="2"/>';
+    else if (id === 'h_wizard') o = '<path d="M38 ' + (t + 6) + ' L64 ' + (t - 34) + ' L84 ' + (t + 6) + 'Z" fill="#7048e8" stroke="#4c2fb0" stroke-width="2.2" stroke-linejoin="round"/><ellipse cx="60" cy="' + (t + 6) + '" rx="34" ry="6" fill="#5f3dc4" stroke="#4c2fb0" stroke-width="2"/><path d="' + starPath(62, t - 8, 5, 2.2, 5) + '" fill="#ffd43b"/>' + sparkle(70, t - 20, 3, '#ffe066');
+    else if (id === 'h_grad') o = '<path d="M60 ' + (t - 16) + ' L96 ' + (t - 6) + ' L60 ' + (t + 4) + ' L24 ' + (t - 6) + 'Z" fill="#343a40" stroke="#212529" stroke-width="2" stroke-linejoin="round"/><rect x="42" y="' + (t - 4) + '" width="36" height="12" rx="3" fill="#343a40"/><path d="M60 ' + (t - 6) + ' L90 ' + (t - 2) + ' L90 ' + (t + 14) + '" stroke="#ffd43b" stroke-width="2" fill="none"/><circle cx="90" cy="' + (t + 16) + '" r="3" fill="#ffd43b"/>';
+    else if (id === 'h_halo') o = '<ellipse cx="60" cy="' + (t - 12) + '" rx="22" ry="6" fill="none" stroke="#ffd43b" stroke-width="5"/><ellipse cx="60" cy="' + (t - 12) + '" rx="22" ry="6" fill="none" stroke="#fff3bf" stroke-width="1.6"/>';
+    else if (id === 'h_crown') o = '<g transform="translate(60,' + (t - 6) + ') scale(.95)"><path d="M-24 10 L-28 -14 L-13 0 L0 -20 L13 0 L28 -14 L24 10Z" fill="#ffd43b" stroke="#c99200" stroke-width="2.4" stroke-linejoin="round"/><rect x="-24" y="8" width="48" height="8" rx="2" fill="#fab005" stroke="#c99200" stroke-width="2"/><circle cx="0" cy="-20" r="3.6" fill="#ff6b6b"/><circle cx="-28" cy="-14" r="3" fill="#4dabf7"/><circle cx="28" cy="-14" r="3" fill="#4dabf7"/><circle cx="0" cy="12" r="2.6" fill="#e64980"/></g>' + sparkle(92, t - 16, 4, '#ffd43b');
+    return o;
+  }
+  function faceItem(id, a) {
+    var y = a.ey, o = '';
+    if (id === 'f_glasses') o = '<g fill="rgba(255,255,255,.25)" stroke="#5c3d2e" stroke-width="2.6"><circle cx="48" cy="' + y + '" r="9"/><circle cx="72" cy="' + y + '" r="9"/></g><path d="M57 ' + y + ' h6" stroke="#5c3d2e" stroke-width="2.6"/>';
+    else if (id === 'f_sun') o = '<g fill="#212529" stroke="#000" stroke-width="2"><rect x="37" y="' + (y - 7) + '" width="21" height="14" rx="6"/><rect x="62" y="' + (y - 7) + '" width="21" height="14" rx="6"/></g><path d="M58 ' + (y - 2) + ' h4" stroke="#000" stroke-width="2.6"/><path d="M41 ' + (y - 3) + ' l5 -2 M66 ' + (y - 3) + ' l5 -2" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".8"/>';
+    else if (id === 'f_star') o = '<g fill="rgba(255,182,193,.55)" stroke="#e64980" stroke-width="2.2" stroke-linejoin="round"><path d="' + starPath(48, y, 11, 5.5, 5) + '"/><path d="' + starPath(72, y, 11, 5.5, 5) + '"/></g>';
+    else if (id === 'f_hearts') o = '<path d="' + heartPath(38, y + 10, 0.6) + '" fill="#ff6b8a"/><path d="' + heartPath(82, y + 10, 0.6) + '" fill="#ff6b8a"/>';
+    else if (id === 'f_mustache') o = '<path d="M60 ' + (y + 9) + ' C54 ' + (y + 4) + ' 44 ' + (y + 6) + ' 42 ' + (y + 12) + ' C48 ' + (y + 11) + ' 54 ' + (y + 13) + ' 60 ' + (y + 11) + ' C66 ' + (y + 13) + ' 72 ' + (y + 11) + ' 78 ' + (y + 12) + ' C76 ' + (y + 6) + ' 66 ' + (y + 4) + ' 60 ' + (y + 9) + 'Z" fill="#4a2f1d"/>';
+    else if (id === 'f_monocle') o = '<circle cx="72" cy="' + y + '" r="9.5" fill="rgba(255,255,255,.25)" stroke="#e0a800" stroke-width="2.8"/><path d="M80 ' + (y + 6) + ' Q86 ' + (y + 24) + ' 78 ' + (y + 34) + '" stroke="#e0a800" stroke-width="1.6" fill="none"/>';
+    return o;
+  }
+  function wearItem(id, a) {
+    var o = '';
+    if (id === 'w_bowtie') o = '<g transform="translate(60,80)"><path d="M0 0 L-12 -7 L-12 7Z M0 0 L12 -7 L12 7Z" fill="#e03131" stroke="#a61e1e" stroke-width="1.8" stroke-linejoin="round"/><circle r="3.2" fill="#ff6b6b" stroke="#a61e1e" stroke-width="1.6"/></g>';
+    else if (id === 'w_tie') o = '<path d="M56 78 L64 78 L62 83 L66 100 L60 106 L54 100 L58 83Z" fill="#1971c2" stroke="#0b4f8a" stroke-width="1.8" stroke-linejoin="round"/>';
+    else if (id === 'w_scarf') o = '<path d="M40 80 Q60 90 80 80 L80 86 Q60 96 40 86Z" fill="#ff6b6b" stroke="#c92a2a" stroke-width="2"/><path d="M70 86 L74 104 L66 104 L64 88Z" fill="#ff6b6b" stroke="#c92a2a" stroke-width="2" stroke-linejoin="round"/><path d="M44 83 h4 M52 86 h4 M60 87 h4 M68 86 h4" stroke="#fff" stroke-width="1.6"/>';
+    else if (id === 'w_medal') o = '<path d="M50 78 L58 96 M70 78 L62 96" stroke="#1c7ed6" stroke-width="4"/><circle cx="60" cy="100" r="8" fill="#ffd43b" stroke="#c99200" stroke-width="2"/><path d="' + starPath(60, 100, 4.5, 2, 5) + '" fill="#fff"/>';
+    else if (id === 'w_book') o = '<g transform="translate(84,98) rotate(-10)"><path d="M-13 -9 Q-6 -12 0 -8 Q6 -12 13 -9 V9 Q6 6 0 10 Q-6 6 -13 9Z" fill="#fff" stroke="#1971c2" stroke-width="2.2" stroke-linejoin="round"/><path d="M0 -8 V10" stroke="#1971c2" stroke-width="1.6"/><path d="M-9 -3 h6 M-9 1 h6 M3 -3 h6 M3 1 h6" stroke="#74c0fc" stroke-width="1.4"/><text x="-7" y="-12" font-family="' + FONT + '" font-size="7" font-weight="900" fill="#1971c2">ABC</text></g>';
+    else if (id === 'w_mic') o = '<path d="M82 104 L92 82" stroke="#495057" stroke-width="4" stroke-linecap="round"/><circle cx="94" cy="78" r="7" fill="#adb5bd" stroke="#495057" stroke-width="2"/><path d="M89 76 h10 M89 80 h10" stroke="#495057" stroke-width="1" opacity=".6"/><path d="M104 66 q4 4 0 8 M108 62 q7 8 0 16" stroke="#ff6b8a" stroke-width="2" fill="none" stroke-linecap="round"/>';
+    else if (id === 'w_balloon') o = '<path d="M82 104 Q92 80 100 52" stroke="#868e96" stroke-width="1.4" fill="none"/><path d="' + heartPath(101, 36, 1.7) + '" fill="#ff6b8a" stroke="#c2255c" stroke-width="2"/><ellipse cx="95" cy="30" rx="3" ry="2" fill="#fff" opacity=".7"/>';
+    else if (id === 'w_wand') o = '<path d="M82 104 L100 70" stroke="#c99200" stroke-width="3" stroke-linecap="round"/><path d="' + starPath(102, 64, 10, 4.6, 5) + '" fill="#ffd43b" stroke="#e67700" stroke-width="2" stroke-linejoin="round"/>' + sparkle(112, 52, 4, '#ffe066') + sparkle(90, 54, 3, '#ffe066');
+    else if (id === 'w_trophy') o = '<g transform="translate(88,92) scale(.42)"><path d="M-22 -26 H22 V-14 C22 4 12 12 0 12 C-12 12 -22 4 -22 -14Z" fill="#ffd43b" stroke="#c99200" stroke-width="4"/><path d="M-22 -20 C-36 -20 -34 0 -18 2 M22 -20 C36 -20 34 0 18 2" stroke="#e0a800" stroke-width="5" fill="none"/><rect x="-5" y="11" width="10" height="9" fill="#e0a800"/><rect x="-16" y="20" width="32" height="9" rx="2" fill="#ffd43b" stroke="#c99200" stroke-width="4"/></g>' + sparkle(100, 72, 4, '#ffd43b');
+    return o;
+  }
+  // アバター：av = { b：キャラクター, sk：肌の色, h：帽子, f：顔, w：服・持ち物, bg：背景 }
+  function avatar(av, size, opt) {
+    av = av || {}; opt = opt || {};
+    var base = CH[av.b] ? av.b : 'cat', a = chibiAnchors(base), clip = nid('av');
+    // 絵や画像のアバター（opt.pic：画像のURL。まだ届いていないときは、あとで差しこむ）
+    if (av.b === 'pic') {
+      var sp2 = size || 64, sh2 = opt.square ? '<rect x="1" y="1" width="118" height="118" rx="22"/>' : '<circle cx="60" cy="60" r="58"/>';
+      return '<svg class="avatar-svg pic-av" width="' + sp2 + '" height="' + sp2 + '" viewBox="0 0 120 120" role="img" aria-label="' + esc(opt.label || 'アバター') + '">' +
+        '<defs><clipPath id="' + clip + '">' + sh2 + '</clipPath></defs>' + bgArt(av.bg || 'bg_sky', clip) +
+        '<image data-pic="' + esc(av.pic || '') + '"' + (opt.pic ? ' href="' + esc(opt.pic) + '"' : '') + ' x="2" y="2" width="116" height="116" preserveAspectRatio="xMidYMid slice" clip-path="url(#' + clip + ')"/>' +
+        (opt.ring === false ? '' : sh2.replace('/>', ' fill="none" stroke="#fff" stroke-width="4"/>')) + '</svg>';
+    }
+    var skins = (root.AvatarSet && root.AvatarSet.SKINS) || [];
+    var skin = skins[+av.sk] || '';
+    var cape = av.w === 'w_cape' ? '<path d="M40 80 Q60 84 80 80 L94 112 Q60 118 26 112Z" fill="#e03131" stroke="#a61e1e" stroke-width="2.2" stroke-linejoin="round"/><circle cx="44" cy="81" r="3" fill="#ffd43b"/><circle cx="76" cy="81" r="3" fill="#ffd43b"/>' : '';
+    if (av.b === 'maker') a = { ey: 56, top: 28, ny: 80, hs: 1 };
+    var who = av.b === 'maker' ? makerChar(av.mk) : chibi(base, { skin: skin });
+    var dy = (a.ny || 80) - 80, chest = { w_bowtie: 1, w_tie: 1, w_scarf: 1, w_medal: 1 };
+    if (cape && dy) cape = '<g transform="translate(0,' + dy + ')">' + cape + '</g>';
+    var wear = av.w && av.w !== 'w_cape' ? wearItem(av.w, a) : '';
+    if (wear && dy && chest[av.w]) wear = '<g transform="translate(0,' + dy + ')">' + wear + '</g>';
+    var hat = av.h ? headItem(av.h, a) : '';
+    if (hat && a.hs && a.hs !== 1) hat = '<g transform="translate(60,' + a.top + ') scale(' + a.hs + ') translate(-60,-' + a.top + ')">' + hat + '</g>';
+    var inner = cape + who + wear + (av.f ? faceItem(av.f, a) : '') + hat;
+    var s = size || 64, shape = opt.square ? '<rect x="1" y="1" width="118" height="118" rx="22"/>' : '<circle cx="60" cy="60" r="58"/>';
+    return '<svg class="avatar-svg" width="' + s + '" height="' + s + '" viewBox="0 0 120 120" role="img" aria-label="' + esc(opt.label || 'アバター') + '">' +
+      '<defs><clipPath id="' + clip + '">' + shape + '</clipPath></defs>' + bgArt(av.bg || 'bg_sky', clip) +
+      '<g clip-path="url(#' + clip + ')"><g transform="' + (opt.full ? 'translate(9,6) scale(.85)' : 'translate(3,9) scale(.95)') + '">' + inner + '</g></g>' +
+      (opt.ring === false ? '' : shape.replace('/>', ' fill="none" stroke="#fff" stroke-width="4"/>')) + '</svg>';
+  }
+  // =================== 入口 ===================
+  function design(idOrDef, size) {
+    var d = typeof idOrDef === 'string' ? (root.StampSet && root.StampSet.byId[idOrDef]) : idOrDef;
+    if (!d) return '';
+    if (d.k === 'hk') return hanko(d, size);
+    if (d.k === 'pp') return pop(d, size);
+    if (d.k === 'lv') return liveStamp(d, size);
+    return sticker(d, size);
+  }
+  // 先生が絵と言葉で作るスタンプ（以前のスタンプもこの形で表示）
+  //  opt.color：言葉の色、opt.crown：王冠、opt.pose：ポーズ、opt.expr：表情
+  function stampSVG(animal, text, size, opt) {
+    opt = opt || {};
+    var sp = SP[animal] ? animal : 'cat';
+    var html = sticker({ sp: sp, po: opt.pose || 'banzai', ex: opt.expr || 'sparkle', t: text, c: /^#[0-9a-f]{6}$/i.test(opt.color || '') ? opt.color : SP[sp].l }, size);
+    if (opt.crown) html = html.replace('</svg>', crown(60, 14, 0.55) + '</svg>');
+    return html;
+  }
+  // 画像のスタンプ（先生がアップロードした画像を丸く切り抜いて表示）
+  function imageStamp(src, text, size) {
+    var id = nid('ic'), f = nid('sk'), t = String(text || ''), fs = fit(t, 108, 24, 10);
+    return svgOpen(size, t || 'スタンプ', 'img-stamp') + '<defs><clipPath id="' + id + '"><circle cx="60" cy="56" r="50"/></clipPath>' + stickerFilter(f) + '</defs>' +
+      '<g filter="url(#' + f + ')"><circle cx="60" cy="56" r="51" fill="#fff"/>' +
+      (src ? '<image href="' + esc(src) + '" x="10" y="6" width="100" height="100" preserveAspectRatio="xMidYMid slice" clip-path="url(#' + id + ')"/>' : '<circle cx="60" cy="56" r="50" fill="#f1f3f5"/>') + '</g>' +
+      (t ? '<g transform="rotate(-5 60 108)">' + bigText(t, 60, 113, fs, '#e64980', '#fff', fs * 0.34) + '</g>' : '') + '</svg>';
+  }
+  // スタンプカードのマーク（肉球）
+  function pawSVG(color, size) {
+    color = color || '#f28bb3';
+    return '<svg width="' + (size || 30) + '" height="' + (size || 30) + '" viewBox="0 0 40 40" aria-hidden="true">' +
+      '<circle cx="20" cy="20" r="18" fill="' + color + '" opacity=".18"/>' +
+      '<ellipse cx="20" cy="25" rx="8" ry="6.5" fill="' + color + '"/>' +
+      '<ellipse cx="11" cy="17" rx="3.4" ry="4.2" fill="' + color + '"/><ellipse cx="17" cy="12" rx="3.4" ry="4.4" fill="' + color + '"/>' +
+      '<ellipse cx="23" cy="12" rx="3.4" ry="4.4" fill="' + color + '"/><ellipse cx="29" cy="17" rx="3.4" ry="4.2" fill="' + color + '"/></svg>';
+  }
+  var ANIMALS = Object.keys(SP);
+  root.Art = { design: design, stampSVG: stampSVG, imageStamp: imageStamp, pawSVG: pawSVG, ANIMALS: ANIMALS,
+    SPECIES: SP, POSES: POSES, EXPRS: EXPRS, character: character, avatar: avatar, makerChar: makerChar };
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+
+/* ===== スタンプの一覧・おみくじ英文のデータ（音読アプリと共通） ===== */
+/*
+ * スタンプの一覧（このアプリ用のオリジナルデザイン）
+ *  k：種類 st＝ゆるかわステッカー / hk＝先生のハンコ / pp＝キラキラ・ポップ / lv＝ライブ表彰
+ *  rules：自動で押すときの条件（この中からランダムに1つ選ばれます）
+ *  絵は js/art.js の Art.design() で描きます。サーバー（Apps Script）にも同じ一覧が入ります。
+ */
+(function (root) {
+  'use strict';
+  var L = [
+    // ---- はじめて音読したとき ----
+    { id: 'st01', k: 'st', sp: 'dog', po: 'wave', ex: 'sparkle', t: 'Welcome!', c: '#ff6b6b', rules: ['first'] },
+    { id: 'st02', k: 'st', sp: 'chick', po: 'banzai', ex: 'happy', t: 'はじめの一歩！', c: '#f08c00', rules: ['first'] },
+    { id: 'pp01', k: 'pp', sh: 'ribbon', t: 'Nice start!', c1: '#ff8787', c2: '#ffa94d', rules: ['first'] },
+    { id: 'hk01', k: 'hk', sh: 'circle', t: 'ようこそ', ink: '#e03131', rot: -8, rules: ['first'] },
+    { id: 'st03', k: 'st', sp: 'hamster', po: 'heart', ex: 'happy', t: 'よろしくね！', c: '#e64980', rules: ['first'] },
+    // ---- 1週間に3日 ----
+    { id: 'st04', k: 'st', sp: 'cat', po: 'wave', ex: 'happy', t: 'Good job!', c: '#f76707', rules: ['week3'] },
+    { id: 'st05', k: 'st', sp: 'frog', po: 'banzai', ex: 'happy', t: 'いいね！', c: '#2b8a3e', rules: ['week3'] },
+    { id: 'hk02', k: 'hk', sh: 'circle', t: 'Good!', ink: '#e03131', rot: 6, face: 'bear', rules: ['week3'] },
+    { id: 'pp02', k: 'pp', sh: 'bubble', t: 'その調子！', c1: '#d0ebff', c2: '#1c7ed6', rules: ['week3'] },
+    { id: 'st06', k: 'st', sp: 'shiba', po: 'star', ex: 'sparkle', t: 'Keep going!', c: '#e8590c', rules: ['week3'] },
+    // ---- 1週間に5日 ----
+    { id: 'st07', k: 'st', sp: 'rabbit', po: 'banzai', ex: 'sparkle', t: 'すごい！', c: '#e64980', rules: ['week5'] },
+    { id: 'st08', k: 'st', sp: 'penguin', po: 'heart', ex: 'happy', t: 'Great!', c: '#1971c2', rules: ['week5'] },
+    { id: 'pp03', k: 'pp', sh: 'burst', t: 'WOW!', c1: '#fff3bf', c2: '#ff922b', c3: '#d9480f', rules: ['week5'] },
+    { id: 'hk03', k: 'hk', sh: 'sakura', t: 'えらい！', ink: '#d6336c', rot: -6, rules: ['week5'] },
+    { id: 'st09', k: 'st', sp: 'bear', po: 'star', ex: 'sparkle', t: 'Wonderful!', c: '#9c36b5', rules: ['week5'] },
+    // ---- 1週間に7日 ----
+    { id: 'pp04', k: 'pp', sh: 'medal', t: 'Perfect/week!', c1: '#7048e8', c2: '#f06595', rules: ['week7'] },
+    { id: 'st10', k: 'st', sp: 'panda', po: 'banzai', ex: 'happy', t: '毎日えらい！', c: '#c2255c', rules: ['week7'] },
+    { id: 'hk04', k: 'hk', sh: 'rect', t: '皆勤賞', t2: '7日連続', ink: '#c92a2a', rot: 5, rules: ['week7'] },
+    { id: 'pp05', k: 'pp', sh: 'star', t: 'Super star!', c1: '#ffe066', c2: '#f08c00', c3: '#e8590c', rules: ['week7'] },
+    { id: 'st11', k: 'st', sp: 'cat', po: 'star', ex: 'wink', t: '最強！', c: '#e03131', rules: ['week7'] },
+    // ---- 課題を達成したとき ----
+    { id: 'hk05', k: 'hk', sh: 'hanamaru', t: 'はなまる', ink: '#e03131', rot: -4, rules: ['achieve'] },
+    { id: 'hk06', k: 'hk', sh: 'double', t: 'たいへん', t2: 'よくでき/ました', ink: '#e03131', rot: -7, rules: ['achieve'] },
+    { id: 'st12', k: 'st', sp: 'chick', po: 'star', ex: 'sparkle', t: 'Excellent!', c: '#f08c00', rules: ['achieve'] },
+    { id: 'pp06', k: 'pp', sh: 'medal', t: 'CLEAR!', c1: '#74c0fc', c2: '#1864ab', rules: ['achieve'] },
+    { id: 'st13', k: 'st', sp: 'dog', po: 'heart', ex: 'happy', t: '合格！', c: '#e03131', rules: ['achieve'] },
+    { id: 'st14', k: 'st', sp: 'hamster', po: 'banzai', ex: 'wink', t: 'やったね！', c: '#f76707', rules: ['achieve'] },
+    // ---- 正確さ100% ----
+    { id: 'pp07', k: 'pp', sh: 'burst', t: '100点!', c1: '#fff0f6', c2: '#f06595', c3: '#a61e4d', rules: ['perfect'] },
+    { id: 'st15', k: 'st', sp: 'rabbit', po: 'star', ex: 'sparkle', t: '天才！', c: '#7048e8', rules: ['perfect'] },
+    { id: 'hk07', k: 'hk', sh: 'hanamaru', t: 'Perfect!', ink: '#e03131', rot: 7, rules: ['perfect'] },
+    { id: 'pp08', k: 'pp', sh: 'star', t: '100%!', c1: '#fff3bf', c2: '#fab005', c3: '#e67700', rules: ['perfect'] },
+    { id: 'st16', k: 'st', sp: 'shiba', po: 'banzai', ex: 'sparkle', t: 'Amazing!', c: '#d9480f', rules: ['perfect'] },
+    // ---- 1週間以上あいてから、また読んだとき ----
+    { id: 'st17', k: 'st', sp: 'dog', po: 'wave', ex: 'happy', t: 'おかえり！', c: '#1c7ed6', rules: ['comeback'] },
+    { id: 'st18', k: 'st', sp: 'bear', po: 'heart', ex: 'sparkle', t: 'Welcome back!', c: '#e64980', rules: ['comeback'] },
+    { id: 'pp09', k: 'pp', sh: 'bubble', t: '待ってたよ！', c1: '#fff0f6', c2: '#e64980', rules: ['comeback'] },
+    { id: 'st19', k: 'st', sp: 'penguin', po: 'wave', ex: 'sparkle', t: 'また会えたね', c: '#1971c2', rules: ['comeback'] },
+    // ---- 先生が選んで押すとき用（自動では出ません） ----
+    { id: 'st20', k: 'st', sp: 'frog', po: 'heart', ex: 'sparkle', t: 'ナイス英語！', c: '#2b8a3e' },
+    { id: 'st21', k: 'st', sp: 'cat', po: 'heart', ex: 'sparkle', t: 'Nice voice!', c: '#e64980' },
+    { id: 'hk08', k: 'hk', sh: 'circle', t: 'Very good', ink: '#1c7ed6', rot: -5, face: 'cat' },
+    { id: 'pp10', k: 'pp', sh: 'ribbon', t: 'がんばったね', c1: '#63e6be', c2: '#20c997' },
+    { id: 'st22', k: 'st', sp: 'panda', po: 'star', ex: 'wink', t: '発音◎', c: '#e03131' },
+    { id: 'pp11', k: 'pp', sh: 'bubble', t: 'Beautiful!', c1: '#f3f0ff', c2: '#7048e8' },
+    { id: 'hk09', k: 'hk', sh: 'sakura', t: 'Excellent', ink: '#e03131', rot: 4 },
+    { id: 'st23', k: 'st', sp: 'hamster', po: 'wave', ex: 'happy', t: 'ファイト！', c: '#f76707' },
+    { id: 'st24', k: 'st', sp: 'chick', po: 'heart', ex: 'happy', t: 'ありがとう', c: '#e64980' },
+    { id: 'pp12', k: 'pp', sh: 'medal', t: 'MVP', c1: '#ffd43b', c2: '#e67700' },
+    { id: 'st25', k: 'st', sp: 'heart', po: 'banzai', ex: 'sparkle', t: '大好き！', c: '#e64980' },
+    { id: 'st26', k: 'st', sp: 'star', po: 'banzai', ex: 'happy', t: 'キラキラ！', c: '#f08c00' },
+    // ---- ライブの表彰 ----
+    { id: 'lv1', k: 'lv', rank: 1, t: '優勝!!', t2: 'CHAMPION', live: 'rank1' },
+    { id: 'lv2', k: 'lv', rank: 2, t: '準優勝!', t2: 'Fantastic!', live: 'rank2' },
+    { id: 'lv3', k: 'lv', rank: 3, t: '3位入賞!', t2: 'Great job!', live: 'rank3' },
+    { id: 'lv10', k: 'lv', rank: 10, t: 'TOP 10!', t2: '入賞おめでとう', live: 'top10' }
+  ];
+  var byId = {};
+  L.forEach(function (d) { byId[d.id] = d; });
+  function pool(rule) { return L.filter(function (d) { return (d.rules || []).indexOf(rule) >= 0; }); }
+  var KINDS = { st: 'ゆるかわ', hk: 'ハンコ', pp: 'キラキラ', lv: 'ライブ表彰' };
+  root.StampSet = { list: L, byId: byId, pool: pool, KINDS: KINDS };
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+/*
+ * おみくじ英文のデータ（短い英文〔3〜8語〕と日本語訳・おみくじの紙にのせる言葉）
+ *  lv：1＝中1 / 2＝中2 / 3＝中3 / 4＝高校
+ *  c ：pos＝前向きなひとこと / prov＝ことわざ・名言 / daily＝日常の表現 / school＝学校生活
+ *  英文を読んだあとに、おみくじを引きます。正確さが高いほど大吉が出やすくなります（運勢はサーバーで決めます）。
+ */
+(function (root) {
+  'use strict';
+  var S = [
+    // ===== 中1 =====
+    [1, 'pos', 'You can do it.', 'あなたならできる。'],
+    [1, 'pos', 'Today is a good day.', '今日はいい日だ。'],
+    [1, 'pos', 'I am happy today.', '私は今日、幸せです。'],
+    [1, 'pos', 'Smile and say hello.', '笑顔であいさつしよう。'],
+    [1, 'pos', 'You are my friend.', 'あなたは私の友だちです。'],
+    [1, 'pos', "Let's try again.", 'もう一度やってみよう。'],
+    [1, 'pos', 'Never give up.', '決してあきらめないで。'],
+    [1, 'prov', 'Time is money.', '時は金なり。'],
+    [1, 'prov', 'Practice makes perfect.', '練習が完ぺきをつくる。（習うより慣れよ）'],
+    [1, 'prov', 'Better late than never.', '遅れても、しないよりはまし。'],
+    [1, 'prov', 'Seeing is believing.', '百聞は一見にしかず。'],
+    [1, 'prov', 'No pain, no gain.', '苦労なくして得るものなし。'],
+    [1, 'prov', 'Many hands make light work.', '人手が多いと仕事は楽になる。'],
+    [1, 'prov', 'Easy come, easy go.', '得やすいものは失いやすい。'],
+    [1, 'daily', 'I like music very much.', '私は音楽が大好きです。'],
+    [1, 'daily', 'I play tennis every day.', '私は毎日テニスをします。'],
+    [1, 'daily', 'My mother is a good cook.', '私の母は料理が上手です。'],
+    [1, 'daily', 'I have a cute dog.', '私はかわいい犬を飼っています。'],
+    [1, 'daily', 'What time is it now?', '今、何時ですか。'],
+    [1, 'daily', 'I can swim fast.', '私は速く泳げます。'],
+    [1, 'daily', 'I usually get up at six.', '私はふだん6時に起きます。'],
+    [1, 'school', "Let's study together.", 'いっしょに勉強しよう。'],
+    [1, 'school', 'I like English class.', '私は英語の授業が好きです。'],
+    [1, 'school', 'Open your textbook, please.', '教科書を開いてください。'],
+    [1, 'school', 'Our school is very big.', '私たちの学校はとても大きいです。'],
+    [1, 'school', 'I am in the brass band.', '私は吹奏楽部に入っています。'],
+    [1, 'school', 'Please listen to me.', '私の話を聞いてください。'],
+    [1, 'school', 'We clean our classroom.', '私たちは教室をそうじします。'],
+    // ===== 中2 =====
+    [2, 'pos', 'You will be fine.', 'あなたはきっと大丈夫。'],
+    [2, 'pos', 'Tomorrow will be a better day.', '明日はもっといい日になるだろう。'],
+    [2, 'pos', 'I want to be strong.', '私は強くなりたい。'],
+    [2, 'pos', 'Trying new things is fun.', '新しいことに挑戦するのは楽しい。'],
+    [2, 'pos', 'You are doing a great job.', 'あなたはとてもよくやっている。'],
+    [2, 'pos', 'There is always a way.', '道はいつもある。'],
+    [2, 'pos', 'Believe in yourself.', '自分を信じよう。'],
+    [2, 'prov', "Where there's a will, there's a way.", '意志あるところに道は開ける。'],
+    [2, 'prov', 'Every cloud has a silver lining.', 'どんな雲にも銀色のふちがある。（悪いことにもよい面がある）'],
+    [2, 'prov', 'The early bird catches the worm.', '早起きの鳥は虫をつかまえる。（早起きは三文の徳）'],
+    [2, 'prov', 'Rome was not built in a day.', 'ローマは一日にして成らず。'],
+    [2, 'prov', 'Actions speak louder than words.', '行動は言葉よりも雄弁だ。'],
+    [2, 'prov', 'A friend in need is a friend indeed.', '困ったときの友こそ、本当の友。'],
+    [2, 'prov', 'Slow and steady wins the race.', 'ゆっくりでも着実な者が勝つ。'],
+    [2, 'daily', 'I went to Kyoto last summer.', '私は去年の夏、京都に行きました。'],
+    [2, 'daily', 'I am going to visit my grandmother.', '私は祖母を訪ねる予定です。'],
+    [2, 'daily', 'It was sunny yesterday.', '昨日は晴れでした。'],
+    [2, 'daily', 'This book is more interesting than that one.', 'この本はあの本よりおもしろい。'],
+    [2, 'daily', 'I have to do my homework.', '私は宿題をしなければならない。'],
+    [2, 'daily', 'Thank you for helping me.', '手伝ってくれてありがとう。'],
+    [2, 'daily', 'When I got home, it was raining.', '家に帰ったとき、雨が降っていた。'],
+    [2, 'school', 'I enjoyed the school festival.', '私は文化祭を楽しみました。'],
+    [2, 'school', 'We must be quiet in the library.', '図書室では静かにしなければならない。'],
+    [2, 'school', 'Studying English is important.', '英語を勉強することは大切です。'],
+    [2, 'school', 'I was practicing soccer after school.', '私は放課後、サッカーを練習していました。'],
+    [2, 'school', 'There are thirty students in my class.', '私のクラスには30人の生徒がいます。'],
+    [2, 'school', 'Our teacher told us an interesting story.', '先生がおもしろい話をしてくれました。'],
+    [2, 'school', 'I will do my best on the test.', '私はテストで全力を尽くします。'],
+    // ===== 中3 =====
+    [3, 'pos', 'I have never given up.', '私は一度もあきらめたことがない。'],
+    [3, 'pos', 'You have grown a lot.', 'あなたはとても成長した。'],
+    [3, 'pos', 'Your effort will be rewarded.', 'あなたの努力は報われるだろう。'],
+    [3, 'pos', 'Mistakes help us learn.', '失敗は、私たちが学ぶ助けになる。'],
+    [3, 'pos', 'It is never too late to start.', '始めるのに遅すぎることはない。'],
+    [3, 'pos', "I'm proud of what you did.", 'あなたがしたことを誇りに思う。'],
+    [3, 'pos', 'Keep going, step by step.', '一歩ずつ、進み続けよう。'],
+    [3, 'prov', 'Knowledge is power.', '知識は力なり。'],
+    [3, 'prov', 'Haste makes waste.', '急いては事をし損じる。'],
+    [3, 'prov', "All's well that ends well.", '終わりよければすべてよし。'],
+    [3, 'prov', 'When in Rome, do as the Romans do.', '郷に入っては郷に従え。'],
+    [3, 'prov', "Don't judge a book by its cover.", '見た目で判断してはいけない。'],
+    [3, 'prov', 'Two heads are better than one.', '三人寄れば文殊の知恵。'],
+    [3, 'prov', 'Look before you leap.', '跳ぶ前によく見よ。（転ばぬ先の杖）'],
+    [3, 'daily', 'I have lived here for ten years.', '私はここに10年間住んでいます。'],
+    [3, 'daily', 'This song is loved by many people.', 'この歌は多くの人に愛されています。'],
+    [3, 'daily', 'The boy playing the guitar is my brother.', 'ギターを弾いている男の子は、私の兄です。'],
+    [3, 'daily', 'I know a girl who speaks French.', '私はフランス語を話す女の子を知っています。'],
+    [3, 'daily', 'Have you ever been to Okinawa?', 'あなたは沖縄に行ったことがありますか。'],
+    [3, 'daily', 'I wish I could fly.', '空を飛べたらいいのになあ。'],
+    [3, 'daily', 'It is easy for me to cook.', '料理をするのは、私には簡単です。'],
+    [3, 'school', 'I have just finished my homework.', '私はちょうど宿題を終えたところです。'],
+    [3, 'school', 'English is spoken all over the world.', '英語は世界中で話されています。'],
+    [3, 'school', 'The picture drawn by Ken is beautiful.', 'ケンがかいた絵は美しい。'],
+    [3, 'school', 'Tell me what you want to do.', 'あなたが何をしたいか教えて。'],
+    [3, 'school', 'We have been friends since elementary school.', '私たちは小学校のときから友だちです。'],
+    [3, 'school', 'The club I belong to is popular.', '私が入っている部は人気があります。'],
+    [3, 'school', 'Do you know when the test is?', 'テストがいつか知っていますか。'],
+    // ===== 高校 =====
+    [4, 'pos', 'Every small step counts.', 'どんな小さな一歩にも意味がある。'],
+    [4, 'pos', 'Your hard work will pay off.', 'あなたの努力は実を結ぶだろう。'],
+    [4, 'pos', 'Challenges make you stronger.', '困難はあなたを強くする。'],
+    [4, 'pos', "Don't be afraid of making mistakes.", '間違えることを恐れないで。'],
+    [4, 'pos', 'The best is yet to come.', '最高のときはこれからだ。'],
+    [4, 'pos', 'Dream big and work hard.', '大きな夢を持ち、一生けんめい努力しよう。'],
+    [4, 'pos', 'Kindness costs nothing.', '親切にお金はかからない。'],
+    [4, 'prov', 'Necessity is the mother of invention.', '必要は発明の母。'],
+    [4, 'prov', 'Honesty is the best policy.', '正直は最善の策。'],
+    [4, 'prov', 'Fortune favors the brave.', '幸運は勇気ある者に味方する。'],
+    [4, 'prov', 'Experience is the best teacher.', '経験は最良の教師である。'],
+    [4, 'prov', 'Little strokes fell great oaks.', '小さな一打も大きな木を倒す。（ちりも積もれば山となる）'],
+    [4, 'prov', 'Great minds think alike.', '賢い人は同じように考える。'],
+    [4, 'prov', 'Absence makes the heart grow fonder.', '会えない時間が愛情を深める。'],
+    [4, 'daily', "I'm looking forward to seeing you.", 'あなたに会えるのを楽しみにしています。'],
+    [4, 'daily', 'Would you mind opening the window?', '窓を開けていただけませんか。'],
+    [4, 'daily', 'It took me an hour to get there.', 'そこに着くのに1時間かかりました。'],
+    [4, 'daily', "I'm used to getting up early.", '私は早起きに慣れています。'],
+    [4, 'daily', 'The more you read, the more you learn.', '読めば読むほど、多くを学べる。'],
+    [4, 'daily', "I can't help laughing at his jokes.", '彼の冗談に、笑わずにはいられない。'],
+    [4, 'daily', 'If I were you, I would try.', '私があなたなら、やってみるだろう。'],
+    [4, 'school', "I'm thinking of studying abroad.", '私は留学しようかと考えています。'],
+    [4, 'school', "Let's make the most of our time.", '時間を最大限に生かそう。'],
+    [4, 'school', 'She is good at solving math problems.', '彼女は数学の問題を解くのが得意です。'],
+    [4, 'school', 'We are supposed to submit the report.', '私たちはレポートを提出することになっている。'],
+    [4, 'school', 'What matters most is doing your best.', 'いちばん大切なのは、全力を尽くすことだ。'],
+    [4, 'school', 'Reading books broadens your horizons.', '読書は視野を広げる。'],
+    [4, 'school', "I'll never forget our school days.", '私は学校生活をけっして忘れない。']
+  ];
+  var list = S.map(function (x, i) { return { id: 'om' + (i + 1), lv: x[0], c: x[1], en: x[2], ja: x[3] }; });
+  var CATS = { pos: '前向きなひとこと', prov: 'ことわざ・名言', daily: '日常の表現', school: '学校生活', review: '課題の復習' };
+  // おみくじの紙にのせる言葉
+  var MESSAGES = {
+    '大吉': ['最高の一日になりそう！思いきって挑戦してみよう。', '今日のあなたは無敵！英語もぐんぐん伸びるよ。', 'うれしいことが次々にやってくる予感！', '努力がキラッと実を結ぶ日。自信をもって！'],
+    '中吉': ['いいことがありそう！笑顔を忘れずにね。', '友だちと協力すると、もっとよくなるよ。', 'こつこつ続けたことが、そろそろ形になりそう。', '新しい発見がある日。いつもとちがう英文も読んでみよう。'],
+    '小吉': ['こつこつがんばると吉！小さな一歩を大切に。', 'あわてず、ていねいに。それが幸運のカギ。', '苦手なことに少しだけ挑戦すると、運が上がるよ。', '今日の復習が、明日の自信になるよ。'],
+    '吉': ['笑顔でいると運が開けるよ！', 'まわりの人に「ありがとう」を伝えると吉。', 'ゆっくり深呼吸。落ち着いて取り組めばうまくいく。', 'もう一度読むと、運気がアップするかも！']
+  };
+  var WORDS = [['rainbow', 'にじ'], ['star', '星'], ['smile', '笑顔'], ['sunshine', '日の光'], ['dream', '夢'], ['friend', '友だち'], ['flower', '花'],
+    ['music', '音楽'], ['adventure', '冒険'], ['treasure', '宝物'], ['courage', '勇気'], ['hope', '希望'], ['ocean', '海'], ['cookie', 'クッキー'],
+    ['piano', 'ピアノ'], ['bicycle', '自転車'], ['breakfast', '朝ごはん'], ['library', '図書館'], ['butterfly', 'ちょう'], ['moon', '月'],
+    ['chocolate', 'チョコレート'], ['kindness', 'やさしさ'], ['challenge', '挑戦'], ['energy', '元気'], ['sky', '空'], ['morning', '朝'],
+    ['thank you', 'ありがとう'], ['future', '未来'], ['peace', '平和'], ['team', 'チーム'], ['journey', '旅'], ['sunflower', 'ひまわり']];
+  var COLORS = [['red', '赤', '#e03131'], ['blue', '青', '#1c7ed6'], ['yellow', '黄色', '#fab005'], ['green', '緑', '#2f9e44'], ['pink', 'ピンク', '#f06595'],
+    ['purple', 'むらさき', '#7048e8'], ['orange', 'オレンジ', '#f76707'], ['white', '白', '#adb5bd'], ['light blue', '水色', '#4dabf7'],
+    ['gold', '金色', '#e0a800'], ['silver', '銀色', '#868e96'], ['brown', '茶色', '#a0612b']];
+  var ITEMS = [['pencil', 'えんぴつ'], ['eraser', '消しゴム'], ['notebook', 'ノート'], ['handkerchief', 'ハンカチ'], ['water bottle', '水とう'],
+    ['dictionary', '辞書'], ['ruler', '定規'], ['sticker', 'シール'], ['hairpin', 'ヘアピン'], ['cap', 'ぼうし'], ['book', '本'], ['umbrella', 'かさ'],
+    ['watch', '腕時計'], ['towel', 'タオル'], ['bookmark', 'しおり'], ['highlighter', '蛍光ペン']];
+  var LUCK = ['勉強運', '友だち運', '部活運', '健康運', '英語運'];
+  // 運勢ごとの★の数の範囲
+  var STARS = { '大吉': [4, 5], '中吉': [3, 5], '小吉': [2, 4], '吉': [2, 4] };
+  root.OmikujiSet = { list: list, CATS: CATS, MESSAGES: MESSAGES, WORDS: WORDS, COLORS: COLORS, ITEMS: ITEMS, LUCK: LUCK, STARS: STARS };
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+</script>
 <script>
 /* =====================================================================
    教材データ（中1・最初の5項目）
@@ -641,7 +1880,10 @@ const DEFAULT_SETTINGS = {
   confirmBeforeSubmit: true,
   autoSubmitStage4: true,
   ttsStage4: true,
-  model: "claude-haiku-5-5"
+  model: "claude-haiku-5-5",
+  showRanking: false,      // 生徒にランキングを見せる
+  autoStamps: true,        // 条件で自動のスタンプを出す
+  omikuji: true            // おみくじ英文を使えるようにする
 };
 function mergeSettings(s) {
   const d = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
@@ -696,11 +1938,27 @@ function computeProgress(results) {
   }
   return p;
 }
-/* ---------- ごほうび（スタンプカード・バッジ） ---------- */
+/* ---------- ごほうび（スタンプカード・バッジ・級・ポイント・着せ替え） ----------
+   この部分はサーバー（Code.gs）にも自動で書き込まれ、ポイントの計算や交換・着せ替えの確認に使われます。 */
+/*__REWARD_SHARED_START__*/
 const STAMPS_PER_CARD = 10;
 const z2 = (n) => String(n).padStart(2, "0");
 const dayKey = (ts) => { const d = new Date(ts); return `${d.getFullYear()}-${z2(d.getMonth() + 1)}-${z2(d.getDate())}`; };
 const dayNum = (key) => Math.round(new Date(key + "T00:00:00").getTime() / 86400000);
+const weekOf = (key) => { const t = new Date(key + "T00:00:00"); return dayKey(t.getTime() - ((t.getDay() + 6) % 7) * 86400000); }; // その週の月曜日
+/* 級・段（けいけん値で上がる） */
+const LEVELS = [[0, "10級"], [100, "9級"], [250, "8級"], [450, "7級"], [700, "6級"], [1000, "5級"], [1400, "4級"], [1900, "3級"], [2500, "2級"], [3200, "1級"],
+  [4000, "初段"], [5000, "二段"], [6200, "三段"], [7600, "四段"], [9200, "五段"], [11000, "六段"], [13000, "七段"], [15500, "八段"], [18500, "九段"], [22000, "十段"], [27000, "名人"]];
+function levelOf(xp) {
+  let idx = 0;
+  for (let i = 0; i < LEVELS.length; i++) if (xp >= LEVELS[i][0]) idx = i;
+  const next = LEVELS[idx + 1];
+  return { index: idx, name: LEVELS[idx][1], from: LEVELS[idx][0], next: next ? next[1] : null, nextAt: next ? next[0] : null,
+    progress: next ? Math.min(1, (xp - LEVELS[idx][0]) / (next[0] - LEVELS[idx][0])) : 1 };
+}
+// 1回の練習でもらえるけいけん値：練習 +5、正解1問 +2（段階1はポイント1つ +3）、合格 +20
+const recordXP = (r) => 5 + (Number(r.stage) === 1 ? 3 : 2) * Math.max(0, Number(r.score) || 0) + (r.passed ? 20 : 0);
+const POINT_RULES = "ポイントは、その日はじめての練習 +10、合格1回 +3、バッジ1つ +20、文法のマスター +30、おみくじ（1日1回）+5、先生からのスタンプ +10 でもらえます。";
 const BADGES = [
   { id: "first", ico: "🌱", name: "はじめの一歩", desc: "はじめて練習した" },
   { id: "streak3", ico: "🔥", name: "3日連続", desc: "3日続けて練習した" },
@@ -721,10 +1979,20 @@ const BADGES = [
   { id: "daily5", ico: "💪", name: "1日5回", desc: "1日に5回練習した" },
   { id: "early", ico: "🌅", name: "早起き練習", desc: "朝7時より前に練習した" },
   { id: "weekend", ico: "🗓️", name: "週末も練習", desc: "土曜と日曜の両方に練習した" },
-  { id: "comeback", ico: "👋", name: "おかえり", desc: "1週間以上あいてから、また練習した" }
+  { id: "comeback", ico: "👋", name: "おかえり", desc: "1週間以上あいてから、また練習した" },
+  { id: "rank5", ico: "🥋", name: "5級", desc: "5級になった" },
+  { id: "shodan", ico: "🥋", name: "初段", desc: "初段になった" },
+  { id: "omikuji", ico: "🎋", name: "おみくじ", desc: "おみくじ英文を読んだ" },
+  { id: "teacher", ico: "💌", name: "先生から", desc: "先生からスタンプをもらった" },
+  { id: "avatar", ico: "🎨", name: "アバターデビュー", desc: "自分のアバターを作った" },
+  { id: "shop1", ico: "🛍️", name: "はじめての交換", desc: "お店でアイテムと交換した" }
 ];
-function rewardState(history) {
-  const h = history || [];
+/* 記録から、スタンプカード・連続日数・バッジ・級・ポイントを計算する
+   settings：先生の設定 ／ itemIds：教材の項目ID ／ extra：{ omDays, teacherStamps, spent, owned, hasAvatar } */
+function computeRewards(history, settings, itemIds, extra) {
+  const h = (history || []).slice().sort((a, b) => (String(a.timestamp) < String(b.timestamp) ? -1 : 1));
+  const x = extra || {}, st = settings || {};
+  const need = (s) => Math.max(1, Math.round(Number((st["stage" + s] || {}).requiredPasses) || 1));
   const days = Array.from(new Set(h.map((r) => dayKey(r.timestamp)))).sort();
   const nums = days.map(dayNum);
   let best = 0, run = 0, comeback = false;
@@ -733,34 +2001,205 @@ function rewardState(history) {
   let streak = 0;
   if (nums.length && today - nums[nums.length - 1] <= 1) { streak = 1; for (let k = nums.length - 1; k > 0 && nums[k] - nums[k - 1] === 1; k--) streak++; }
   const perDay = {}; h.forEach((r) => { const k = dayKey(r.timestamp); perDay[k] = (perDay[k] || 0) + 1; });
-  const weekend = days.some((d) => new Date(d + "T00:00:00").getDay() === 6 && days.includes(dayKey(new Date(d + "T00:00:00").getTime() + 86400000)));
-  const prog = computeProgress(h);
-  const clearedOf = (id) => [1, 2, 3, 4].filter((st) => ((prog[id] && prog[id].passCount) || [0, 0, 0, 0])[st - 1] >= requiredPasses(st)).length;
-  const mastered = CONTENT.filter((it) => clearedOf(it.id) === 4);
-  const assigned = CONTENT.filter((it) => isAssigned(it.id));
+  const weekend = days.some((d) => new Date(d + "T00:00:00").getDay() === 6 && days.indexOf(dayKey(new Date(d + "T00:00:00").getTime() + 86400000)) >= 0);
+  const pc = {}, passedAll = {};
+  h.forEach((r) => {
+    const a = (pc[r.itemId] = pc[r.itemId] || [0, 0, 0, 0]), b = (passedAll[r.itemId] = passedAll[r.itemId] || [false, false, false, false]);
+    if (r.passed && r.stage >= 1 && r.stage <= 4) { a[r.stage - 1]++; b[r.stage - 1] = true; }
+  });
+  const clearedOf = (id) => [1, 2, 3, 4].filter((s) => (pc[id] || [0, 0, 0, 0])[s - 1] >= need(s)).length;
+  const ids = itemIds || [];
+  const assigned = Array.isArray(st.assigned) ? ids.filter((id) => st.assigned.indexOf(id) >= 0) : ids;
+  const xp = h.reduce((a, r) => a + recordXP(r), 0);
+  const level = levelOf(xp);
   const c = {
     total: h.length, passes: h.filter((r) => r.passed).length,
     perfect: h.filter((r) => r.stage >= 2 && r.total > 0 && r.score === r.total).length,
     explain: h.some((r) => r.stage === 1 && r.total > 0 && r.score === r.total),
-    quick: h.some((r) => (r.tags || []).includes("quick")),
-    cleared: CONTENT.reduce((a, it) => a + clearedOf(it.id), 0),
-    allStages: CONTENT.some((it) => prog[it.id] && prog[it.id].passed.every(Boolean)),
-    mastered: mastered.length,
-    assignAll: assigned.length > 0 && assigned.every((it) => clearedOf(it.id) === 4),
+    quick: h.some((r) => (r.tags || []).indexOf("quick") >= 0),
+    cleared: ids.reduce((a, id) => a + clearedOf(id), 0),
+    allStages: ids.some((id) => passedAll[id] && passedAll[id].every(Boolean)),
+    mastered: ids.filter((id) => clearedOf(id) === 4).length,
+    assignAll: assigned.length > 0 && assigned.every((id) => clearedOf(id) === 4),
     early: h.some((r) => new Date(r.timestamp).getHours() < 7),
-    maxPerDay: Math.max(0, ...Object.values(perDay))
+    maxPerDay: Math.max.apply(null, [0].concat(Object.keys(perDay).map((k) => perDay[k])))
   };
   const tests = {
     first: c.total >= 1, streak3: best >= 3, streak7: best >= 7, streak30: best >= 30, card1: days.length >= STAMPS_PER_CARD,
     clear1: c.cleared >= 1, explain: c.explain, perfect: c.perfect >= 1, perfect10: c.perfect >= 10, quick: c.quick,
     allStages: c.allStages, master1: c.mastered >= 1, master3: c.mastered >= 3, assignAll: c.assignAll,
-    pass10: c.passes >= 10, pass50: c.passes >= 50, daily5: c.maxPerDay >= 5, early: c.early, weekend, comeback
+    pass10: c.passes >= 10, pass50: c.passes >= 50, daily5: c.maxPerDay >= 5, early: c.early, weekend: weekend, comeback: comeback,
+    rank5: level.index >= 5, shodan: level.index >= 10, omikuji: (Number(x.omDays) || 0) >= 1,
+    teacher: (Number(x.teacherStamps) || 0) >= 1, avatar: !!x.hasAvatar, shop1: (x.owned || []).length >= 1
   };
+  const badges = new Set(BADGES.filter((b) => tests[b.id]).map((b) => b.id));
+  const earned = 10 * days.length + 3 * c.passes + 20 * badges.size + 30 * c.mastered + 5 * (Number(x.omDays) || 0) + 10 * (Number(x.teacherStamps) || 0);
+  const spent = Math.max(0, Number(x.spent) || 0);
   return {
-    days: days.length, todayDone: days.includes(dayKey(Date.now())), streak, bestStreak: best,
+    days: days.length, todayDone: days.indexOf(dayKey(Date.now())) >= 0, streak: streak, bestStreak: best,
     cards: Math.floor(days.length / STAMPS_PER_CARD), onCard: days.length % STAMPS_PER_CARD,
-    badges: new Set(BADGES.filter((b) => tests[b.id]).map((b) => b.id))
+    badges: badges, xp: xp, level: level, mastered: c.mastered, liveBest: Number(x.liveBest) || 0,
+    points: { earned: earned, spent: spent, avail: Math.max(0, earned - spent) }
   };
+}
+/* アバターと着せ替えアイテム（絵は art.js。音読アプリと共通のオリジナルデザイン）
+   un：もらえる条件　start＝最初から ／ lv:N＝級・段が LEVELS の N 番目以上（1＝9級 … 10＝初段）／ card:N＝練習した日が N 日
+   badge:ID＝バッジ ／ shop:P＝お店で P ポイントと交換 ／ live:N＝ライブで N 位以内 */
+const AVATAR_SET = (function () {
+  const L = [
+    { id: "cat", k: "b", name: "ねこ", un: "start" }, { id: "dog", k: "b", name: "いぬ", un: "start" },
+    { id: "rabbit", k: "b", name: "うさぎ", un: "start" }, { id: "panda", k: "b", name: "パンダ", un: "start" },
+    { id: "hamster", k: "b", name: "ハムスター", un: "start" }, { id: "shiba", k: "b", name: "しばいぬ", un: "start" },
+    { id: "chick", k: "b", name: "ひよこ", un: "start" }, { id: "penguin", k: "b", name: "ペンギン", un: "start" },
+    { id: "boy", k: "b", name: "男の子", un: "start", human: 1 }, { id: "girl", k: "b", name: "女の子", un: "start", human: 1 },
+    { id: "kid2", k: "b", name: "くるくる髪の子", un: "lv:1", human: 1 }, { id: "bear", k: "b", name: "くま", un: "lv:2" },
+    { id: "kid3", k: "b", name: "おだんご髪の子", un: "lv:3", human: 1 }, { id: "robot", k: "b", name: "ロボット", un: "lv:4" },
+    { id: "ghost", k: "b", name: "おばけ", un: "lv:5" }, { id: "alien", k: "b", name: "うちゅうじん", un: "lv:6" },
+    { id: "dragon", k: "b", name: "ドラゴン", un: "lv:7" }, { id: "unicorn", k: "b", name: "ユニコーン", un: "lv:8" },
+    { id: "koala", k: "b", name: "コアラ", un: "card:10" }, { id: "sheep", k: "b", name: "ひつじ", un: "card:20" },
+    { id: "frog", k: "b", name: "かえる", un: "badge:streak7" }, { id: "fox", k: "b", name: "きつね", un: "badge:perfect" },
+    { id: "seal", k: "b", name: "アザラシ", un: "shop:100" }, { id: "redpanda", k: "b", name: "レッサーパンダ", un: "shop:150" },
+    { id: "h_ribbon", k: "h", name: "リボン", un: "start" }, { id: "h_cap", k: "h", name: "キャップ", un: "start" },
+    { id: "h_flower", k: "h", name: "花かんむり", un: "badge:first" }, { id: "h_star", k: "h", name: "星のヘアピン", un: "lv:3" },
+    { id: "h_party", k: "h", name: "パーティー帽子", un: "card:10" }, { id: "h_phones", k: "h", name: "ヘッドホン", un: "shop:80" },
+    { id: "h_beret", k: "h", name: "ベレー帽", un: "shop:100" }, { id: "h_chef", k: "h", name: "コック帽", un: "shop:120" },
+    { id: "h_wizard", k: "h", name: "魔法使いの帽子", un: "lv:5" }, { id: "h_grad", k: "h", name: "卒業帽子", un: "badge:master1" },
+    { id: "h_halo", k: "h", name: "天使のわっか", un: "badge:perfect10" }, { id: "h_crown", k: "h", name: "ライブ王者の王冠", un: "live:1" },
+    { id: "f_glasses", k: "f", name: "まるメガネ", un: "start" }, { id: "f_hearts", k: "f", name: "ハートのほっぺ", un: "badge:streak3" },
+    { id: "f_star", k: "f", name: "星のメガネ", un: "lv:4" }, { id: "f_sun", k: "f", name: "サングラス", un: "shop:60" },
+    { id: "f_mustache", k: "f", name: "ちょびひげ", un: "shop:50" }, { id: "f_monocle", k: "f", name: "片メガネ", un: "lv:7" },
+    { id: "w_bowtie", k: "w", name: "蝶ネクタイ", un: "start" }, { id: "w_tie", k: "w", name: "ネクタイ", un: "lv:1" },
+    { id: "w_book", k: "w", name: "英語の本", un: "badge:pass10" }, { id: "w_mic", k: "w", name: "マイク", un: "badge:explain" },
+    { id: "w_scarf", k: "w", name: "マフラー", un: "card:20" }, { id: "w_balloon", k: "w", name: "ふうせん", un: "shop:90" },
+    { id: "w_wand", k: "w", name: "星のステッキ", un: "shop:150" }, { id: "w_cape", k: "w", name: "ヒーローマント", un: "lv:9" },
+    { id: "w_medal", k: "w", name: "金メダル", un: "badge:streak30" }, { id: "w_trophy", k: "w", name: "ライブのトロフィー", un: "live:3" },
+    { id: "bg_sky", k: "bg", name: "青空", un: "start" }, { id: "bg_pink", k: "bg", name: "ピンク", un: "start" },
+    { id: "bg_mint", k: "bg", name: "ミント", un: "start" }, { id: "bg_lemon", k: "bg", name: "レモン", un: "start" },
+    { id: "bg_class", k: "bg", name: "教室", un: "lv:1" }, { id: "bg_rainbow", k: "bg", name: "にじ", un: "badge:pass50" },
+    { id: "bg_sakura", k: "bg", name: "さくら", un: "card:30" }, { id: "bg_sea", k: "bg", name: "海", un: "shop:120" },
+    { id: "bg_space", k: "bg", name: "宇宙", un: "lv:6" }, { id: "bg_stage", k: "bg", name: "ライブのステージ", un: "live:10" },
+    { id: "bg_gold", k: "bg", name: "チャンピオンの金色", un: "live:1" }
+  ];
+  const byId = {}; L.forEach((d) => { byId[d.id] = d; });
+  const MAKER = {
+    sh: [["round", "まる"], ["oval", "たまご"], ["square", "しかく"], ["wide", "よこ長"]],
+    sk: [["#ffe3cc", ""], ["#f6c9a1", ""], ["#d9a273", ""], ["#9c6644", ""], ["#b2f2bb", ""], ["#a5d8ff", ""], ["#d0bfff", ""], ["#ffc9de", ""]],
+    hs: [["short", "ショート"], ["spiky", "ツンツン"], ["bob", "ボブ"], ["long", "ロング"], ["curly", "くるくる"], ["bun", "おだんご"], ["twin", "ツインテール"], ["pony", "ポニーテール"], ["mohawk", "モヒカン"], ["none", "なし"]],
+    hc: [["#2b2118", ""], ["#5c3a1e", ""], ["#a0612b", ""], ["#f2c14e", ""], ["#e8590c", ""], ["#f783ac", ""], ["#4dabf7", ""], ["#40c057", ""], ["#9775fa", ""], ["#f1f3f5", ""]],
+    ey: [["dot", "てん"], ["round", "まる"], ["sparkle", "キラキラ"], ["happy", "にっこり"], ["sleepy", "ねむい"], ["star", "ほし"], ["wink", "ウインク"]],
+    br: [["none", "なし"], ["normal", "ふつう"], ["thick", "ふとい"], ["angry", "キリッ"], ["worried", "こまり"]],
+    mo: [["smile", "にこ"], ["open", "あーん"], ["cat", "ω"], ["tongue", "ベー"], ["oh", "お"], ["grin", "ニカッ"]],
+    ch: [["pink", "ピンク"], ["none", "なし"], ["freckles", "そばかす"], ["hearts", "ハート"]],
+    ea: [["human", "ひと"], ["cat", "ねこ"], ["bear", "くま"], ["rabbit", "うさぎ"], ["elf", "エルフ"]],
+    cl: [["#4dabf7", ""], ["#f783ac", ""], ["#69db7c", ""], ["#ffd43b", ""], ["#ff8787", ""], ["#9775fa", ""], ["#495057", ""], ["#ffffff", ""]]
+  };
+  const MAKER_DEFAULT = { sh: "round", sk: "#ffe3cc", hs: "short", hc: "#5c3a1e", ey: "sparkle", br: "normal", mo: "smile", ch: "pink", ea: "human", cl: "#4dabf7" };
+  return { list: L, byId: byId, KINDS: { b: "キャラクター", h: "帽子・頭", f: "顔", w: "服・持ち物", bg: "背景" },
+    SKINS: ["#ffe3cc", "#f6c9a1", "#d9a273", "#9c6644"], MAKER: MAKER, MAKER_DEFAULT: MAKER_DEFAULT };
+})();
+/* 着せ替え（テーマ色） */
+const THEMES = [
+  { id: "umi", name: "うみ", un: "start", c: "#1f6f8b" }, { id: "sakura", name: "さくら", un: "start", c: "#c4527a" },
+  { id: "mint", name: "ミント", un: "start", c: "#228a7e" }, { id: "sunset", name: "ゆうやけ", un: "lv:2", c: "#d0632e" },
+  { id: "lavender", name: "ラベンダー", un: "lv:4", c: "#7058bd" }, { id: "forest", name: "もり", un: "card:10", c: "#3f7d3a" },
+  { id: "candy", name: "キャンディ", un: "shop:80", c: "#d6477f" }, { id: "ocean", name: "しんかい", un: "shop:100", c: "#1d4a9e" },
+  { id: "gold", name: "ゴールド", un: "badge:master1", c: "#a8770a" }, { id: "night", name: "よぞら", un: "shop:150", c: "#33367a" }
+];
+const shopPrice = (un) => (/^shop:\d+$/.test(String(un)) ? Number(String(un).slice(5)) : 0);
+const findGoods = (id) => AVATAR_SET.byId[id] || THEMES.filter((t) => t.id === id)[0] || null;
+/* アイテム・テーマ色が使えるか（rw：computeRewards の結果、owned：交換したアイテム） */
+function isOpen(item, rw, owned) {
+  if (!item) return false;
+  const p = String(item.un || "").split(":"), v = Number(p[1]);
+  if (p[0] === "start") return true;
+  if (p[0] === "lv") return rw.level.index >= v;
+  if (p[0] === "card") return rw.days >= v;
+  if (p[0] === "badge") return rw.badges.has(p[1]);
+  if (p[0] === "shop") return (owned || []).indexOf(item.id) >= 0;
+  if (p[0] === "live") return rw.liveBest > 0 && rw.liveBest <= v;
+  return false;
+}
+/* アバターの内容が正しく、使えるものだけでできているか */
+function avatarProblem(av, rw, owned) {
+  if (!av || typeof av !== "object") return "アバターの内容が正しくありません。";
+  const A = AVATAR_SET;
+  if (av.b === "maker") {
+    const mk = av.mk || {};
+    for (const k in A.MAKER) if (!A.MAKER[k].some((o) => o[0] === mk[k])) return "パーツの内容が正しくありません。";
+  } else if (!A.byId[av.b] || A.byId[av.b].k !== "b") return "キャラクターが正しくありません。";
+  else if (!isOpen(A.byId[av.b], rw, owned)) return "まだ使えないキャラクターです。";
+  const kinds = { h: 1, f: 1, w: 1, bg: 1 };
+  for (const k in kinds) {
+    if (!av[k]) continue;
+    const it = A.byId[av[k]];
+    if (!it || it.k !== k) return "アイテムが正しくありません。";
+    if (!isOpen(it, rw, owned)) return "まだ使えないアイテムです（" + it.name + "）。";
+  }
+  if (av.sk !== undefined && !(Number(av.sk) >= 0 && Number(av.sk) <= 3)) return "はだの色が正しくありません。";
+  return "";
+}
+/* アバターから、保存してよい項目だけを取り出す */
+function cleanAvatar(av) {
+  const o = { b: String(av.b) };
+  if (av.b === "maker") { o.mk = {}; for (const k in AVATAR_SET.MAKER) o.mk[k] = av.mk[k]; }
+  ["h", "f", "w", "bg"].forEach((k) => { if (av[k]) o[k] = String(av[k]); });
+  if (av.sk !== undefined && av.b !== "maker") o.sk = Number(av.sk) || 0;
+  return o;
+}
+/* ニックネームの確認（長さ・使えない文字） */
+function nicknameProblem(n) {
+  const s = String(n || "").trim();
+  if (!s) return "";
+  if (Array.from(s).length > 10) return "ニックネームは10文字までです。";
+  if (/[<>"'&\\\/@]|https?:|www\./i.test(s)) return "ニックネームに使えない文字が入っています。";
+  if (/[0-9０-９]{5,}/.test(s)) return "数字だけが長く続くニックネームは使えません。";
+  return "";
+}
+/*__REWARD_SHARED_END__*/
+
+/* 画面側：いまの生徒のごほうびの状態 */
+const ITEM_IDS = CONTENT.map((it) => it.id);
+function rewardExtra() {
+  const pf = state.profile || {};
+  return { omDays: pf.omDays || 0, teacherStamps: (state.tstamps || []).length, spent: pf.spent || 0, owned: pf.owned || [], hasAvatar: !!pf.avatar, liveBest: pf.liveBest || 0 };
+}
+function rewardState(history) {
+  const rw = computeRewards(history, state.settings, ITEM_IDS, rewardExtra());
+  rw.autoStamps = state.settings.autoStamps === false ? [] : autoStampEvents(history);
+  rw.unlocked = new Set(AVATAR_SET.list.concat(THEMES).filter((it) => isOpen(it, rw, (state.profile || {}).owned)).map((it) => it.id));
+  return rw;
+}
+/* 条件で自動でもらえるスタンプ（記録から決まる。絵は条件ごとの候補から生徒ごとに選ばれる） */
+const STAMP_RULES = { first: "はじめての練習", week3: "1週間に3日練習", week5: "1週間に5日練習", week7: "1週間に7日練習", achieve: "文法をマスター", perfect: "全問正解", comeback: "おかえり" };
+const strHash = (s) => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0; return h; };
+function autoStampEvents(history) {
+  const SS = window.StampSet; if (!SS) return [];
+  const h = (history || []).slice().sort((a, b) => (String(a.timestamp) < String(b.timestamp) ? -1 : 1));
+  const out = [], seen = new Set(), weekDays = {}, pc = {};
+  let lastDay = null;
+  const add = (rule, key, r) => {
+    if (seen.has(key)) return; seen.add(key);
+    const pool = SS.pool(rule); if (!pool.length) return;
+    out.push({ rule, key, ts: r.timestamp, design: pool[strHash(state.email + "|" + key) % pool.length].id, note: STAMP_RULES[rule] + (rule === "achieve" ? "：" + ((CONTENT.find((c) => c.id === r.itemId) || {}).short || "") : "") });
+  };
+  h.forEach((r, i) => {
+    const day = dayKey(r.timestamp), wk = weekOf(day);
+    if (i === 0) add("first", "first", r);
+    if (day !== lastDay) {
+      if (lastDay && dayNum(day) - dayNum(lastDay) >= 8) add("comeback", "cb:" + day, r);
+      const w = (weekDays[wk] = weekDays[wk] || new Set()); w.add(day);
+      if (w.size >= 3) add("week3", "w3:" + wk, r);
+      if (w.size >= 5) add("week5", "w5:" + wk, r);
+      if (w.size >= 7) add("week7", "w7:" + wk, r);
+      lastDay = day;
+    }
+    if (r.total > 0 && r.score === r.total) add("perfect", "pf:" + wk, r);
+    if (r.passed && r.stage >= 1 && r.stage <= 4) {
+      const a = (pc[r.itemId] = pc[r.itemId] || [0, 0, 0, 0]); a[r.stage - 1]++;
+      if ([1, 2, 3, 4].every((s) => a[s - 1] >= requiredPasses(s))) add("achieve", "a:" + r.itemId, r);
+    }
+  });
+  return out;
 }
 /* 次にやるとよい段階（課題の中で、まだクリアしていない最初のもの） */
 function nextStep() {
@@ -838,7 +2277,6 @@ function claudeBody(req, model) {
   return {
     model: model,
     max_tokens: 800,
-    temperature: 0.2,
     system: req.system,
     messages: [{ role: "user", content: req.user }],
     output_config: { format: { type: "json_schema", schema: AI_SCHEMAS[req.kind] } }
@@ -880,8 +2318,62 @@ const remoteApi = (callFn) => ({
   saveSettings(s) { return this.call("saveSettings", s); },
   judge(req) { return this.call("judge", req); },
   async transcribe(blob) { return this.call("transcribe", { b64: await blobToBase64(blob), mime: blob.type || "audio/webm" }); },
-  dashboard() { return this.call("getDashboard"); }
+  dashboard() { return this.call("getDashboard"); },
+  saveProfile(p) { return this.call("saveProfile", p); },
+  buy(id) { return this.call("buy", { id }); },
+  omikuji() { return this.call("omikuji"); },
+  ranking(period) { return this.call("ranking", { period }); },
+  markStampsRead() { return this.call("markStampsRead"); },
+  students() { return this.call("getStudents"); },
+  sendStamp(d) { return this.call("sendStamp", d); },
+  updateStudent(d) { return this.call("adminUpdateStudent", d); },
+  sentStamps() { return this.call("getSentStamps"); }
 });
+/* お試しモード：この端末だけで、ごほうびの処理をまねる */
+const DEFAULT_PROFILE = { nickname: "", avatar: null, theme: "umi", owned: [], spent: 0, omDays: 0, omLast: "", liveBest: 0 };
+const demoProfile = () => Object.assign({}, DEFAULT_PROFILE, lsGet("eg_profile", {}));
+const demoRewards = (pf) => computeRewards(lsGet("eg_results", []), lsGet("eg_settings", null) ? mergeSettings(lsGet("eg_settings", null)) : state.settings, ITEM_IDS,
+  { omDays: pf.omDays, teacherStamps: lsGet("eg_tstamps", []).length, spent: pf.spent, owned: pf.owned, hasAvatar: !!pf.avatar, liveBest: pf.liveBest });
+const demoRewardsApi = {
+  async saveProfile(p) {
+    const pf = demoProfile(), rw = demoRewards(pf);
+    if (p.nickname !== undefined) { const e = nicknameProblem(p.nickname); if (e) throw new Error(e); pf.nickname = String(p.nickname).trim(); }
+    if (p.avatar !== undefined) { const e = avatarProblem(p.avatar, rw, pf.owned); if (e) throw new Error(e); pf.avatar = cleanAvatar(p.avatar); }
+    if (p.theme !== undefined) { const t = THEMES.find((x) => x.id === p.theme); if (!t || !isOpen(t, rw, pf.owned)) throw new Error("まだ使えないテーマ色です。"); pf.theme = t.id; }
+    lsSet("eg_profile", pf); return pf;
+  },
+  async buy(id) {
+    const pf = demoProfile(), it = findGoods(id), price = it ? shopPrice(it.un) : 0;
+    if (!price) throw new Error("お店にないアイテムです。");
+    if (pf.owned.includes(id)) throw new Error("もう持っています。");
+    if (demoRewards(pf).points.avail < price) throw new Error("ポイントが足りません。");
+    pf.owned = pf.owned.concat([id]); pf.spent += price; lsSet("eg_profile", pf); return pf;
+  },
+  async omikuji() {
+    const pf = demoProfile(), today = dayKey(Date.now());
+    if (pf.omLast !== today) { pf.omDays++; pf.omLast = today; lsSet("eg_profile", pf); }
+    return pf;
+  },
+  async ranking(period) {
+    const pf = demoProfile(), res = lsGet("eg_results", []), rw = demoRewards(pf);
+    const since = period === "week" ? weekOf(dayKey(Date.now())) : period === "month" ? dayKey(Date.now()).slice(0, 8) + "01" : "";
+    const xp = res.filter((r) => !since || dayKey(r.timestamp) >= since).reduce((a, r) => a + recordXP(r), 0);
+    const me = { rank: 1, nick: pf.nickname, av: pf.avatar, level: rw.level.name, xp, me: true };
+    return { period, rows: xp > 0 ? [me] : [], me: xp > 0 ? me : null, count: 1 };
+  },
+  async markStampsRead() { lsSet("eg_tstamps", lsGet("eg_tstamps", []).map((s) => Object.assign(s, { seen: true }))); return { ok: true }; },
+  async students() {
+    const pf = demoProfile(), rw = demoRewards(pf), res = lsGet("eg_results", []);
+    return { students: [{ email: "お試しユーザー", nickname: pf.nickname, avatar: pf.avatar, level: rw.level.name, xp: rw.xp, avail: rw.points.avail, days: rw.days, last: res.length ? res[res.length - 1].timestamp : "" }] };
+  },
+  async sendStamp(d) {
+    const list = lsGet("eg_tstamps", []);
+    list.push({ id: "t" + Date.now(), ts: new Date().toISOString(), by: "先生", design: d.design, msg: String(d.message || "").slice(0, 60), seen: false });
+    lsSet("eg_tstamps", list); return { sent: 1 };
+  },
+  async updateStudent(d) { const pf = demoProfile(); if (d.nickname !== undefined) pf.nickname = ""; lsSet("eg_profile", pf); return { ok: true }; },
+  async sentStamps() { return { stamps: lsGet("eg_tstamps", []).slice().reverse().map((s) => ({ ts: s.ts, to: ["お試しユーザー"], design: s.design, msg: s.msg, seen: s.seen ? 1 : 0 })) }; }
+};
 const api = MODE === "api" ? remoteApi(async (action, args) => {
   const token = lsGet("eg_token", "");
   if (!token) throw new AuthError("ログインしてください");
@@ -893,20 +2385,13 @@ const api = MODE === "api" ? remoteApi(async (action, args) => {
   if (data.authError) { lsSet("eg_token", ""); throw new AuthError(data.error || "ログインしてください"); }
   if (data.error) throw new Error(data.error);
   return data.result;
-}) : MODE === "gas" ? {
-  call(fn, ...args) {
-    return new Promise((res, rej) => google.script.run.withSuccessHandler(res).withFailureHandler((e) => rej(new Error((e && e.message) || String(e))))[fn](...args));
-  },
-  bootstrap() { return this.call("getBootstrap"); },
-  saveResult(r) { return this.call("saveResult", r); },
-  saveSettings(s) { return this.call("saveSettings", s); },
-  judge(req) { return this.call("judge", req); },
-  async transcribe(blob) { return this.call("transcribe", { b64: await blobToBase64(blob), mime: blob.type || "audio/webm" }); },
-  dashboard() { return this.call("getDashboard"); }
-} : {
+}) : MODE === "gas" ? remoteApi((action, args) => new Promise((res, rej) =>
+  google.script.run.withSuccessHandler(res).withFailureHandler((e) => rej(new Error((e && e.message) || String(e)))).apiCall(action, args === undefined ? null : args)
+)) : Object.assign({}, demoRewardsApi, {
   async bootstrap() {
     const results = lsGet("eg_results", []);
-    return { email: "お試しユーザー", isAdmin: true, settings: lsGet("eg_settings", null), progress: computeProgress(results), history: results, hasEleven: !!lsGet("eg_eleven_key", "") };
+    return { email: "お試しユーザー", isAdmin: true, settings: lsGet("eg_settings", null), progress: computeProgress(results), history: results, hasEleven: !!lsGet("eg_eleven_key", ""),
+      profile: demoProfile(), tstamps: lsGet("eg_tstamps", []) };
   },
   async saveResult(r) {
     const results = lsGet("eg_results", []);
@@ -947,9 +2432,10 @@ const api = MODE === "api" ? remoteApi(async (action, args) => {
   async dashboard() {
     const results = lsGet("eg_results", []);
     const days = Array.from(new Set(results.map((r) => dayKey(r.timestamp))));
-    return { students: results.length ? [{ email: "お試しユーザー", progress: computeProgress(results), days: days.length, last: results[results.length - 1].timestamp }] : [], recent: results.slice(-30).reverse() };
+    const pf = demoProfile(), rw = demoRewards(pf);
+    return { students: results.length ? [{ email: "お試しユーザー", progress: computeProgress(results), days: days.length, last: results[results.length - 1].timestamp, nickname: pf.nickname, level: rw.level.name, xp: rw.xp, avail: rw.points.avail }] : [], recent: results.slice(-30).reverse() };
   }
-};
+});
 
 /* ---------- 音声認識・読み上げ ---------- */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1080,7 +2566,7 @@ function speak(text, lang, onDone) {
 }
 
 /* ---------- アプリの状態 ---------- */
-const state = { email: "", isAdmin: false, settings: mergeSettings(null), progress: {}, history: [], hasEleven: false };
+const state = { email: "", isAdmin: false, settings: mergeSettings(null), progress: {}, history: [], hasEleven: false, profile: Object.assign({}, DEFAULT_PROFILE), tstamps: [] };
 const useEleven = () => state.settings.sttStage1 === "elevenlabs" && state.hasEleven && recorderAvailable;
 let session = null;      // 進行中の練習
 let activeRec = null;    // 動作中の音声認識
@@ -1093,7 +2579,7 @@ function stopAll() {
 
 /* ---------- 画面の描画 ---------- */
 const app = () => $("#app");
-function render(html, opts) { stopAll(); if (!(opts && opts.keepMic)) releaseMic(); app().innerHTML = html; window.scrollTo(0, 0); }
+function render(html, opts) { stopAll(); if (!(opts && opts.keepMic)) releaseMic(); app().innerHTML = html; if (!(opts && opts.keepScroll)) window.scrollTo(0, 0); }
 const showAdmin = () => state.isAdmin && !state.viewAsStudent;
 function header(title, backFn) {
   const sw = state.isAdmin ? `<span class="view-switch" role="group" aria-label="画面の切りかえ">
@@ -1125,6 +2611,9 @@ function renderAdminHome() {
       <div class="admin-grid">
         <button class="admin-card" id="aDash"><span class="ac-ico">📊</span><span class="ac-title">学習記録</span><span class="ac-desc">生徒ごとの到達状況と最近の記録</span></button>
         <button class="admin-card" id="aSet"><span class="ac-ico">⚙️</span><span class="ac-title">管理者設定</span><span class="ac-desc">課題の項目・合格基準・合格回数・聞き取り方法</span></button>
+        <button class="admin-card" id="aStamp"><span class="ac-ico">💌</span><span class="ac-title">先生スタンプ</span><span class="ac-desc">スタンプを作って生徒に送る・送ったスタンプ</span></button>
+        <button class="admin-card" id="aPeople"><span class="ac-ico">👥</span><span class="ac-title">生徒一覧</span><span class="ac-desc">級・ポイント・ニックネーム（消すこともできます）</span></button>
+        <button class="admin-card" id="aRank"><span class="ac-ico">🏆</span><span class="ac-title">ランキング</span><span class="ac-desc">${s.showRanking ? "生徒に表示中" : "いまは先生だけに表示"}</span></button>
         <button class="admin-card" id="aStu"><span class="ac-ico">👀</span><span class="ac-title">生徒画面を見る</span><span class="ac-desc">生徒に表示される画面で、実際に練習を試せます</span></button>
       </div>
       <section class="panel">
@@ -1135,6 +2624,7 @@ function renderAdminHome() {
           <dt>合格ライン</dt><dd>${[1, 2, 3, 4].map((k) => `段階${k}：${pct(s["stage" + k].passRatio)}%`).join("　")}</dd>
           <dt>段階1の聞き取り</dt><dd>${esc(stt)}</dd>
           <dt>進め方</dt><dd>${s.lockProgression ? "前の段階をクリアしないと次に進めない" : "どの段階からでも練習できる"}</dd>
+          <dt>ごほうび</dt><dd>ランキング：${s.showRanking ? "生徒に表示" : "表示しない"}　自動スタンプ：${s.autoStamps !== false ? "あり" : "なし"}　おみくじ：${s.omikuji !== false ? "あり" : "なし"}</dd>
         </dl>
       </section>
       ${studentUrl ? `<section class="panel">
@@ -1150,6 +2640,9 @@ function renderAdminHome() {
   $("#aDash").onclick = renderDashboard;
   $("#aSet").onclick = renderSettings;
   $("#aStu").onclick = () => setView(true);
+  $("#aStamp").onclick = () => renderTeacherStamps();
+  $("#aPeople").onclick = renderStudents;
+  $("#aRank").onclick = () => renderRanking("week");
   if ($("#copyUrl")) $("#copyUrl").onclick = async () => {
     const m = $("#copyMsg");
     try { await navigator.clipboard.writeText(studentUrl); m.textContent = "コピーしました"; m.className = "msg ok"; }
@@ -1158,9 +2651,43 @@ function renderAdminHome() {
   if ($("#logout")) $("#logout").onclick = () => { lsSet("eg_token", ""); renderLogin("ログアウトしました。"); };
 }
 
+/* ===== 絵（アバター・スタンプ）とテーマ色 ===== */
+function avatarHTML(av, size, opt) {
+  size = size || 48;
+  if (av && av.b && window.Art) return Art.avatar(av, size, opt);
+  return `<svg class="avatar-svg" width="${size}" height="${size}" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="58" fill="#e9ecef"/><text x="60" y="78" text-anchor="middle" font-size="52" font-weight="800" fill="#adb5bd">?</text></svg>`;
+}
+function stampArt(design, size) {
+  if (!window.Art || !design) return "";
+  if (typeof design === "string") return Art.design(design, size);
+  if (design.id) return Art.design(design.id, size);
+  if (design.make) { const m = design.make; return Art.stampSVG(m.a, m.t, size, { color: m.c, pose: m.po, expr: m.ex, crown: !!m.cr }); }
+  return "";
+}
+function applySkin(id) {
+  const t = THEMES.find((x) => x.id === id) || THEMES[0];
+  const root = document.documentElement;
+  if (t.id === "umi") { delete root.dataset.skin; root.style.removeProperty("--skin"); }
+  else { root.dataset.skin = t.id; root.style.setProperty("--skin", t.c); }
+  lsSet("eg_skin", t.id);
+}
+applySkin(lsGet("eg_skin", "umi"));
+function unlockText(un) {
+  const p = String(un || "").split(":"), v = p[1];
+  if (p[0] === "lv") return (LEVELS[+v] ? LEVELS[+v][1] : "") + "になると";
+  if (p[0] === "card") return "練習した日が" + v + "日で";
+  if (p[0] === "badge") { const b = BADGES.find((x) => x.id === v); return "バッジ「" + (b ? b.name : v) + "」で"; }
+  if (p[0] === "shop") return "お店で " + v + "pt";
+  if (p[0] === "live") return +v === 1 ? "ライブで1位になると" : "ライブで" + v + "位以内に入ると";
+  return "";
+}
+const fmtDate = (ts) => { const t = new Date(ts); return isNaN(t) ? "" : `${t.getMonth() + 1}/${t.getDate()}`; };
+const myName = () => state.profile.nickname || (MODE === "demo" ? "お試しユーザー" : state.email.split("@")[0]);
+
 /* ===== ホーム（生徒画面） ===== */
 function renderHome() {
   if (state.isAdmin && !state.viewAsStudent) return renderAdminHome();
+  applySkin(state.profile.theme);
   const card = (it, i) => {
     const p = itemProg(it.id);
     const done = clearedCount(it.id);
@@ -1182,25 +2709,41 @@ function renderHome() {
     (freeList.length ? `<h2 class="sec">自由練習</h2>` + freeList.map(([it, i]) => card(it, i)).join("") : "");
   const rw = rewardState(state.history);
   const nx = nextStep();
-  const name = MODE === "demo" ? "お試しユーザー" : state.email.split("@")[0];
+  const pf = state.profile, lv = rw.level;
+  const unread = state.tstamps.filter((s) => !s.seen).length;
+  const omToday = pf.omLast === dayKey(Date.now());
+  const menu = [
+    ["toAvatar", "🎨", "着せ替え", ""],
+    ["toShop", "🛍️", "お店", ""],
+    state.settings.omikuji !== false ? ["toOmikuji", "🎋", "おみくじ", omToday ? "" : "今日まだ"] : null,
+    state.settings.showRanking || state.isAdmin ? ["toRank", "🏆", "ランキング", state.settings.showRanking ? "" : "先生だけ"] : null,
+    ["toRewards", "📮", "スタンプ帳", unread ? "NEW" : ""]
+  ].filter(Boolean);
   const slots = Array.from({ length: STAMPS_PER_CARD }, (_, k) => `<span class="slot ${k < rw.onCard ? "on" : ""} ${k === rw.onCard - 1 && rw.todayDone ? "today" : ""}">${k < rw.onCard ? "🐾" : k + 1}</span>`).join("");
   render(`${header("英文法トレーニング")}
     <main class="wrap">
       ${speechAvailable ? "" : `<div class="notice">この端末のブラウザでは音声認識が使えません。キーボードのマイク（音声入力）や文字入力で答えてください。</div>`}
       <section class="me-card">
         <div class="me-top">
-          <div><div class="me-hello">${esc(name)} さん</div><div class="me-sub">${rw.todayDone ? "今日のスタンプはゲット済み！" : "今日も1回練習して、スタンプをもらおう"}</div></div>
-          <div class="me-stats">
-            <span class="stat"><b>🔥 ${rw.streak}</b><small>日連続</small></span>
-            <span class="stat"><b>🏅 ${rw.badges.size}</b><small>バッジ</small></span>
-            <span class="stat"><b>👑 ${CONTENT.filter((it) => clearedCount(it.id) === 4).length}</b><small>マスター</small></span>
+          <button class="me-av" id="meAv" aria-label="アバターを着せ替える">${avatarHTML(pf.avatar, 78)}<span class="av-edit" aria-hidden="true">✏️</span></button>
+          <div class="me-info">
+            <div class="me-hello">${esc(myName())} さん</div>
+            <div class="lv-row"><span class="lv-chip">🥋 ${esc(lv.name)}</span><span class="lv-next">${lv.next ? `${esc(lv.next)}まで あと ${lv.nextAt - rw.xp}` : "最高の段位です！"}</span></div>
+            <div class="lv-bar" title="けいけん値 ${rw.xp}"><i style="width:${pct(lv.progress)}%"></i></div>
           </div>
         </div>
-        <button class="stamp-card" id="toRewards" aria-label="スタンプとバッジを見る">
-          <span class="sc-head"><span>スタンプカード${rw.cards ? `（${rw.cards}枚うめた）` : ""}</span><span class="sc-more">バッジを見る ›</span></span>
+        <div class="me-stats">
+          <span class="stat"><b>🔥 ${rw.streak}</b><small>日連続</small></span>
+          <span class="stat"><b>🪙 ${rw.points.avail}</b><small>ポイント</small></span>
+          <span class="stat"><b>🏅 ${rw.badges.size}</b><small>バッジ</small></span>
+          <span class="stat"><b>👑 ${rw.mastered}</b><small>マスター</small></span>
+        </div>
+        <button class="stamp-card" id="toCard" aria-label="スタンプ帳を見る">
+          <span class="sc-head"><span>スタンプカード${rw.cards ? `（${rw.cards}枚うめた）` : ""}</span><span class="sc-more">${rw.todayDone ? "今日のスタンプ ゲット！" : "今日も1回練習しよう"}</span></span>
           <span class="slots">${slots}</span>
         </button>
       </section>
+      <nav class="quick-grid">${menu.map(([id, ico, label, note]) => `<button class="quick" id="${id}"><span class="q-ico">${ico}</span><span class="q-label">${label}</span>${note ? `<span class="q-note ${note === "NEW" ? "new" : ""}">${note}</span>` : ""}</button>`).join("")}</nav>
       ${nx ? `<section class="next-card"><div class="next-label">今日のおすすめ</div>
         <div class="next-body"><span class="stage-no s${nx.stage}">段階${nx.stage}</span><span class="next-title">${esc(nx.it.title)}<small>${STAGE_NAMES[nx.stage - 1]}</small></span></div>
         <button class="btn primary big" id="goNext">はじめる</button></section>`
@@ -1214,22 +2757,337 @@ function renderHome() {
     </main>`);
   bindBack(null);
   $$(".item-card").forEach((b) => (b.onclick = () => renderItem(+b.dataset.i)));
+  $("#meAv").onclick = () => renderAvatar("b");
+  $("#toAvatar").onclick = () => renderAvatar("b");
+  $("#toShop").onclick = renderShop;
+  if ($("#toOmikuji")) $("#toOmikuji").onclick = renderOmikuji;
+  if ($("#toRank")) $("#toRank").onclick = () => renderRanking("week");
   $("#toRewards").onclick = renderRewards;
+  $("#toCard").onclick = renderRewards;
   if ($("#goNext")) $("#goNext").onclick = () => (nx.stage === 1 ? renderStage1(nx.i) : startQuiz(nx.i, nx.stage));
   if ($("#logout")) $("#logout").onclick = () => { lsSet("eg_token", ""); renderLogin("ログアウトしました。"); };
+  // はじめての生徒にはアバターを選んでもらう → 先生からのスタンプが届いていれば見せる
+  if (!pf.avatar && !state.isAdmin) avatarPicker();
+  else if (unread) showTeacherStamps();
 }
 
-/* ===== スタンプとバッジ ===== */
+/* ===== はじめてのアバター選び ===== */
+const START_BGS = ["bg_sky", "bg_pink", "bg_mint", "bg_lemon"];
+function avatarPicker() {
+  const bases = AVATAR_SET.list.filter((x) => x.k === "b" && x.un === "start");
+  const pick = { b: "", sk: 0, bg: "bg_sky" };
+  let nick = state.profile.nickname || "";
+  const el = document.createElement("div");
+  el.className = "gift-overlay av-first";
+  document.body.appendChild(el);
+  function draw() {
+    const b = AVATAR_SET.byId[pick.b];
+    el.innerHTML = `<div class="gift av-pick-box" role="dialog" aria-label="アバターを選ぶ"><div class="gift-title">✨ あなたのアバターを選ぼう！</div>
+      <p class="hint">これが、アプリの中のあなたです。あとから着せ替えもできます。練習をがんばると、キャラクターやアイテムが増えていきます！</p>
+      <div class="av-pick-grid">${bases.map((x, i) => `<button type="button" class="av-pick ${pick.b === x.id ? "active" : ""}" data-b="${x.id}">${avatarHTML({ b: x.id, sk: pick.b === x.id ? pick.sk : 0, bg: START_BGS[i % 4] }, 64)}<span>${esc(x.name)}</span></button>`).join("")}</div>
+      ${b && b.human ? `<div class="av-skins"><span class="hint">はだの色</span>${AVATAR_SET.SKINS.map((c, i) => `<button type="button" class="skin ${pick.sk === i ? "active" : ""}" data-sk="${i}" style="background:${c}" aria-label="はだの色${i + 1}"></button>`).join("")}</div>` : ""}
+      <div class="av-bgs"><span class="hint">背景</span>${START_BGS.map((id) => `<button type="button" class="bgpick ${pick.bg === id ? "active" : ""}" data-bg="${id}">${avatarHTML({ b: pick.b || "cat", bg: id, sk: pick.sk }, 40)}</button>`).join("")}</div>
+      <label class="nick-row"><span>ニックネーム（ランキングなどで表示。10文字まで・あとで変えられます）</span><input type="text" id="pkNick" maxlength="10" value="${esc(nick)}" placeholder="例：えいごマン"></label>
+      <div class="av-big">${pick.b ? avatarHTML(pick, 110) : ""}</div>
+      <button class="btn primary big" id="avGo" ${pick.b ? "" : "disabled"}>${pick.b ? "このアバターにする！" : "キャラクターを選んでね"}</button>
+      <div class="msg ng" id="avErr"></div></div>`;
+    $("#pkNick", el).oninput = (e) => { nick = e.target.value; };
+    $$(".av-pick", el).forEach((bt) => (bt.onclick = () => { pick.b = bt.dataset.b; if (!(AVATAR_SET.byId[pick.b] || {}).human) pick.sk = 0; draw(); }));
+    $$(".skin", el).forEach((bt) => (bt.onclick = () => { pick.sk = +bt.dataset.sk; draw(); }));
+    $$(".bgpick", el).forEach((bt) => (bt.onclick = () => { pick.bg = bt.dataset.bg; draw(); }));
+    $("#avGo", el).onclick = async (e) => {
+      e.target.disabled = true;
+      const before = rewardState(state.history);
+      try {
+        state.profile = await api.saveProfile({ avatar: pick, nickname: nick.trim() });
+        el.remove();
+        rewardGifts(before);
+        renderHome();
+      } catch (err) { $("#avErr", el).textContent = err.message; e.target.disabled = false; }
+    };
+  }
+  draw();
+}
+
+/* ===== 着せ替え（アバター・テーマ色・ニックネーム） ===== */
+const AV_TABS = [["b", "キャラクター"], ["make", "パーツで作る"], ["h", "帽子・頭"], ["f", "顔"], ["w", "服・持ち物"], ["bg", "背景"], ["theme", "テーマ色"]];
+const MAKER_GROUPS = [["sh", "顔の形"], ["sk", "はだの色"], ["ea", "耳"], ["hs", "髪型"], ["hc", "髪の色"], ["ey", "目"], ["br", "まゆ"], ["mo", "口"], ["ch", "ほっぺ"], ["cl", "服の色"]];
+function renderAvatar(tab) {
+  const A = AVATAR_SET;
+  const saved = () => JSON.stringify([state.profile.avatar, state.profile.theme || "umi"]);
+  let draft = JSON.parse(JSON.stringify(state.profile.avatar || { b: "cat", bg: "bg_sky" }));
+  let theme = state.profile.theme || "umi";
+  let mk = Object.assign({}, A.MAKER_DEFAULT, draft.b === "maker" ? draft.mk : lsGet("eg_lastmk", {}));
+  tab = tab || "b";
+  const leave = () => { applySkin(state.profile.theme); renderHome(); };
+  let drawn = false;
+  function draw() {
+    const rw = rewardState(state.history), owned = state.profile.owned || [];
+    const changed = JSON.stringify([draft, theme]) !== saved();
+    let side = "";
+    if (tab === "make") {
+      side = `<div class="maker-parts">${MAKER_GROUPS.map(([k, label]) => `<div class="mk-row"><div class="mk-label">${label}</div><div class="mk-opts">${A.MAKER[k].map((o) => {
+        const act = mk[k] === o[0];
+        if (/^#/.test(o[0])) return `<button type="button" class="mk-color ${act ? "active" : ""}" data-k="${k}" data-v="${o[0]}" style="background:${o[0]}" aria-label="${label}"></button>`;
+        const test = Object.assign({}, mk, { [k]: o[0] });
+        return `<button type="button" class="mk-opt ${act ? "active" : ""}" data-k="${k}" data-v="${o[0]}">${avatarHTML({ b: "maker", mk: test, bg: "bg_sky" }, 46, { ring: false })}<small>${esc(o[1])}</small></button>`;
+      }).join("")}</div></div>`).join("")}
+        <div class="btn-row"><button class="btn" id="mkRand">🎲 おまかせ</button><button class="btn" id="mkUse">このパーツを使う</button></div></div>`;
+    } else if (tab === "theme") {
+      side = `<p class="hint">アプリの色を変えられます。</p><div class="theme-grid">${THEMES.map((t) => {
+        const open = isOpen(t, rw, owned);
+        return `<button class="theme-item ${theme === t.id ? "active" : ""} ${open ? "" : "locked"}" data-theme-id="${t.id}" ${open ? "" : "disabled"}>
+          <span class="swatch" style="background:${t.c}"></span><span class="nm">${esc(t.name)}</span>${open ? "" : `<span class="lock">🔒 ${esc(unlockText(t.un))}</span>`}</button>`;
+      }).join("")}</div>`;
+    } else {
+      const list = A.list.filter((x) => x.k === tab);
+      side = (tab === "b" && (A.byId[draft.b] || {}).human ? `<div class="av-skins"><span class="hint">はだの色</span>${A.SKINS.map((c, i) => `<button type="button" class="skin ${(+draft.sk || 0) === i ? "active" : ""}" data-sk="${i}" style="background:${c}" aria-label="はだの色${i + 1}"></button>`).join("")}</div>` : "") +
+        `<div class="av-grid">${tab !== "b" && tab !== "bg" ? `<button class="av-item ${!draft[tab] ? "active" : ""}" data-id="">${avatarHTML(Object.assign({}, draft, { [tab]: "" }), 76)}<span class="nm">なし</span></button>` : ""}
+        ${tab === "b" && (draft.b === "maker" || lsGet("eg_lastmk", null)) ? `<button class="av-item ${draft.b === "maker" ? "active" : ""}" data-mine="1">${avatarHTML(Object.assign({}, draft, { b: "maker", mk }), 76)}<span class="nm">パーツで作った</span></button>` : ""}
+        ${list.map((it) => {
+          const open = isOpen(it, rw, owned);
+          const av = Object.assign({}, draft, { [it.k]: it.id });
+          if (it.k === "b") { delete av.mk; if (!it.human) delete av.sk; }
+          return `<button class="av-item ${draft[tab] === it.id ? "active" : ""} ${open ? "" : "locked"}" data-id="${it.id}" ${open ? "" : (shopPrice(it.un) ? 'data-shop="1"' : "disabled")}>${avatarHTML(av, 76)}<span class="nm">${esc(it.name)}</span>${open ? "" : `<span class="lock">🔒 ${esc(unlockText(it.un))}</span>`}</button>`;
+        }).join("")}</div>`;
+    }
+    render(`${header("着せ替え", true)}
+      <main class="wrap wide">
+        <div class="av-editor">
+          <div class="av-stage">
+            ${avatarHTML(tab === "make" ? Object.assign({}, draft, { b: "maker", mk }) : draft, 170)}
+            <div class="av-points">🪙 使えるポイント <b>${rw.points.avail}</b>pt <button class="link-btn small" id="goShop">お店へ</button></div>
+            <div class="btn-row center"><button class="btn primary" id="avSave" ${changed ? "" : "disabled"}>${changed ? "💾 これに決める" : "✅ いまの着せ替え"}</button>${changed ? `<button class="btn" id="avReset">もとにもどす</button>` : ""}</div>
+            <div class="msg" id="avMsg"></div>
+            <div class="nick-box"><label for="nickIn">ニックネーム</label>
+              <div class="url-row"><input type="text" id="nickIn" maxlength="10" value="${esc(state.profile.nickname || "")}" placeholder="10文字まで"><button class="btn" id="nickSave">決める</button></div>
+              <div class="msg" id="nickMsg"></div></div>
+          </div>
+          <div class="av-side">
+            <div class="seg">${AV_TABS.map(([k, label]) => `<button data-t="${k}" class="${tab === k ? "on" : ""}">${label}</button>`).join("")}</div>
+            ${side}
+          </div>
+        </div>
+      </main>`, { keepScroll: drawn });
+    drawn = true;
+    bindBack(leave);
+    $$(".seg button").forEach((b) => (b.onclick = () => { tab = b.dataset.t; draw(); }));
+    $$(".av-item[data-id]").forEach((b) => (b.onclick = () => {
+      if (b.dataset.shop) return renderShop();
+      const id = b.dataset.id;
+      if (!id) delete draft[tab]; else draft[tab] = id;
+      if (tab === "b") { delete draft.mk; if (!(A.byId[id] || {}).human) delete draft.sk; }
+      draw();
+    }));
+    $$(".av-item[data-mine]").forEach((b) => (b.onclick = () => { draft.b = "maker"; draft.mk = Object.assign({}, mk); delete draft.sk; draw(); }));
+    $$(".skin").forEach((b) => (b.onclick = () => { draft.sk = +b.dataset.sk; draw(); }));
+    $$("[data-k]").forEach((b) => (b.onclick = () => { mk[b.dataset.k] = b.dataset.v; draw(); }));
+    if ($("#mkRand")) $("#mkRand").onclick = () => { Object.keys(A.MAKER).forEach((k) => { mk[k] = A.MAKER[k][Math.floor(Math.random() * A.MAKER[k].length)][0]; }); draw(); };
+    if ($("#mkUse")) $("#mkUse").onclick = () => { draft.b = "maker"; draft.mk = Object.assign({}, mk); delete draft.sk; lsSet("eg_lastmk", mk); tab = "b"; draw(); };
+    $$("[data-theme-id]").forEach((b) => (b.onclick = () => { theme = b.dataset.themeId; applySkin(theme); draw(); }));
+    $("#goShop").onclick = () => { applySkin(state.profile.theme); renderShop(); };
+    if ($("#avReset")) $("#avReset").onclick = () => { draft = JSON.parse(JSON.stringify(state.profile.avatar || { b: "cat", bg: "bg_sky" })); theme = state.profile.theme || "umi"; applySkin(theme); draw(); };
+    $("#avSave").onclick = async (e) => {
+      e.target.disabled = true;
+      const before = rewardState(state.history);
+      try {
+        state.profile = await api.saveProfile({ avatar: draft, theme });
+        if (draft.b === "maker") lsSet("eg_lastmk", draft.mk);
+        applySkin(state.profile.theme);
+        draw();
+        const m = $("#avMsg"); m.textContent = "着せ替えました ✨"; m.className = "msg ok";
+        rewardGifts(before);
+      } catch (err) { const m = $("#avMsg"); m.textContent = err.message; m.className = "msg ng"; e.target.disabled = false; }
+    };
+    $("#nickSave").onclick = async () => {
+      const m = $("#nickMsg"), v = $("#nickIn").value.trim();
+      const prob = nicknameProblem(v); if (prob) { m.textContent = prob; m.className = "msg ng"; return; }
+      try { state.profile = await api.saveProfile({ nickname: v }); m.textContent = v ? "ニックネームを決めました" : "ニックネームを消しました"; m.className = "msg ok"; }
+      catch (err) { m.textContent = err.message; m.className = "msg ng"; }
+    };
+  }
+  draw();
+}
+
+/* ===== お店（ポイントで交換） ===== */
+function renderShop() {
+  let drawn = false;
+  const draw = () => {
+    const rw = rewardState(state.history), owned = state.profile.owned || [];
+    const av = state.profile.avatar || { b: "cat", bg: "bg_sky" };
+    const goods = AVATAR_SET.list.filter((x) => shopPrice(x.un)).sort((a, b) => shopPrice(a.un) - shopPrice(b.un));
+    const themes = THEMES.filter((t) => shopPrice(t.un));
+    const item = (it, preview) => {
+      const have = owned.includes(it.id), price = shopPrice(it.un);
+      return `<div class="shop-item ${have ? "have" : ""}">${preview}<span class="nm">${esc(it.name)}</span>
+        ${have ? `<span class="tag ok">持っている</span>` : `<button class="btn small ${rw.points.avail >= price ? "primary" : ""}" data-buy="${it.id}" ${rw.points.avail >= price ? "" : "disabled"}>🪙 ${price}pt</button>`}</div>`;
+    };
+    render(`${header("お店", true)}
+      <main class="wrap">
+        <section class="panel shop-head"><div class="av-points">🪙 使えるポイント <b>${rw.points.avail}</b>pt</div>
+          <p class="hint">${esc(POINT_RULES)}</p><div class="msg" id="shopMsg"></div></section>
+        <section class="panel"><h2>キャラクター・アイテム</h2>
+          <div class="shop-grid">${goods.map((it) => { const a = Object.assign({}, av, { [it.k]: it.id }); if (it.k === "b") { delete a.mk; delete a.sk; } return item(it, avatarHTML(a, 80)); }).join("")}</div></section>
+        <section class="panel"><h2>テーマ色</h2>
+          <div class="shop-grid">${themes.map((t) => item(t, `<span class="swatch big" style="background:${t.c}"></span>`)).join("")}</div>
+          <p class="hint">交換したテーマ色は「着せ替え」→「テーマ色」で使えます。</p></section>
+        ${footerNote()}
+      </main>`, { keepScroll: drawn });
+    drawn = true;
+    bindBack(renderHome);
+    $$("[data-buy]").forEach((b) => (b.onclick = async () => {
+      const it = findGoods(b.dataset.buy);
+      if (b.dataset.armed !== "1") { $$("[data-buy]").forEach((x) => { if (x !== b) { x.dataset.armed = ""; } }); b.dataset.armed = "1"; b.textContent = "交換する？"; return; }
+      b.disabled = true;
+      const before = rewardState(state.history);
+      try {
+        state.profile = await api.buy(it.id);
+        draw();
+        const m = $("#shopMsg"); m.textContent = `「${it.name}」と交換しました！「着せ替え」で使えます。`; m.className = "msg ok";
+        rewardGifts(before);
+      } catch (err) { const m = $("#shopMsg"); m.textContent = err.message; m.className = "msg ng"; b.disabled = false; }
+    }));
+  };
+  draw();
+}
+
+/* ===== おみくじ英文（英文を読んでから引く） ===== */
+const FORTUNE_ODDS = [[95, [50, 30, 15, 5]], [85, [30, 35, 25, 10]], [70, [15, 30, 30, 25]], [0, [5, 20, 35, 40]]];
+const FORTUNE_NAMES = ["大吉", "中吉", "小吉", "吉"];
+function drawFortune(acc) {
+  const odds = FORTUNE_ODDS.find((o) => acc >= o[0])[1], x = Math.random() * 100;
+  for (let i = 0, sum = 0; i < odds.length; i++) { sum += odds[i]; if (x < sum) return FORTUNE_NAMES[i]; }
+  return "吉";
+}
+// 読めた単語の割合（語順もふくめて、いちばん長く一致した単語の数 ÷ 英文の単語の数）
+function readAccuracy(target, said) {
+  const t = normalize(target).split(" ").filter(Boolean), s = normalize(said).split(" ").filter(Boolean);
+  if (!t.length) return { acc: 0, marks: [] };
+  const dp = Array.from({ length: t.length + 1 }, () => new Array(s.length + 1).fill(0));
+  for (let i = t.length - 1; i >= 0; i--) for (let j = s.length - 1; j >= 0; j--) dp[i][j] = t[i] === s[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+  const marks = []; let i = 0, j = 0;
+  while (i < t.length) { if (j < s.length && t[i] === s[j]) { marks.push(true); i++; j++; } else if (j < s.length && dp[i][j + 1] >= dp[i + 1][j]) j++; else { marks.push(false); i++; } }
+  return { acc: Math.round((dp[0][0] / t.length) * 100), marks, words: t };
+}
+function omikujiPool() {
+  const O = window.OmikujiSet || { list: [] };
+  const base = O.list.filter((x) => x.lv === 1);
+  // 練習した文法の英文（課題の復習）もまぜる
+  const done = CONTENT.filter((it) => itemProg(it.id).attempts.some((n) => n > 0));
+  const review = done.flatMap((it) => it.stage3.questions.map((q) => ({ c: "review", en: q.answers[0], ja: q.ja })));
+  return { base, review };
+}
+function renderOmikuji() {
+  const O = window.OmikujiSet || { CATS: {}, MESSAGES: {}, WORDS: [["star", "星"]], COLORS: [["red", "赤", "#e03131"]], ITEMS: [["pencil", "えんぴつ"]], LUCK: [], STARS: {} };
+  const { base, review } = omikujiPool();
+  const pickFrom = review.length && Math.random() < 0.3 ? review : base;
+  const s = pickFrom[Math.floor(Math.random() * pickFrom.length)] || { c: "pos", en: "You can do it.", ja: "あなたならできる。" };
+  const today = state.profile.omLast === dayKey(Date.now());
+  render(`${header("おみくじ英文", true)}
+    <main class="wrap">
+      <section class="om-sentence">
+        <span class="om-cat">${esc(O.CATS[s.c] || "英文")}</span>
+        <div class="om-ja">${esc(s.ja)}</div>
+        <div class="om-en">${esc(s.en)}</div>
+        <button class="listen" id="omListen">🔊 お手本</button>
+      </section>
+      <p class="hint center">英文を声に出して読んでから、おみくじを引こう。正しく読めるほど大吉が出やすくなります。${today ? "" : "今日はじめてのおみくじで +5pt！"}</p>
+      ${answerBlock({ lang: "en-US", placeholder: "マイクをタップして英文を読もう", multiline: false })}
+      <div id="result"></div>
+      ${footerNote()}
+    </main>`);
+  bindBack(renderHome);
+  $("#omListen").onclick = () => speak(s.en, "en-US");
+  const ctl = mountAnswer({
+    lang: "en-US", continuous: false, confirm: false,
+    onSubmit: (ans) => {
+      const best = [ans.text].concat(ans.alts || []).map((t) => readAccuracy(s.en, t)).sort((a, b) => b.acc - a.acc)[0];
+      if (!best.acc) { ctl.setMsg("英文が聞き取れませんでした。もう一度読んでみよう。", "ng"); return; }
+      ctl.disable();
+      $("#result").innerHTML = `<div class="panel center"><div class="om-words">${best.words.map((w, k) => `<span class="${best.marks[k] ? "ok" : "ng"}">${esc(w)}</span>`).join(" ")}</div>
+        <div class="verdict ${best.acc >= 85 ? "ok" : ""}">読めた割合 ${best.acc}%</div>
+        <button class="btn primary big" id="omDraw">🎋 おみくじを引く</button>
+        <button class="btn" id="omAgain">もう一度読む</button></div>`;
+      $("#omAgain").onclick = renderOmikuji;
+      $("#omDraw").onclick = () => drawOmikuji(drawFortune(best.acc), O);
+    }
+  });
+}
+async function drawOmikuji(fortune, O) {
+  const box = $("#result");
+  box.innerHTML = `<div class="omikuji-box shake"><div class="omikuji-tube">🎋</div></div><div class="hint center">カラカラ…</div>`;
+  const before = rewardState(state.history);
+  const rec = api.omikuji().then((pf) => { state.profile = pf; }).catch(() => {});
+  await new Promise((r) => timers.push(setTimeout(r, 1300)));
+  await rec;
+  const pick = (a) => a[Math.floor(Math.random() * a.length)];
+  const st = O.STARS[fortune] || [2, 4], w = pick(O.WORDS), c = pick(O.COLORS), it = pick(O.ITEMS);
+  const cls = { "大吉": "f0", "中吉": "f1", "小吉": "f2", "吉": "f3" }[fortune] || "f3";
+  box.innerHTML = `<div class="omikuji-paper om-result"><div class="om-top">おみくじ</div><div class="fortune ${cls}">${esc(fortune)}</div>
+      <div class="om-msg">${esc(pick(O.MESSAGES[fortune] || O.MESSAGES["吉"] || ["いい日になりますように！"]))}</div>
+      <div class="om-lucks">${(O.LUCK || []).map((k) => { const n = st[0] + Math.floor(Math.random() * (st[1] - st[0] + 1)); return `<div class="om-luck"><span>${esc(k)}</span><b>${"★".repeat(n)}<i>${"★".repeat(5 - n)}</i></b></div>`; }).join("")}</div>
+      <div class="om-lucky"><div><small>ラッキー英単語</small><b>${esc(w[0])}</b><span>${esc(w[1])}</span></div>
+        <div><small>ラッキーカラー</small><b><i class="om-dot" style="background:${c[2]}"></i>${esc(c[0])}</b><span>${esc(c[1])}</span></div>
+        <div><small>ラッキーアイテム</small><b>${esc(it[0])}</b><span>${esc(it[1])}</span></div></div></div>
+    <div class="btn-row"><button class="btn primary" id="omNext">🎋 ほかの英文でもう一回</button><button class="btn" id="omHome">ホームへ</button></div>`;
+  $("#omNext").onclick = renderOmikuji;
+  $("#omHome").onclick = renderHome;
+  rewardGifts(before);
+}
+
+/* ===== ランキング ===== */
+async function renderRanking(period) {
+  const tabs = [["week", "今週"], ["month", "今月"], ["total", "これまで"]];
+  render(`${header("ランキング", true)}
+    <main class="wrap">
+      <div class="seg center">${tabs.map(([k, l]) => `<button data-p="${k}" class="${period === k ? "on" : ""}">${l}</button>`).join("")}</div>
+      ${state.isAdmin && !state.settings.showRanking ? `<div class="notice">いまは生徒には表示されていません（管理者設定の「ランキングを生徒に表示する」で切りかえ）。</div>` : ""}
+      <section class="panel" id="rankBox"><div class="judging"><span class="spinner"></span>読み込んでいます…</div></section>
+      <p class="hint center">けいけん値（練習 +5、正解1問 +2〜3、合格 +20）の合計でならんでいます。名前はニックネームで表示されます。</p>
+      ${footerNote()}
+    </main>`);
+  bindBack(renderHome);
+  $$(".seg button").forEach((b) => (b.onclick = () => renderRanking(b.dataset.p)));
+  let d;
+  try { d = await api.ranking(period); }
+  catch (e) { $("#rankBox").innerHTML = `<div class="msg ng">${esc(e.message)}</div>`; return; }
+  const medal = (n) => (n === 1 ? "🥇" : n === 2 ? "🥈" : n === 3 ? "🥉" : n);
+  const row = (r) => `<div class="rank-row ${r.me ? "me" : ""}"><span class="rank-no r${r.rank}">${medal(r.rank)}</span>${avatarHTML(r.av, 40)}
+    <span class="rank-name">${esc(r.nick || "ニックネームなし")}${r.who ? `<small>（${esc(r.who)}）</small>` : ""}${r.me ? " <small>（あなた）</small>" : ""}</span>
+    <span class="lv-chip small">${esc(r.level || "")}</span><span class="rank-val">${r.xp}</span></div>`;
+  const rows = d.rows || [];
+  $("#rankBox").innerHTML = rows.length ? rows.map(row).join("") + (d.me && !rows.some((r) => r.me) ? `<div class="rank-gap">…</div>${row(d.me)}` : "")
+    : `<p class="hint">この期間の記録はまだありません。</p>`;
+}
+
+/* ===== スタンプ帳・スタンプカード・級・バッジ ===== */
 function renderRewards() {
   const rw = rewardState(state.history);
+  const stamps = state.tstamps.map((s) => ({ ts: s.ts, design: s.design, note: "先生から" + (s.by ? "（" + s.by + "）" : ""), msg: s.msg, teacher: true }))
+    .concat(rw.autoStamps.map((s) => ({ ts: s.ts, design: s.design, note: s.note })))
+    .sort((a, b) => (String(a.ts) < String(b.ts) ? 1 : -1));
   const slots = Array.from({ length: STAMPS_PER_CARD }, (_, k) => `<span class="slot big ${k < rw.onCard ? "on" : ""}">${k < rw.onCard ? "🐾" : k + 1}</span>`).join("");
-  render(`${header("スタンプとバッジ", true)}
+  const lv = rw.level;
+  render(`${header("スタンプ帳とバッジ", true)}
     <main class="wrap">
+      <section class="panel">
+        <h2>スタンプ帳 <small>${stamps.length}こ</small></h2>
+        ${stamps.length ? `<div class="stamp-grid">${stamps.map((s) => `<div class="stamp-item ${s.teacher ? "teacher" : ""}">${stampArt(s.design, 104)}<span class="st-note">${esc(s.note)}</span>${s.msg ? `<span class="st-msg">「${esc(s.msg)}」</span>` : ""}<span class="st-date">${fmtDate(s.ts)}</span></div>`).join("")}</div>`
+        : `<p class="hint">練習すると、スタンプがもらえます。先生からスタンプが届くこともあります。</p>`}
+        <p class="hint">自動でもらえるスタンプ：はじめての練習／1週間に3日・5日・7日練習／文法をマスター／全問正解／1週間以上あいてからの練習</p>
+      </section>
       <section class="panel">
         <h2>スタンプカード</h2>
         <p class="hint">その日に初めて練習すると、スタンプが1つもらえます。10個で1枚うまります。</p>
         <div class="slots wide">${slots}</div>
         <div class="rw-stats"><span>うめたカード <b>${rw.cards}</b>枚</span><span>練習した日 <b>${rw.days}</b>日</span><span>いまの連続 <b>${rw.streak}</b>日</span><span>最高の連続 <b>${rw.bestStreak}</b>日</span></div>
+      </section>
+      <section class="panel">
+        <h2>級・段 <small>けいけん値 ${rw.xp}</small></h2>
+        <div class="lv-row big"><span class="lv-chip">🥋 ${esc(lv.name)}</span><span class="lv-next">${lv.next ? `${esc(lv.next)}まで あと ${lv.nextAt - rw.xp}` : "最高の段位です！"}</span></div>
+        <div class="lv-bar"><i style="width:${pct(lv.progress)}%"></i></div>
+        <p class="hint">けいけん値は、練習1回 +5、正解1問 +2（段階1はポイント1つ +3）、合格 +20 でたまります。級が上がると、新しいキャラクターやアイテムが使えるようになります。</p>
+        <div class="lv-list">${LEVELS.map(([at, name], k) => `<span class="${k <= lv.index ? "got" : ""}">${esc(name)}<small>${at}</small></span>`).join("")}</div>
       </section>
       <section class="panel">
         <h2>バッジ <small>${rw.badges.size} / ${BADGES.length}</small></h2>
@@ -1239,20 +3097,47 @@ function renderRewards() {
     </main>`);
   bindBack(renderHome);
 }
-/* もらったスタンプ・バッジを順番に大きく表示する */
-function showGifts(list) {
+/* 先生から届いたスタンプを見せて、「見た」にする */
+function showTeacherStamps() {
+  const list = state.tstamps.filter((s) => !s.seen);
+  if (!list.length) return;
+  showGifts(list.map((s) => ({ html: stampArt(s.design, 170), title: "先生からスタンプが届きました！", text: (s.msg ? "「" + s.msg + "」" : "") + (s.by ? "　" + s.by : "") })), "うれしい！");
+  state.tstamps.forEach((s) => { s.seen = true; });
+  api.markStampsRead().catch(() => {});
+}
+/* もらったスタンプ・バッジなどを順番に大きく表示する */
+function showGifts(list, okLabel) {
   if (!list.length) return;
   const g = list[0];
   const ov = document.createElement("div");
   ov.className = "gift-overlay";
   ov.innerHTML = `<div class="gift" role="dialog" aria-live="assertive">
       <div class="confetti">${Array.from({ length: 18 }, (_, k) => `<i style="--k:${k}"></i>`).join("")}</div>
-      <div class="gift-big">${g.big}</div><div class="gift-title">${esc(g.title)}</div><div class="gift-text">${esc(g.text)}</div>
-      <button class="btn primary big" id="giftOk">やったね！</button></div>`;
+      ${g.html ? `<div class="gift-art">${g.html}</div>` : `<div class="gift-big">${g.big}</div>`}<div class="gift-title">${esc(g.title)}</div><div class="gift-text">${esc(g.text)}</div>
+      <button class="btn primary big" id="giftOk">${esc(okLabel || "やったね！")}</button></div>`;
   document.body.appendChild(ov);
-  const close = () => { ov.remove(); showGifts(list.slice(1)); };
+  const close = () => { ov.remove(); showGifts(list.slice(1), okLabel); };
   $("#giftOk", ov).onclick = close;
   ov.addEventListener("click", (e) => { if (e.target === ov) close(); });
+}
+/* 練習・交換などのあとに、新しくもらったものをお知らせする */
+function rewardGifts(before) {
+  const after = rewardState(state.history);
+  const gifts = [];
+  if (after.days > before.days) gifts.push({ big: "🐾", title: "今日のスタンプ！", text: after.onCard === 0 ? `スタンプカードが1枚うまりました（${after.cards}枚目）` : `スタンプカード ${after.onCard} / ${STAMPS_PER_CARD}` + (after.streak >= 2 ? `　🔥${after.streak}日連続` : "") });
+  if (after.level.index > before.level.index) gifts.push({ big: "🥋", title: `${after.level.name}に昇級！`, text: `けいけん値 ${after.xp}。新しいキャラクターやアイテムが使えるようになるかも！` });
+  const oldKeys = new Set(before.autoStamps.map((s) => s.key));
+  after.autoStamps.filter((s) => !oldKeys.has(s.key)).forEach((s) => gifts.push({ html: stampArt(s.design, 160), title: "スタンプをもらいました！", text: s.note }));
+  BADGES.filter((b) => after.badges.has(b.id) && !before.badges.has(b.id)).forEach((b) => gifts.push({ big: b.ico, title: "バッジ「" + b.name + "」", text: b.desc + "（+20pt）" }));
+  const newItems = AVATAR_SET.list.filter((it) => after.unlocked.has(it.id) && !before.unlocked.has(it.id) && !shopPrice(it.un));
+  const newThemes = THEMES.filter((t) => after.unlocked.has(t.id) && !before.unlocked.has(t.id) && !shopPrice(t.un));
+  if (newItems.length || newThemes.length) {
+    const av = state.profile.avatar || { b: "cat", bg: "bg_sky" };
+    gifts.push({ html: `<div class="gift-items">${newItems.slice(0, 6).map((it) => { const a = Object.assign({}, av, { [it.k]: it.id }); if (it.k === "b") delete a.mk; return avatarHTML(a, 72); }).join("")}${newThemes.map((t) => `<span class="swatch big" style="background:${t.c}"></span>`).join("")}</div>`,
+      title: "新しい着せ替えが使えるようになりました！", text: newItems.concat(newThemes).map((x) => x.name).join("、") });
+  }
+  showGifts(gifts);
+  return { gained: after.points.avail - before.points.avail, after };
 }
 
 /* ===== 項目ページ（4段階をえらぶ） ===== */
@@ -1486,12 +3371,8 @@ async function saveResult(r) {
     const prog = await api.saveResult(r);
     if (prog) state.progress = prog;
     state.history = state.history.concat([{ timestamp: new Date().toISOString(), itemId: r.itemId, stage: r.stage, score: r.score, total: r.total, passed: r.passed, tags: r.tags || [] }]);
-    if (el) { el.textContent = "記録しました"; el.classList.add("ok"); }
-    const after = rewardState(state.history);
-    const gifts = [];
-    if (after.days > before.days) gifts.push({ big: "🐾", title: "今日のスタンプ！", text: after.onCard === 0 ? `スタンプカードが1枚うまりました（${after.cards}枚目）` : `スタンプカード ${after.onCard} / ${STAMPS_PER_CARD}` + (after.streak >= 2 ? `　🔥${after.streak}日連続` : "") });
-    BADGES.filter((b) => after.badges.has(b.id) && !before.badges.has(b.id)).forEach((b) => gifts.push({ big: b.ico, title: "バッジ「" + b.name + "」", text: b.desc }));
-    showGifts(gifts);
+    const { gained, after } = rewardGifts(before);
+    if (el) { el.innerHTML = `記録しました　<span class="gain">けいけん値 +${after.xp - before.xp}${gained > 0 ? `　🪙 +${gained}pt` : ""}</span>`; el.classList.add("ok"); }
     const ci = $("#clearInfo");
     if (ci && r.passed) {
       const need = requiredPasses(r.stage), n = itemProg(r.itemId).passCount[r.stage - 1];
@@ -1713,6 +3594,10 @@ function renderSettings() {
         ${chk("confirm", s.confirmBeforeSubmit, "段階2・3で、聞き取った文を確認してから答える")}
         ${chk("auto4", s.autoSubmitStage4, "段階4は確認なしで自動で答える")}
         ${chk("tts4", s.ttsStage4, "段階4で日本語を読み上げる")}
+        <h2>ごほうび・ランキング</h2>
+        ${chk("showRank", s.showRanking, "ランキングを生徒に表示する（名前はニックネームで表示）")}
+        ${chk("autoSt", s.autoStamps !== false, "条件で自動のスタンプを出す（はじめての練習・週3日練習・マスターなど）")}
+        ${chk("omk", s.omikuji !== false, "おみくじ英文を使えるようにする")}
         <h2>段階1の聞き取り</h2>
         ${chk("eleven", s.sttStage1 === "elevenlabs", "ElevenLabs で文字起こしする（日本語と英語がまざっても聞き取れる）")}
         ${MODE === "demo" ? `<div class="row"><span>ElevenLabs APIキー<br><small>（お試しモード専用。この端末にだけ保存）</small></span><input type="password" id="elevenkey" value="${esc(lsGet("eg_eleven_key", ""))}" class="wide" autocomplete="off"></div>` : `<p class="hint">APIキーは Apps Script の「スクリプト プロパティ」（ELEVENLABS_API_KEY）で管理しています。${state.hasEleven ? "（設定済み）" : "（まだ設定されていません。設定されるまではブラウザの音声認識を使います）"}</p>`}
@@ -1743,7 +3628,10 @@ function renderSettings() {
       confirmBeforeSubmit: $("#confirm").checked,
       autoSubmitStage4: $("#auto4").checked,
       ttsStage4: $("#tts4").checked,
-      model: $("#model").value.trim() || DEFAULT_SETTINGS.model
+      model: $("#model").value.trim() || DEFAULT_SETTINGS.model,
+      showRanking: $("#showRank").checked,
+      autoStamps: $("#autoSt").checked,
+      omikuji: $("#omk").checked
     };
   };
   const keepKey = () => {
@@ -1777,7 +3665,7 @@ async function renderDashboard() {
   catch (e) { $("main").innerHTML = `<div class="msg ng">読み込めませんでした：${esc(e.message)}</div>`; return; }
   const head = CONTENT.map((it, i) => `<th title="${esc(it.title)}">${isAssigned(it.id) ? "★" : ""}${i + 1}<br><small>${esc(it.short)}</small></th>`).join("");
   const fmtD = (ts) => { const t = new Date(ts); return isNaN(t) ? "－" : `${t.getMonth() + 1}/${t.getDate()}`; };
-  const rows = (d.students || []).map((st) => `<tr><th class="name">${esc(String(st.email).split("@")[0])}</th><td>${st.days != null ? st.days + "日" : "－"}</td><td>${st.last ? fmtD(st.last) : "－"}</td>${CONTENT.map((it) => {
+  const rows = (d.students || []).map((st) => `<tr><th class="name">${esc(String(st.email).split("@")[0])}${st.nickname ? `<small> ${esc(st.nickname)}</small>` : ""}</th><td>${esc(st.level || "－")}</td><td>${st.days != null ? st.days + "日" : "－"}</td><td>${st.last ? fmtD(st.last) : "－"}</td>${CONTENT.map((it) => {
     const pc = (st.progress[it.id] && st.progress[it.id].passCount) || [0, 0, 0, 0];
     const lv = [1, 2, 3, 4].filter((k) => pc[k - 1] >= requiredPasses(k)).length;
     return `<td class="lv lv${lv}">${lv === 4 ? "マスター" : lv ? "段階" + lv : "－"}</td>`;
@@ -1786,7 +3674,7 @@ async function renderDashboard() {
   const recent = (d.recent || []).map((r) => `<tr><td>${esc(fmt(r.timestamp))}</td><td>${esc(String(r.email).split("@")[0])}</td><td>${esc((CONTENT.find((c) => c.id === r.itemId) || {}).short || r.itemId)}</td><td>段階${r.stage}</td><td>${r.score}/${r.total}</td><td>${r.passed ? "合格" : ""}</td></tr>`).join("");
   $("main").innerHTML = `
     <section class="panel"><h2>到達状況</h2><p class="hint">クリアした段階を表示しています（★は課題の項目）。</p>
-      <div class="table-wrap"><table class="dash"><thead><tr><th></th><th>練習<br><small>した日数</small></th><th>最後に<br><small>練習した日</small></th>${head}</tr></thead><tbody>${rows || `<tr><td colspan="${CONTENT.length + 3}">まだ記録がありません</td></tr>`}</tbody></table></div></section>
+      <div class="table-wrap"><table class="dash"><thead><tr><th></th><th>級・段</th><th>練習<br><small>した日数</small></th><th>最後に<br><small>練習した日</small></th>${head}</tr></thead><tbody>${rows || `<tr><td colspan="${CONTENT.length + 4}">まだ記録がありません</td></tr>`}</tbody></table></div></section>
     <section class="panel"><h2>最近の記録</h2>
       <div class="table-wrap"><table class="recent"><thead><tr><th>日時</th><th>生徒</th><th>項目</th><th>段階</th><th>得点</th><th></th></tr></thead><tbody>${recent || `<tr><td colspan="6">まだ記録がありません</td></tr>`}</tbody></table></div></section>
     ${MODE === "demo" ? `<div class="btn-row"><button class="btn danger" id="clear">この端末の記録を消す</button></div><div class="msg" id="clearMsg"></div>` : ""}`;
@@ -1797,6 +3685,99 @@ async function renderDashboard() {
       lsSet("eg_results", []); state.progress = {}; state.history = []; renderDashboard();
     };
   }
+}
+
+/* ===== 生徒一覧（先生用） ===== */
+async function renderStudents() {
+  render(`${header("生徒一覧", true)}<main class="wrap"><div class="judging"><span class="spinner"></span>読み込んでいます…</div></main>`);
+  bindBack(renderHome);
+  let d;
+  try { d = await api.students(); }
+  catch (e) { $("main").innerHTML = `<div class="msg ng">読み込めませんでした：${esc(e.message)}</div>`; return; }
+  const list = d.students || [];
+  $("main").innerHTML = `<section class="panel"><h2>生徒一覧 <small>${list.length}人</small></h2>
+    <p class="hint">一度でもアプリを開いた生徒が表示されます。ふさわしくないニックネームは［消す］で消せます（生徒はまた付け直せます）。</p>
+    <div class="table-wrap"><table class="people"><thead><tr><th></th><th class="name">生徒</th><th>ニックネーム</th><th>級・段</th><th>けいけん値</th><th>ポイント</th><th>練習した日</th><th>最後</th></tr></thead><tbody>
+    ${list.map((p) => `<tr><td>${avatarHTML(p.avatar, 34)}</td><th class="name">${esc(String(p.email).split("@")[0])}</th>
+      <td>${p.nickname ? `${esc(p.nickname)} <button class="link-btn small" data-clear="${esc(p.email)}">消す</button>` : `<span class="hint">なし</span>`}</td>
+      <td>${esc(p.level || "")}</td><td>${p.xp || 0}</td><td>${p.avail || 0}</td><td>${p.days || 0}日</td><td>${p.last ? fmtDate(p.last) : "－"}</td></tr>`).join("") || `<tr><td colspan="8">まだ生徒がいません</td></tr>`}
+    </tbody></table></div><div class="msg" id="pplMsg"></div></section>`;
+  $$("[data-clear]").forEach((b) => (b.onclick = async () => {
+    if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "本当に消す"; return; }
+    try { await api.updateStudent({ email: b.dataset.clear, nickname: "" }); renderStudents(); }
+    catch (e) { const m = $("#pplMsg"); m.textContent = e.message; m.className = "msg ng"; }
+  }));
+}
+
+/* ===== 先生スタンプ（作って送る） ===== */
+const STAMP_COLORS = ["#e03131", "#e64980", "#f76707", "#f08c00", "#2b8a3e", "#1971c2", "#7048e8", "#495057"];
+async function renderTeacherStamps() {
+  const SS = window.StampSet || { list: [] };
+  const choices = SS.list.filter((d) => d.k !== "lv").sort((a, b) => (a.rules ? 1 : 0) - (b.rules ? 1 : 0));
+  const st = { mode: "pick", design: { id: (choices[0] || {}).id }, make: { a: "cat", t: "よくできました", c: "#e03131", po: "banzai", ex: "sparkle", cr: false }, to: new Set(), all: false, msg: "", students: null, sent: null };
+  render(`${header("先生スタンプ", true)}<main class="wrap"><div class="judging"><span class="spinner"></span>読み込んでいます…</div></main>`);
+  bindBack(renderHome);
+  try { const [a, b] = await Promise.all([api.students(), api.sentStamps()]); st.students = a.students || []; st.sent = b.stamps || []; }
+  catch (e) { $("main").innerHTML = `<div class="msg ng">読み込めませんでした：${esc(e.message)}</div>`; return; }
+  const cur = () => (st.mode === "make" ? { make: Object.assign({}, st.make) } : st.design);
+  function draw() {
+    const A = window.Art || { SPECIES: {}, POSES: {}, EXPRS: {} };
+    const designBox = st.mode === "pick"
+      ? `<div class="stamp-pick">${choices.map((d) => `<button class="stamp-opt ${st.design.id === d.id ? "active" : ""}" data-sid="${d.id}">${stampArt(d.id, 78)}</button>`).join("")}</div>`
+      : `<div class="maker-form">
+          <label>キャラクター<select id="mkA">${Object.keys(A.SPECIES).map((k) => `<option value="${k}" ${st.make.a === k ? "selected" : ""}>${esc(A.SPECIES[k].name || k)}</option>`).join("")}</select></label>
+          <label>ポーズ<select id="mkPo">${Object.keys(A.POSES).map((k) => `<option value="${k}" ${st.make.po === k ? "selected" : ""}>${esc(A.POSES[k])}</option>`).join("")}</select></label>
+          <label>表情<select id="mkEx">${Object.keys(A.EXPRS).map((k) => `<option value="${k}" ${st.make.ex === k ? "selected" : ""}>${esc(A.EXPRS[k])}</option>`).join("")}</select></label>
+          <label>ことば（12文字まで）<input type="text" id="mkT" maxlength="12" value="${esc(st.make.t)}"></label>
+          <div class="mk-row"><div class="mk-label">ことばの色</div><div class="mk-opts">${STAMP_COLORS.map((c) => `<button type="button" class="mk-color ${st.make.c === c ? "active" : ""}" data-col="${c}" style="background:${c}" aria-label="色"></button>`).join("")}</div></div>
+          <label class="check"><input type="checkbox" id="mkCr" ${st.make.cr ? "checked" : ""}> 王冠をつける</label>
+        </div>`;
+    const people = st.students.map((p) => `<label class="person ${st.to.has(p.email) ? "on" : ""}"><input type="checkbox" data-to="${esc(p.email)}" ${st.to.has(p.email) || st.all ? "checked" : ""} ${st.all ? "disabled" : ""}>${avatarHTML(p.avatar, 30)}<span>${esc(String(p.email).split("@")[0])}${p.nickname ? `<small>${esc(p.nickname)}</small>` : ""}</span></label>`).join("");
+    $("main").innerHTML = `
+      <section class="panel"><h2>1. スタンプをえらぶ・つくる</h2>
+        <div class="seg"><button data-m="pick" class="${st.mode === "pick" ? "on" : ""}">えらぶ</button><button data-m="make" class="${st.mode === "make" ? "on" : ""}">つくる</button></div>
+        <div class="stamp-editor"><div class="stamp-preview">${stampArt(cur(), 150)}</div>${designBox}</div></section>
+      <section class="panel"><h2>2. 送る相手</h2>
+        <label class="check"><input type="checkbox" id="toAll" ${st.all ? "checked" : ""}> 全員に送る（${st.students.length}人）</label>
+        <div class="people-pick">${people || `<p class="hint">まだ生徒がいません（一度アプリを開いた生徒が表示されます）。</p>`}</div></section>
+      <section class="panel"><h2>3. ひとこと（なくてもOK）</h2>
+        <input type="text" class="full" id="stMsg" maxlength="60" value="${esc(st.msg)}" placeholder="例：毎日よくがんばっていますね！">
+        <div class="btn-row"><button class="btn primary big" id="sendSt">💌 スタンプを送る</button></div><div class="msg" id="stMsgOut"></div>
+        <p class="hint">送ったスタンプは、生徒が次にアプリを開いたときに表示されます。スタンプ1つにつき生徒に +10pt。</p></section>
+      <section class="panel"><h2>送ったスタンプ</h2>
+        ${st.sent.length ? `<div class="sent-list">${st.sent.slice(0, 40).map((s) => `<div class="sent-row">${stampArt(s.design, 56)}<div><b>${fmtDate(s.ts)}</b> ${s.to.length > 3 ? `${s.to.length}人` : s.to.map((e) => esc(String(e).split("@")[0])).join("、")}${s.msg ? `<div class="hint">「${esc(s.msg)}」</div>` : ""}<div class="hint">見た人 ${s.seen} / ${s.to.length}</div></div></div>`).join("")}</div>` : `<p class="hint">まだ送っていません。</p>`}</section>
+      <p class="hint">自動のスタンプ（はじめての練習・週3日練習など）は、管理者設定でオン・オフできます。</p>`;
+    $$(".seg button[data-m]").forEach((b) => (b.onclick = () => { st.mode = b.dataset.m; draw(); }));
+    $$("[data-sid]").forEach((b) => (b.onclick = () => { st.design = { id: b.dataset.sid }; draw(); }));
+    const upd = () => { $(".stamp-preview").innerHTML = stampArt(cur(), 150); };
+    if ($("#mkA")) {
+      $("#mkA").onchange = (e) => { st.make.a = e.target.value; upd(); };
+      $("#mkPo").onchange = (e) => { st.make.po = e.target.value; upd(); };
+      $("#mkEx").onchange = (e) => { st.make.ex = e.target.value; upd(); };
+      $("#mkT").oninput = (e) => { st.make.t = e.target.value; upd(); };
+      $("#mkCr").onchange = (e) => { st.make.cr = e.target.checked; upd(); };
+      $$("[data-col]").forEach((b) => (b.onclick = () => { st.make.c = b.dataset.col; draw(); }));
+    }
+    $("#toAll").onchange = (e) => { st.all = e.target.checked; draw(); };
+    $$("[data-to]").forEach((c) => (c.onchange = () => { if (c.checked) st.to.add(c.dataset.to); else st.to.delete(c.dataset.to); c.closest(".person").classList.toggle("on", c.checked); }));
+    $("#stMsg").oninput = (e) => { st.msg = e.target.value; };
+    $("#sendSt").onclick = async (e) => {
+      const m = $("#stMsgOut");
+      const to = st.all ? "all" : Array.from(st.to);
+      if (to !== "all" && !to.length) { m.textContent = "送る相手をえらんでください。"; m.className = "msg ng"; return; }
+      if (st.mode === "make" && !st.make.t.trim()) { m.textContent = "ことばを入れてください。"; m.className = "msg ng"; return; }
+      e.target.disabled = true;
+      try {
+        const r = await api.sendStamp({ to, design: cur(), message: st.msg.trim() });
+        const b = await api.sentStamps(); st.sent = b.stamps || [];
+        if (MODE === "demo") state.tstamps = lsGet("eg_tstamps", []);
+        st.to.clear(); st.all = false; st.msg = "";
+        draw();
+        const m2 = $("#stMsgOut"); m2.textContent = `${r.sent}人にスタンプを送りました 💌`; m2.className = "msg ok";
+      } catch (err) { m.textContent = "送れませんでした：" + err.message; m.className = "msg ng"; e.target.disabled = false; }
+    };
+  }
+  draw();
 }
 
 /* ---------- ログイン（本番のとき） ---------- */
@@ -1826,6 +3807,8 @@ async function init() {
     state.progress = b.progress || {};
     state.history = b.history || [];
     state.hasEleven = !!b.hasEleven;
+    state.profile = Object.assign({}, DEFAULT_PROFILE, b.profile || {});
+    state.tstamps = b.tstamps || [];
     renderHome();
   } catch (e) {
     if (e instanceof AuthError) return renderLogin(e.message);
