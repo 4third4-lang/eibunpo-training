@@ -589,6 +589,81 @@ table.sets td, table.sets th { vertical-align: top; }
 .cls-checks .check { margin: 0; }
 table.dash th.mcol, table.dash td.mcol { border-left: 2px solid var(--gold); }
 
+/* ===== 現在地（ホーム） ===== */
+.me-av.ringed { position: relative; }
+.me-av .ring-wrap { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); pointer-events: none; }
+.pos-line { font-size: 14px; color: var(--muted); margin: 2px 0; }
+.pos-line b { font-size: 20px; color: var(--orange); }
+.next-goal { display: flex; align-items: center; gap: 8px; width: 100%; margin-top: 10px; padding: 10px 12px; border-radius: 12px; border: 1px dashed var(--orange); background: var(--orange-soft); color: var(--ink); font: inherit; text-align: left; flex-wrap: wrap; }
+.next-goal.done { justify-content: center; font-weight: 700; }
+.ng-label { font-size: 12px; font-weight: 800; color: #fff; background: var(--orange); border-radius: 999px; padding: 2px 8px; }
+.ng-text { font-weight: 700; flex: 1; min-width: 140px; }
+.ng-gain { font-size: 13px; color: var(--orange); font-weight: 800; }
+.ng-go { color: var(--orange); font-weight: 900; }
+
+/* ===== ストーリーモード ===== */
+.story-card { display: flex; gap: 12px; align-items: center; width: 100%; text-align: left; margin: 12px 0; padding: 12px 14px; border-radius: 18px; border: 2px solid #5f3dc4; background: linear-gradient(135deg, #2b1f5c, #4c2f9e); color: #fff; box-shadow: var(--shadow); font: inherit; }
+.sc-art { flex: none; background: rgba(255,255,255,.12); border-radius: 14px; padding: 4px; }
+.sc-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
+.sc-title { font-weight: 900; font-size: 17px; }
+.sc-title small { display: block; font-size: 12px; opacity: .8; font-weight: 600; }
+.sc-text { font-size: 14px; }
+.sc-bar { height: 8px; border-radius: 999px; background: rgba(255,255,255,.2); overflow: hidden; }
+.sc-bar i { display: block; height: 100%; background: linear-gradient(90deg, #ffd43b, #f08a24); }
+.sc-sub { font-size: 12px; opacity: .85; }
+.sc-goal { font-size: 13px; font-weight: 700; background: #fff3bf; color: #5c3d00; border-radius: 8px; padding: 4px 8px; }
+.sc-goal.ok { background: #d3f9d8; color: #1b5e20; }
+.sc-goal.ng { background: #ffe3e3; color: #a51111; }
+.wrap.story .story-head { text-align: center; padding: 14px; border-radius: 18px; background: linear-gradient(135deg, #2b1f5c, #4c2f9e); color: #fff; margin-bottom: 12px; }
+.sh-title { font-size: 22px; font-weight: 900; letter-spacing: .05em; }
+.sh-sub { font-size: 14px; opacity: .9; margin: 4px 0 8px; }
+.story-head .btn { background: rgba(255,255,255,.15); color: #fff; border-color: rgba(255,255,255,.35); }
+.battle-card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px; text-align: center; box-shadow: var(--shadow); margin-bottom: 12px; }
+.battle-card.win { border: 2px solid var(--gold); background: linear-gradient(180deg, #fff9db, var(--surface)); }
+.battle-card h2 { margin: 4px 0 8px; }
+.bc-kingdom { font-size: 13px; color: var(--muted); }
+.bc-monster { display: flex; justify-content: center; }
+.bc-monster.shake { animation: mshake 1.2s ease-in-out infinite; }
+@keyframes mshake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-4px) rotate(-2deg); } 75% { transform: translateX(4px) rotate(2deg); } }
+.bc-name { font-weight: 900; font-size: 18px; color: #5f3dc4; }
+.hp { display: flex; align-items: center; gap: 8px; justify-content: center; margin: 8px auto; max-width: 320px; }
+.hp-bar { flex: 1; height: 12px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.hp-bar i { display: block; height: 100%; background: linear-gradient(90deg, #fa5252, #ff922b); transition: width .4s; }
+.need-list { display: grid; gap: 6px; margin-top: 6px; }
+.need { display: flex; justify-content: space-between; gap: 8px; padding: 9px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); font: inherit; text-align: left; }
+.restored { margin-top: 8px; padding: 10px; border-radius: 12px; background: var(--accent-soft); text-align: left; }
+.restored svg { float: left; margin-right: 8px; }
+.battle-bar { display: flex; align-items: center; gap: 8px; max-width: 760px; margin: 4px auto 0; padding: 4px 16px; }
+.bb-name { font-weight: 800; font-size: 13px; color: #5f3dc4; white-space: nowrap; }
+.continent { position: relative; border-radius: 18px; padding: 12px; margin-bottom: 12px; background: linear-gradient(180deg, var(--cs), var(--surface)); border: 2px solid var(--cc); overflow: hidden; }
+:root[data-theme="dark"] .continent, .continent { color: #1d2433; }
+.continent h2 { margin: 0; color: var(--cc); }
+.continent .hint { color: #5f687c; }
+.kmap { display: grid; grid-template-columns: repeat(auto-fill, minmax(58px, 1fr)); gap: 8px; margin-top: 8px; }
+.kn { position: relative; display: flex; flex-direction: column; align-items: center; padding: 4px 2px; border-radius: 12px; border: 1px solid rgba(0,0,0,.08); background: rgba(255,255,255,.7); font: inherit; color: #1d2433; }
+.kn.cur { background: #fff; border: 2px solid #f08a24; box-shadow: 0 0 0 4px rgba(240,138,36,.25); animation: glow 1.6s ease-in-out infinite; }
+@keyframes glow { 50% { box-shadow: 0 0 0 8px rgba(240,138,36,.12); } }
+.kn.lock { opacity: .6; }
+.kn-no { font-size: 11px; font-weight: 800; }
+.kn-peers { position: absolute; right: -4px; top: -6px; display: flex; }
+.kn-peers .avatar-svg { margin-left: -6px; border: 1px solid #fff; border-radius: 50%; }
+.kn-peers small { font-size: 10px; background: #fff; border-radius: 6px; padding: 0 2px; }
+.continent.fog .kmap { filter: blur(3px) grayscale(.7); }
+.fog-cover { position: absolute; inset: 60px 0 0 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-weight: 800; color: #495057; background: rgba(241,243,245,.55); }
+.chapter-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.ch { display: flex; gap: 10px; align-items: center; width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); font: inherit; text-align: left; }
+.ch.lock { opacity: .6; }
+.ch-no { font-weight: 900; color: #5f3dc4; min-width: 56px; }
+.chapter { background: #fffdf5; color: #2b2118; border: 1px solid #e9dcc0; border-radius: 16px; padding: 18px 18px 20px; box-shadow: var(--shadow); line-height: 1.95; font-size: 17px; }
+.chapter h2 { margin-top: 0; color: #5f3dc4; }
+.dist { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; align-items: end; height: 140px; margin: 8px 0; }
+.dist-col { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; }
+.dist-col i { display: block; width: 100%; background: linear-gradient(180deg, #ffd43b, #f08a24); border-radius: 6px 6px 0 0; min-height: 2px; }
+.dist-col small { font-size: 10px; color: var(--muted); }
+.dist-n { font-size: 12px; font-weight: 800; }
+.story-goal-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px 10px; margin: 6px 0; border-radius: 12px; background: var(--accent-soft); }
+.story-goal-row select { font: inherit; font-size: 14px; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); max-width: 100%; }
+
 </style>
 </head>
 <body>
@@ -2029,6 +2104,8 @@ const DEFAULT_SETTINGS = {
   assigned: null,          // 先生が選んだ「課題」の項目ID（null = すべて課題）
   due: {},                 // 課題の締め切り {項目ID: "YYYY-MM-DD"}
   src: {},                 // 課題の問題 {項目ID: 問題セットID}（なし＝アプリの問題）
+  story: { on: true, num: 10, pass: 0.8, peers: true }, // ストーリーモード（とどめの問題数・合格ライン・仲間のアバターを地図に出す）
+  storyGoal: null,         // ストーリーモードの課題 {upto: 文法ID, due: "YYYY-MM-DD"}
   masters: [],             // マスターモード [{id, name, items:[項目ID], num:問題数, pass:合格ライン, classes:[クラス]（空＝全クラス）}]
   classTasks: {},          // クラスごとの課題・締め切り {クラス: {assigned, due}}
   sttStage1: "elevenlabs", // 段階1の聞き取り: "elevenlabs"（録音して文字起こし）/ "browser"（ブラウザの音声認識）
@@ -2341,7 +2418,7 @@ function openMistakes(records) {
 function settingsForClass(settings, cls) {
   const s = Object.assign({}, settings || {});
   const ct = s.classTasks && cls ? s.classTasks[cls] : null;
-  if (ct) { s.assigned = ct.assigned === undefined ? s.assigned : ct.assigned; s.due = ct.due || {}; s.src = ct.src || {}; }
+  if (ct) { s.assigned = ct.assigned === undefined ? s.assigned : ct.assigned; s.due = ct.due || {}; s.src = ct.src || {}; s.storyGoal = ct.storyGoal || null; }
   s.due = s.due || {};
   s.src = s.src || {}; // 課題の問題：{項目ID: 問題セットID}（なければアプリの問題）
   return s;
@@ -2372,6 +2449,12 @@ function dueState(due, mastered, now) {
 function mastersDone(history) {
   const s = {};
   (history || []).forEach((r) => { if (r.itemId === "master" && r.passed) (r.tags || []).forEach((t) => { if (/^m:/.test(t)) s[t.slice(2)] = 1; }); });
+  return Object.keys(s);
+}
+/* ストーリーモード：とりもどした王国（文法ID） */
+function storyDone(history) {
+  const s = {};
+  (history || []).forEach((r) => { if (r.itemId === "story" && r.passed) (r.tags || []).forEach((t) => { if (/^s:/.test(t)) s[t.slice(2)] = 1; }); });
   return Object.keys(s);
 }
 function mastersFor(settings, cls, all) {
@@ -3139,6 +3222,7 @@ function renderHome() {
     }).join("") : "");
   const rw = rewardState(state.history);
   const nx = nextStep();
+  const posNow = positionOf(state.progress);
   const pf = state.profile, lv = rw.level;
   const unread = state.tstamps.filter((s) => !s.seen).length;
   const omToday = pf.omLast === dayKey(Date.now());
@@ -3157,9 +3241,10 @@ function renderHome() {
       ${soon.length ? `<div class="notice due-notice">⏰ 締め切りが近い（または過ぎた）課題が ${soon.length}つ あります。下の「課題」を見てみよう。</div>` : ""}
       <section class="me-card">
         <div class="me-top">
-          <button class="me-av" id="meAv" aria-label="アバターを着せ替える">${avatarHTML(pf.avatar, 78)}<span class="av-edit" aria-hidden="true">✏️</span></button>
+          <button class="me-av ringed" id="meAv" aria-label="アバターを着せ替える"><span class="ring-wrap">${positionRing(posNow, 98)}</span>${avatarHTML(pf.avatar, 78)}<span class="av-edit" aria-hidden="true">✏️</span></button>
           <div class="me-info">
             <div class="me-hello">${esc(myName())} さん</div>
+            <div class="pos-line" title="すべての文法をマスターすると100">現在地 <b>${posNow.toFixed(1)}</b><small> / 100</small></div>
             <div class="lv-row"><span class="lv-chip">🥋 ${esc(lv.name)}</span><span class="lv-next">${lv.next ? `${esc(lv.next)}まで あと ${lv.nextAt - rw.xp}` : "最高の段位です！"}</span></div>
             <div class="lv-bar" title="けいけん値 ${rw.xp}"><i style="width:${pct(lv.progress)}%"></i></div>
           </div>
@@ -3174,12 +3259,10 @@ function renderHome() {
           <span class="sc-head"><span>スタンプカード${rw.cards ? `（${rw.cards}枚うめた）` : ""}</span><span class="sc-more">${rw.todayDone ? "今日のスタンプ ゲット！" : "今日も1回練習しよう"}</span></span>
           <span class="slots">${slots}</span>
         </button>
+        ${nextGoalHTML()}
       </section>
+      ${storyCardHTML()}
       <nav class="quick-grid">${menu.map(([id, ico, label, note]) => `<button class="quick" id="${id}"><span class="q-ico">${ico}</span><span class="q-label">${label}</span>${note ? `<span class="q-note ${note === "NEW" ? "new" : ""}">${note}</span>` : ""}</button>`).join("")}</nav>
-      ${nx ? `<section class="next-card"><div class="next-label">今日のおすすめ</div>
-        <div class="next-body"><span class="stage-no s${nx.stage}">段階${nx.stage}</span><span class="next-title">${esc(nx.it.title)}<small>${STAGE_NAMES[nx.stage - 1]}</small></span></div>
-        <button class="btn primary big" id="goNext">はじめる</button></section>`
-      : `<section class="next-card done"><div class="next-label">すごい！</div><div class="next-title">すべての文法をマスターしました 🎉</div></section>`}
       <p class="lead">文法の項目をえらぼう。段階1〜4をすべてクリアすると、その文法はマスターです。</p>
       <div class="items">${cards}</div>
       <div class="home-links">
@@ -3190,6 +3273,7 @@ function renderHome() {
   bindBack(null);
   $$(".item-card").forEach((b) => (b.onclick = () => renderItem(+b.dataset.i)));
   $$(".master-card").forEach((b) => (b.onclick = () => renderMaster(b.dataset.m)));
+  if ($("#toStory")) $("#toStory").onclick = () => renderStory();
   $("#meAv").onclick = () => renderAvatar("b");
   $("#toAvatar").onclick = () => renderAvatar("b");
   $("#toShop").onclick = renderShop;
@@ -3854,9 +3938,9 @@ function startQuiz(i, stage) {
 
 function quizHeader() {
   const { stage, qs, index, i } = session;
-  return `${header(session.master ? "まとめ問題" : session.review ? "復習" : `段階${stage}　${CONTENT[i].short}`, true)}
-    <div class="progress"><div class="progress-bar s${session.review || session.master ? 3 : stage}" style="width:${(index / qs.length) * 100}%"></div></div>
-    <div class="progress-text">${index + 1} / ${qs.length}</div>`;
+  return `${header(session.story ? "とどめの一撃" : session.master ? "まとめ問題" : session.review ? "復習" : `段階${stage}　${CONTENT[i].short}`, true)}
+    <div class="progress"><div class="progress-bar s${session.review || session.master || session.story ? 3 : stage}" style="width:${(index / qs.length) * 100}%"></div></div>
+    <div class="progress-text">${index + 1} / ${qs.length}</div>${session.story ? storyBattleBar() : ""}`;
 }
 
 function renderStage4Intro() {
@@ -3906,12 +3990,12 @@ function renderQuestion() {
   const stage = q._st || session.stage; // 復習では問題ごとに段階がちがう
   render(`${quizHeader()}
     <main class="wrap">
-      ${session.review || session.master ? `<div class="review-tag">${esc(q._from || "")}</div>` : ""}
+      ${session.review || session.master || session.story ? `<div class="review-tag">${esc(q._from || "")}</div>` : ""}
       ${questionCard(q, stage)}
       ${answerBlock({ lang: "en-US", placeholder: stage === 4 ? "聞き取り中に英語で言おう" : "マイクをタップして英語で言おう", multiline: false })}
       <div id="result"></div>
     </main>`);
-  bindBack(() => (session.master ? renderMaster(session.master.id) : session.review ? renderReview() : renderItem(session.i)));
+  bindBack(() => (session.story ? renderStory() : session.master ? renderMaster(session.master.id) : session.review ? renderReview() : renderItem(session.i)));
 
   let shownAt = 0, latency = null;
   const limit = state.settings.stage4.timeLimitSec;
@@ -3989,6 +4073,7 @@ async function judgeQuestion(q, ans, via, latency, ctl) {
 async function renderQuizResult() {
   if (session.review) return renderReviewResult();
   if (session.master) return renderMasterResult();
+  if (session.story) return renderStoryResult();
   const { i, stage, log } = session;
   const it = CONTENT[i];
   const conf = state.settings["stage" + stage];
@@ -4192,8 +4277,8 @@ function masterTable(sum) {
 function renderSettings() {
   const s = state.rawSettings;
   // 課題と締め切り（"" = 全クラス共通、ほかはクラスごと）
-  const tasks = { "": { assigned: s.assigned, due: Object.assign({}, s.due || {}), src: Object.assign({}, s.src || {}) } };
-  Object.keys(s.classTasks || {}).forEach((c) => { tasks[c] = { assigned: s.classTasks[c].assigned, due: Object.assign({}, s.classTasks[c].due || {}), src: Object.assign({}, s.classTasks[c].src || {}), own: true }; });
+  const tasks = { "": { assigned: s.assigned, due: Object.assign({}, s.due || {}), src: Object.assign({}, s.src || {}), storyGoal: s.storyGoal || null } };
+  Object.keys(s.classTasks || {}).forEach((c) => { tasks[c] = { assigned: s.classTasks[c].assigned, due: Object.assign({}, s.classTasks[c].due || {}), src: Object.assign({}, s.classTasks[c].src || {}), storyGoal: s.classTasks[c].storyGoal || null, own: true }; });
   const classes = Array.from(new Set((state.classes || []).concat(Object.keys(s.classTasks || {})))).filter(Boolean).sort();
   let taskCls = "";
   const num = (id, v, min, max, step, unit) => `<span class="num-in"><input type="number" id="${id}" value="${v}" min="${min}" max="${max}" step="${step || 1}">${unit || ""}</span>`;
@@ -4205,6 +4290,12 @@ function renderSettings() {
         ${classes.length ? `<div class="row"><span>設定するクラス</span><select id="taskCls"><option value="">全クラス共通</option>${classes.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join("")}</select></div>` : ""}
         <div id="taskBox"></div>
         <p class="hint">チェックした項目が生徒の画面の「課題」に、それ以外は「自由練習」に表示されます。締め切りまでに段階1〜4をすべてクリア（マスター）するのが目標です。締め切りは空欄でもかまいません。</p>
+        <h2>ストーリーモード</h2>
+        <p class="hint">生徒が自分で進める冒険（王国＝文法の順番）。その王国の文法と、それまでの文法をすべてマスターしたあと、「とどめの一撃」（その文法とそれまでの文法がまざった問題）に合格すると王国がもどり、物語の続きが読めます。課題にするときは、上の「ストーリーモードの課題」で王国と締め切りを選びます。</p>
+        ${chk("stOn", (s.story || {}).on !== false, "ストーリーモードを使う")}
+        ${chk("stPeers", (s.story || {}).peers !== false, "地図に、同じクラスの仲間のアバター（名前なし）を出す")}
+        <div class="row"><span>とどめの一撃の問題数</span>${num("stNum", (s.story || {}).num || 10, 3, 30, 1, "問")}</div>
+        <div class="row"><span>とどめの一撃の合格ライン</span>${num("stPass", pct((s.story || {}).pass || 0.8), 10, 100, 5, "%")}</div>
         <h2>マスターモード</h2>
         <p class="hint">選んだ文法をすべてマスターしたあと、それらをまとめた問題（段階2の問題と、制限時間のある段階4の問題がランダムにまざる）に合格すると成功です。まとめ問題はアプリの問題から出します（PDF・Word の問題とは別の問題になります）。成功するたびに、新しいアバターがもらえます。文法を1つも選んでいないマスターモードは保存されません。</p>
         <div id="masterBox"></div>
@@ -4258,6 +4349,8 @@ function renderSettings() {
     t.assigned = on.length === CONTENT.length ? null : on;
     t.due = {}; CONTENT.forEach((it) => { const v = $("#du_" + it.id).value; if (v && on.includes(it.id)) t.due[it.id] = v; });
     t.src = {}; CONTENT.forEach((it) => { const v = ($("#sr_" + it.id) || {}).value; if (v && v !== "new" && on.includes(it.id)) t.src[it.id] = v; });
+    const up = ($("#sgUpto") || {}).value || "";
+    t.storyGoal = up ? { upto: up, due: ($("#sgDue") || {}).value || "" } : null;
   };
   const drawTasks = () => {
     const own = !taskCls || (tasks[taskCls] && tasks[taskCls].own);
@@ -4271,6 +4364,8 @@ function renderSettings() {
         <label class="due-in">締め切り <input type="date" id="du_${it.id}" value="${esc(a ? (t.due || {})[it.id] || "" : "")}" ${own && a ? "" : "disabled"}></label></span></div>`;
     };
     $("#taskBox").innerHTML = (taskCls ? `<label class="check"><input type="checkbox" id="ownTask" ${own ? "checked" : ""}> ${esc(taskCls)} だけの課題・締め切りにする（オフのときは全クラス共通と同じ）</label>` : "") +
+      `<div class="story-goal-row"><span>📖 ストーリーモードの課題</span><select id="sgUpto" ${own ? "" : "disabled"}><option value="">なし</option>${CONTENT.map((it, k) => `<option value="${esc(it.id)}" ${t.storyGoal && t.storyGoal.upto === it.id ? "selected" : ""}>第${k + 1}の王国「${esc(kingdomOf(it).name)}」まで（${esc(it.short)}）</option>`).join("")}</select>
+        <label class="due-in">締め切り <input type="date" id="sgDue" value="${esc((t.storyGoal && t.storyGoal.due) || "")}" ${own ? "" : "disabled"}></label></div>` +
       `<p class="hint">「問題を自動作成」はアプリに入っている問題、📄 は PDF・Word から作った問題です（段階1のルール説明は、どちらも同じです）。</p>` +
       `<div class="task-table ${own ? "" : "off"}">${GRADES.map((g) => {
         const list = CONTENT.filter((it) => gradeOf(it) === g);
@@ -4335,11 +4430,11 @@ function renderSettings() {
   };
   drawMasters();
   $("#addMaster").onclick = () => { readMasters(); masters.push({ id: newMid(), name: "マスターモード" + (masters.length + 1), items: [], num: 20, pass: 0.8, classes: [] }); drawMasters(); };
-  if ($("#taskCls")) $("#taskCls").onchange = (e) => { readTasks(); taskCls = e.target.value; if (!tasks[taskCls]) tasks[taskCls] = { assigned: tasks[""].assigned, due: Object.assign({}, tasks[""].due), src: Object.assign({}, tasks[""].src), own: false }; drawTasks(); };
+  if ($("#taskCls")) $("#taskCls").onchange = (e) => { readTasks(); taskCls = e.target.value; if (!tasks[taskCls]) tasks[taskCls] = { assigned: tasks[""].assigned, due: Object.assign({}, tasks[""].due), src: Object.assign({}, tasks[""].src), storyGoal: tasks[""].storyGoal, own: false }; drawTasks(); };
   const collect = () => {
     readTasks();
     const classTasks = {};
-    Object.keys(tasks).filter((c) => c && tasks[c].own).forEach((c) => { classTasks[c] = { assigned: tasks[c].assigned, due: tasks[c].due, src: tasks[c].src || {} }; });
+    Object.keys(tasks).filter((c) => c && tasks[c].own).forEach((c) => { classTasks[c] = { assigned: tasks[c].assigned, due: tasks[c].due, src: tasks[c].src || {}, storyGoal: tasks[c].storyGoal || null }; });
     const v = (id) => parseFloat($("#" + id).value);
     const clampR = (x) => Math.min(1, Math.max(0.1, (isNaN(x) ? 80 : x) / 100));
     const clampN = (x) => Math.min(30, Math.max(1, Math.round(isNaN(x) ? 10 : x)));
@@ -4349,7 +4444,8 @@ function renderSettings() {
       stage2: { numQuestions: clampN(v("s2n")), passRatio: clampR(v("s2p")), requiredPasses: clampP(v("r2")) },
       stage3: { numQuestions: clampN(v("s3n")), passRatio: clampR(v("s3p")), requiredPasses: clampP(v("r3")) },
       stage4: { numQuestions: clampN(v("s4n")), passRatio: clampR(v("s4p")), timeLimitSec: Math.min(30, Math.max(1, isNaN(v("s4t")) ? 5 : v("s4t"))), requiredPasses: clampP(v("r4")) },
-      assigned: tasks[""].assigned, due: tasks[""].due, src: tasks[""].src || {}, classTasks,
+      assigned: tasks[""].assigned, due: tasks[""].due, src: tasks[""].src || {}, storyGoal: tasks[""].storyGoal || null, classTasks,
+      story: { on: $("#stOn").checked, peers: $("#stPeers").checked, num: Math.max(3, Math.min(30, Math.round(parseFloat($("#stNum").value) || 10))), pass: Math.min(1, Math.max(0.1, (parseFloat($("#stPass").value) || 80) / 100)) },
       masters: readMasters().filter((m) => m.items.length).map((m) => ({ id: m.id, name: m.name, items: m.items, num: m.num, pass: m.pass, classes: m.classes })), rosterOnly: $("#rosterOnly").checked,
       sttStage1: $("#eleven").checked ? "elevenlabs" : "browser",
       lockProgression: $("#lock").checked,
@@ -4462,7 +4558,13 @@ async function renderDashboard(cls) {
   if (!cols.length) cols = CONTENT.filter((it) => gradeOf(it) === 1);
   const mlist = mastersFor(state.rawSettings, cls, !cls);
   const head = cols.map((it) => `<th title="${esc(it.title)}">${gradeOf(it)}-${itemNo(it)}<br><small>${esc(it.short)}</small></th>`).join("") +
-    mlist.map((m) => `<th class="mcol" title="マスターモード">🏅<br><small>${esc(m.name)}</small></th>`).join("");
+    mlist.map((m) => `<th class="mcol" title="マスターモード">🏅<br><small>${esc(m.name)}</small></th>`).join("") +
+    `<th class="mcol" title="ストーリーモード">📖<br><small>王国</small></th><th class="mcol" title="すべての文法をマスター＝100">現在地</th>`;
+  const storyCell = (st) => {
+    const n = (st.story || []).length, g = st.storyGoal, gi = g && g.upto ? CONTENT.findIndex((it) => it.id === g.upto) : -1;
+    const ok = gi >= 0 && (st.story || []).includes(g.upto);
+    return `<td class="mcol ${ok ? "lv lv4" : ""}">${n}${gi >= 0 ? `<small class="due-mark ${ok ? "done" : ""}">/${gi + 1}${ok ? "✓" : ""}</small>` : ""}</td>`;
+  };
   const mcell = (st, m) => {
     const n = m.items.filter((id) => { const pc = (st.progress[id] && st.progress[id].passCount) || [0, 0, 0, 0]; return [1, 2, 3, 4].every((k) => pc[k - 1] >= requiredPasses(k)); }).length;
     return (st.masters || []).includes(m.id) ? `<td class="lv lv4 mcol">成功</td>` : `<td class="mcol">${n}/${m.items.length}</td>`;
@@ -4474,7 +4576,7 @@ async function renderDashboard(cls) {
     const asg = !Array.isArray(st.assigned) || st.assigned.includes(it.id);
     const ds = (st.due || {})[it.id];
     return `<td class="lv lv${lv} ${asg ? "asg" : ""}">${lv === 4 ? "マスター" : lv ? "段階" + lv : "－"}${ds && DUE_LABEL[ds] ? `<small class="due-mark ${ds}">${DUE_LABEL[ds]}</small>` : ""}</td>`;
-  }).join("")}${mlist.map((m) => mcell(st, m)).join("")}</tr>`).join("");
+  }).join("")}${mlist.map((m) => mcell(st, m)).join("")}${storyCell(st)}<td class="mcol">${positionOf(st.progress).toFixed(1)}</td></tr>`).join("");
   const active = list.filter((st) => st.last && dayKey(st.last) >= week).length;
   const over = list.filter((st) => Object.values(st.due || {}).includes("over")).length;
   const recent = (d.recent || []).filter((r) => !cls || r.cls === cls).slice(0, 40).map((r) => {
@@ -4483,10 +4585,11 @@ async function renderDashboard(cls) {
   }).join("");
   $("main").innerHTML = `
     <div class="toolbar">${clsSelect("dashCls", classes, cls)}<button class="btn small" id="dashReport">${cls ? esc(cls) + "の" : ""}レポートを印刷</button><button class="btn small" id="dashMiss">まちがいの多い問題</button></div>
+    ${distributionHTML(list)}
     <div class="sum-cards"><div><b>${list.length}</b><small>人</small></div><div><b>${active}</b><small>今週練習した人</small></div><div><b class="${over ? "ng" : ""}">${over}</b><small>締め切りを過ぎた課題がある人</small></div></div>
     <section class="panel"><h2>到達状況</h2><p class="hint">クリアした段階（太字の列はその生徒の課題）。名前を押すと、その生徒の詳しい記録が見られます。列の上の「1-3」は「中1の3番目」です。</p>
       <div class="toolbar"><label>表に出す文法 <select id="dashCols"><option value="auto">課題と、練習した文法</option>${GRADES.map((g) => `<option value="g${g}" ${view === "g" + g ? "selected" : ""}>中${g}の文法</option>`).join("")}<option value="all" ${view === "all" ? "selected" : ""}>すべて</option></select></label></div>
-      <div class="table-wrap"><table class="dash"><thead><tr><th></th><th>級・段</th><th>練習<br><small>した日数</small></th><th>最後に<br><small>練習した日</small></th>${head}</tr></thead><tbody>${rows || `<tr><td colspan="${cols.length + mlist.length + 4}">まだ記録がありません</td></tr>`}</tbody></table></div></section>
+      <div class="table-wrap"><table class="dash"><thead><tr><th></th><th>級・段</th><th>練習<br><small>した日数</small></th><th>最後に<br><small>練習した日</small></th>${head}</tr></thead><tbody>${rows || `<tr><td colspan="${cols.length + mlist.length + 6}">まだ記録がありません</td></tr>`}</tbody></table></div></section>
     <section class="panel"><h2>最近の記録</h2>
       <div class="table-wrap"><table class="recent"><thead><tr><th>日時</th><th>生徒</th><th>項目</th><th>段階</th><th>得点</th><th></th></tr></thead><tbody>${recent || `<tr><td colspan="6">まだ記録がありません</td></tr>`}</tbody></table></div></section>
     ${MODE === "demo" ? `<div class="btn-row"><button class="btn danger" id="clear">この端末の記録を消す</button></div>` : ""}`;
@@ -4622,7 +4725,7 @@ async function renderStudentDetail(email, back) {
       <button class="btn small" id="toReport">🖨️ レポートを印刷</button></section>
     <div class="sum-cards"><div><b>${esc(d.level.name)}</b><small>けいけん値 ${d.xp}</small></div><div><b>${d.days}</b><small>練習した日</small></div><div><b>${d.streak}</b><small>いまの連続（最高${d.bestStreak}）</small></div>
       <div><b>${d.mastered}</b><small>マスターした文法</small></div><div><b>${d.points.avail}</b><small>ポイント</small></div><div><b>${d.badges.length}</b><small>バッジ</small></div></div>
-    <section class="panel"><h2>文法ごとの進み具合</h2><div class="table-wrap">${progressTable(d)}</div>${masterTable(d) ? `<div class="table-wrap">${masterTable(d)}</div>` : ""}</section>
+    <section class="panel"><h2>文法ごとの進み具合</h2><p class="hint">現在地 <b>${positionOf(d.progress).toFixed(1)}</b> / 100　・　ストーリーモード：とりもどした王国 <b>${(d.story || []).length}</b> / ${CONTENT.length}</p><div class="table-wrap">${progressTable(d)}</div>${masterTable(d) ? `<div class="table-wrap">${masterTable(d)}</div>` : ""}</section>
     <section class="panel"><h2>練習した日 <small>最近10週</small></h2>${calendarHTML(d.dayCounts, 10)}</section>
     <section class="panel"><h2>まちがえたままの問題 <small>${(d.mistakes || []).length}問</small></h2><div class="table-wrap">${mistakeList(d.mistakes, 50)}</div></section>
     <section class="panel"><h2>最近の記録 <small>${d.total}回</small></h2><p class="hint">行を押すと、問題ごとの答えが見られます（△は内容は正しいが時間オーバー）。</p>${recRows || `<p class="hint">まだ記録がありません</p>`}</section>
@@ -5117,6 +5220,470 @@ async function init() {
   }
 }
 document.addEventListener("DOMContentLoaded", init);
+
+/* =====================================================================
+   冒険の物語（オリジナル）
+   ・66の王国に1体ずつ「封印獣」がいる。文法をマスターすると封印獣をたおし、王国がもどる
+   ・本編（第0話〜第66話）は、とりもどした王国の数で順に読めるようになる
+   ・王国ごとの小さな話は、その王国をとりもどしたときに読める
+   ・{name} は生徒のニックネーム（なければ「きみ」）に置きかわる
+   ===================================================================== */
+const STORY = {
+  title: "七色の剣と黒の王",
+  continents: [
+    { id: 1, name: "緑風の大陸 フェルナ", color: "#2f9e44", sky: "#d3f9d8", desc: "風車と森の大陸。旅はここから始まる。" },
+    { id: 2, name: "砂と潮の大陸 サルマ", color: "#e67700", sky: "#fff3bf", desc: "砂漠と海にかこまれた、商人と船乗りの大陸。" },
+    { id: 3, name: "氷星の大陸 ノルディア", color: "#1971c2", sky: "#d0ebff", desc: "空に一年中オーロラがかかる、北のはての大陸。" }
+  ],
+  // [王国の名前, 封印獣の名前, 姿（形-色）, とりもどしたときの話]
+  kingdoms: [
+    // ---- 緑風の大陸 フェルナ（25） ----
+    ["はじまりの村 ミルト", "ドロスライム", "slime-0", "村の風車が百年ぶりに回り出した。パン屋のおばあさんが、焼きたてのパンを{name}の両手いっぱいにのせてくれた。「勇者さまに、と百年前から決めておったんじゃ」"],
+    ["風車の国 ヴィント", "カゼクイバット", "bat-1", "止まっていた千の風車がいっせいに回り、国じゅうに歌が流れた。風車守りの少年は「ぼくも、いつか旅に出る」と、ポポの頭をそっとなでた。"],
+    ["きのこの森 モッフル", "オオキノコン", "plant-2", "森じゅうのきのこが光り、夜なのに昼のように明るくなった。ポポは光るきのこを食べて、しばらくしっぽが光りっぱなしだった。"],
+    ["湖の国 ルーネ", "ミズチドロ", "fish-3", "にごっていた湖がすきとおり、湖の底に沈んでいた鐘が鳴った。鐘には、二本の剣が交わる紋章がきざまれていた。"],
+    ["花の都 ブロッサ", "トゲバラゴン", "plant-4", "石だった花畑がいっせいに咲いた。花売りの娘が「この花、あなたに似合う」と、七色の花を一輪くれた。"],
+    ["鍛冶の町 アンヴィル", "サビゴーレム", "golem-5", "鍛冶屋の親方が{name}の剣を見て、目を丸くした。「このひび…わしには直せん。だが、まだ死んでおらん。この剣は待っておる」"],
+    ["丘の国 ヒルダ", "ゴロゴロック", "golem-0", "丘の上の大きな木に、子どもたちが登れるようになった。木の幹には、だれかが小刀で彫った二人分の名前が残っていた。半分は、けずられていた。"],
+    ["ミツバチの里 ハニカム", "ドクハチクイーン", "bat-2", "はちみつの川が流れ出し、ポポは三日間しあわせそうだった。里の長老は「勇者は甘いものが苦手じゃった」と笑った。…なぜ知っているのだろう。"],
+    ["霧の谷の入り口 ミスタ", "キリオバケ", "ghost-6", "うすい霧が晴れ、谷の向こうが見えた。そこには、もっと深い霧が渦をまいていた。"],
+    ["川の国 リバーナ", "カワウソクラブ", "fish-1", "川の水車が回り、魚がはねた。渡し守のおじいさんが言った。「仮面の騎士も、ゆうべこの川をわたっていったよ。きみたちと同じ方向へ」"],
+    ["星見の里 ステラ", "ヤミフクロウ", "bat-3", "百年ぶりに夜空に星が見えた。星読みのミラが、空を見上げて泣いていた。「星が、また動き出した…」"],
+    ["石橋の国 ブリッジア", "ハシゲタトロル", "golem-4", "落ちていた大きな石橋が、元の形にもどった。橋のまん中には、小さなドラゴンの足あとの化石が残っていた。ポポの足と、ぴったり同じ大きさだった。"],
+    ["音楽の国 メロディア", "ノイズガエル", "slime-5", "国じゅうの楽器が鳴り出し、三日三晩のお祭りになった。ポポはおどりすぎて、片方の翼で一回だけ宙がえりした。"],
+    ["果樹園の国 オーチャード", "イガイガモンキー", "plant-0", "りんごの木が実をつけた。農家の夫婦が、{name}の顔を見て首をかしげた。「どこかで…いや、百年前の絵の勇者さまに似ているような」"],
+    ["森の砦 ウッドガルド", "キバイノシシ", "dragon-1", "砦の門が開き、森の兵士たちが鎧をぬいだ。隊長は言った。「霧の三将が近い。気をつけろ。あいつらは、ただの手下ではない」"],
+    ["羊飼いの国 メエメ", "クロヒツジ", "slime-6", "まっ黒だった羊たちが、真っ白にもどった。一匹だけ黒いまま残った羊が、なぜか{name}のあとをついてくる。"],
+    ["温泉の里 ユノハラ", "ニエタギル", "slime-3", "温泉がわき出し、旅のつかれがとれた。ゆげの向こうで、灰の騎士がひとり湯につかっていた。仮面はつけたままだった。"],
+    ["時計の町 クロッカ", "ハグルマグモ", "golem-2", "止まっていた町の大時計が動き出した。でも、時計の針は一本だけ逆に回っていた。時計職人は「百年前から、ずっとこうなんだ」と言った。"],
+    ["絵かきの国 パレッタ", "スミヌリダコ", "fish-5", "灰色だった絵に、色がもどった。美術館のいちばん奥の絵には、二人の勇者と一人の黒い服の少年が、肩を組んで笑っていた。"],
+    ["霧の谷 ヴェイルダウン", "キリノオオカミ", "dragon-6", "谷をおおう深い霧が晴れた。霧のヴェイルが残した言葉が、まだ耳に残っている。「お前は何も知らない。黒の王さまが、何を守っているのか」"],
+    ["図書の塔 ビブリオ", "シミムシキング", "bat-4", "塔の本がすべて読めるようになった。でも『百年前の勇者』の章だけ、どの本でもページが破られていた。"],
+    ["灯台の国 ルミエール", "クラヤミイカ", "fish-2", "灯台に火がともり、海の向こうまで光がとどいた。光のとどいた先に、砂の大陸サルマが小さく見えた。"],
+    ["雲の上の村 ニンブス", "カミナリドリ", "bat-0", "雲の上の村に、虹の橋がかかった。ポポは虹の橋を見て、「…前にも、だれかとここを飛んだ気がする」とつぶやいた。"],
+    ["森の王都 シルヴァーナ", "ネジレジュボク", "plant-3", "王都の大樹が若葉をつけた。森の女王は{name}の手をにぎった。「あなたの剣、さっきより少しだけ、ひびが小さくなっているわ」"],
+    ["風の神殿 アエリア", "ハリケーンジャ", "dragon-4", "大陸の主をたおし、フェルナに風がもどった。神殿の祭壇には、七色の宝石が一つはめこまれていた。残りのくぼみは、あと二つ。"],
+    // ---- 砂と潮の大陸 サルマ（24） ----
+    ["港町 マリーナ", "フジツボガニ", "fish-0", "港に船がもどり、市場がにぎわいを取りもどした。船乗りたちは、{name}たちを「七つの海の恩人」とよんで、魚を山ほどくれた。"],
+    ["砂漠の入り口 デューナ", "スナモグラ", "golem-3", "砂の中にうもれていた井戸から、水がわいた。ラクダ使いの少女が言った。「鉄のガルドが、この先の国を檻でかこっているよ」"],
+    ["オアシスの国 ミラージュ", "シンキロウヘビ", "dragon-2", "まぼろしの湖が、本物の湖になった。湖の水面に、一瞬だけ、黒い翼の青年が映って消えた。"],
+    ["商人の都 バザール", "キンカクシガラス", "bat-5", "百の店が開き、千の声が飛びかった。ポポは屋台の料理を全部食べようとして、三軒目でたおれた。"],
+    ["鉄の檻の国 ケージア", "テツゴウシ", "golem-6", "国をかこんでいた鉄の檻がくずれた。檻の中で、子どもたちは元気に遊んでいた。鉄のガルドは、子どもたちにだけは手を出さなかったらしい。"],
+    ["塩の湖 サリナ", "シオダマリ", "slime-1", "真っ白な塩の湖が、鏡のように空を映した。湖のまん中で、灰の騎士が剣をみがいていた。その剣にも、同じひびがあった。"],
+    ["サボテンの里 カクタ", "トゲトゲダルマ", "plant-5", "サボテンが一斉に花を咲かせた。花のみつは、ポポの好物になった。「お前らの好み、昔から変わんねえな」とポポは言って、自分で首をかしげた。"],
+    ["ピラミッドの国 ファラオン", "ミイラドク", "ghost-0", "ピラミッドのとびらが開いた。壁画には、空から落ちる大きな星と、それを両手で受け止める黒い服の人が描かれていた。"],
+    ["真珠の島 パーリア", "オオシャコガイ", "fish-4", "海の底で眠っていた真珠が、いっせいに光った。島の巫女は言った。「百年前、星が落ちた夜も、真珠はこうして光ったのです」"],
+    ["風紋の国 ザンド", "スナアラシ", "dragon-3", "砂嵐がやみ、砂の上に美しい模様が広がった。模様をつなぐと、地図になった。北の大陸の、さらに北をさしていた。"],
+    ["潮の神殿 タイダル", "ウズシオドラ", "dragon-5", "神殿に潮がもどった。たおれた鉄のガルドがつぶやいた。「ノクスさまは、百年ずっと、一人で痛みにたえておられる…」"],
+    ["夜市の国 ルナバザ", "ヨルノコモリ", "bat-6", "夜だけ開く市場に、ちょうちんの灯りがともった。占い師の老婆が{name}の手を見て言った。「あんたの手は、一度だれかの手を離したことがあるね」"],
+    ["地下水路の都 アクエド", "スイロワニ", "fish-6", "地下水路に水が流れ、都じゅうの噴水が歌い出した。水路の奥の石板には、ミラの若いころの名前が、勇者の仲間としてきざまれていた。"],
+    ["砂の城 カスティラ", "スナノキシ", "golem-1", "くずれかけた砂の城が、金色にかがやいた。城の王は言った。「時のセレンが近くにいる。あの女は、時を止める」"],
+    ["ヤシの浜辺 パームリ", "ヤシガニンジャ", "fish-3", "浜辺にヤシの実が転がり、子どもたちが波と遊んだ。ポポは初めて海に足をつけて、「つめてっ」と飛び上がった。"],
+    ["星降る丘 アストラ", "ナガレボシモドキ", "ghost-4", "丘の上に、流れ星がたくさん見えた。でも、一つだけ空にとどまり続ける赤い星があった。ミラは「あれが、百年前に落ちてきた星のかけらじゃ」と言った。"],
+    ["機械じかけの町 ギアロ", "ゼンマイオウ", "golem-0", "町じゅうの機械が動き出した。発明家の少年が、ポポのために小さな飛行用の帽子を作ってくれた。片方の翼の代わりに、プロペラがついていた。"],
+    ["香辛料の国 スパイシア", "カラシドラゴン", "dragon-0", "百のスパイスの香りがもどった。からい料理を食べたポポが火をふいた。ポポが火をふいたのは、生まれて初めてだった。"],
+    ["止まった時の国 クロノス", "トキトメネコ", "ghost-2", "止まっていた時間が動き出し、落ちる途中で止まっていた鳥が、空へ飛んでいった。時のセレンは、ポポの黒い翼を見て、なぜか泣きそうな顔をした。"],
+    ["人魚の入り江 セイレン", "ウタヌスミ", "fish-1", "入り江に人魚の歌がもどった。その歌は、百年前に二人の勇者が別れたときの歌だった。ポポは、最後まで聞いていられなかった。"],
+    ["月の神殿 ルナリア", "ツキクイオオカミ", "dragon-6", "神殿の天井から月の光がさしこみ、床に黒い翼の影が映った。ポポの影だった。でも、両方の翼があった。"],
+    ["大灯台の国 ファロス", "クラゲノヌシ", "fish-5", "大灯台が北の海を照らした。光の先に、氷の大陸ノルディアが白くかがやいていた。もう、ふり返らない。"],
+    ["王の砂漠 キングスサンド", "サバクノオウジャ", "golem-4", "砂の王をたおすと、砂の下から古い石碑が出てきた。『二人の勇者と、黒き友。三人で星を受け止めるべし』。三人？"],
+    ["潮騒の大神殿 ポセイドラ", "リヴァイアサン", "dragon-2", "大陸の主をたおし、サルマに潮の音がもどった。祭壇に、二つ目の七色の宝石がはまった。残りのくぼみは、あと一つ。"],
+    // ---- 氷星の大陸 ノルディア（17） ----
+    ["氷の港 フロスタ", "コオリクラーケン", "fish-2", "こおっていた港がとけ、船が着けるようになった。港の人々は「黒の王の塔に近づくほど、寒さはきびしくなる」と、あたたかい毛布をくれた。"],
+    ["雪の村 スノウィ", "ユキダルマン", "slime-4", "村に雪合戦の声がもどった。シエルが雪玉を投げてきて、{name}の顔に命中した。仮面をとった彼が、はじめて大声で笑った。"],
+    ["オーロラの国 ボレアリス", "ヒカリクイ", "ghost-5", "空のオーロラが七色にもどった。オーロラの光が、剣ルミナのひびに吸いこまれていった。ひびは、もう指一本分しか残っていない。"],
+    ["氷の図書館 グラキエス", "コオリノショモツ", "golem-6", "こおっていた本がとけ、破られていたページが見つかった。そこには、百年前のことが、すべて書かれていた。"],
+    ["白熊の国 ベアリア", "シロクマオウ", "dragon-1", "白熊の戦士たちが目を覚まし、{name}たちの旅に力を貸すと約束した。「塔へ行くなら、我らの背に乗れ」"],
+    ["霜の森 フロストウッド", "シモバシラジュ", "plant-6", "森の木々が霜の花を咲かせた。霧のヴェイルが森の奥で待っていた。もう、戦うつもりはないようだった。"],
+    ["星読みの塔 アストロノミア", "ホシクイドリ", "bat-1", "塔の天井に、百年前と同じ星空が映し出された。ミラは言った。「あの夜の星の並び、もう一度見られるとは思わなかった」"],
+    ["鏡の湖 ミラーレイク", "カガミノマジョ", "ghost-3", "湖が鏡のようにすみわたった。のぞきこむと、{name}とシエルが、一人の人の姿で映った。"],
+    ["氷河の国 グレイシア", "ヒョウガノキョジン", "golem-2", "氷河が動き出し、大地が目を覚ました。鉄のガルドが、白熊たちといっしょに道を切り開いてくれた。"],
+    ["流氷の里 ドリフタ", "ナガレヒョウ", "fish-0", "流氷の上で、アザラシの子どもたちが遊び始めた。時のセレンが、そっと時間をゆっくりにして、その時間を長くしてくれた。"],
+    ["吹雪の峠 ブリザード", "フブキノオニ", "ghost-6", "吹雪がやみ、塔へ続く道が見えた。ポポの翼が、根もとから少しずつ白くなり始めていた。"],
+    ["水晶の洞くつ クリスタ", "スイショウトカゲ", "dragon-4", "洞くつの水晶がいっせいに鳴った。音は、とりもどした王国の数だけ重なって、一つの歌になった。"],
+    ["北極星の国 ポラリス", "ホッキョクノバン", "dragon-5", "北極星が、塔の真上でかがやき始めた。王国の人々が、遠い大陸から少しずつ集まってきていた。"],
+    ["凍った玉座の国 フローズン", "コオリノオウ", "golem-3", "こおった玉座がとけ、王国の旗がひるがえった。旗には、二本の剣と一枚の黒い翼が描かれていた。"],
+    ["星の門 ゲートオブスター", "モンバンリュウ", "dragon-0", "星の門が開いた。門の向こうから、黒の王ノクスの声がひびいた。「…来るな」"],
+    ["終わりの星のふもと エンドオール", "ホシノシモベ", "ghost-0", "赤い星のかけらが静まり、空気があたたかくなった。塔のてっぺんまで、あと少し。"],
+    ["黒の塔 ノクティス", "クロキツバサ", "dragon-6", "最後の封印がとけ、黒い塔が白い光につつまれた。祭壇に、三つ目の七色の宝石がはまった。"]
+  ],
+  // 本編：第0話（はじめから読める）〜第66話（とりもどした王国の数で読める）
+  chapters: [
+    { t: "目ざめ", s: "目を開けると、空も草も、すべてが灰色だった。手には、ひびの入った剣が一本。自分がだれなのかも思い出せない。\n「やっと起きたか、{name}。お前、百年も寝てたんだぞ」\n声のほうを見ると、片方の翼しかない小さなドラゴンが、こちらをにらんでいた。\n「おれはポポ。この世界はな、黒の王に66の王国を石にされちまった。王国にすみついた封印獣をたおさないかぎり、元にはもどらねえ」\nポポは、遠くの灰色の村を指さした。「ほら、最初の一匹がいるぜ。…ま、おれは見てるだけだけどな」" },
+    { t: "最初の色", s: "封印獣がたおれた瞬間、村に色がもどった。赤い屋根、青い空、黄色い花。\n剣のひびが、ほんの少しだけ光った。そして、たおれた封印獣から小さな光のかけらが飛び出し、{name}の胸に吸いこまれた。\n——炎の中で、だれかが叫んでいる。「約束だ！ 手を離すなよ！」\n「…今の、なに？」\n「記憶のかけら、だろうな」ポポは目をそらした。「お前がなくしたもんだ」" },
+    { t: "片方の翼", s: "たき火の前で、ポポはパンを三つたいらげた。\n「ねえ、どうして翼が片方しかないの？」\n「…知らねえ。気づいたらこうだった」\nポポは背中を向けて丸くなった。でも、寝息が聞こえるまで、その翼は小さくふるえていた。" },
+    { t: "仮面のうわさ", s: "旅人たちのあいだで、うわさが広がっていた。灰色の仮面をつけた騎士が、ひとりで封印獣をたおして回っているらしい。\n「おれたちより先に？」ポポがむっとした。\n「でもね」と宿屋のおかみは声をひそめた。「その騎士がたおした封印獣の王国は、色がもどらないんだって」" },
+    { t: "灰の騎士", s: "封印獣の前で、その騎士と鉢合わせした。灰色の仮面、灰色のマント。\n騎士は{name}の剣を見て、一瞬だけ動きを止めた。\n「その剣…どこで手に入れた」\n答える前に、騎士は背を向けた。「この獲物はゆずってやる。だが、次はない」\n騎士の剣にも、同じようなひびがあった気がした。" },
+    { t: "丘の上の二人", s: "二つ目の記憶のかけらが、胸にとけた。\n——夕焼けの丘。木の剣で打ち合う二人の子ども。どちらの顔も、光でよく見えない。\n「お前、また手かげんしただろ」\n「してないよ。きみが強くなったんだ」\n笑い声だけが、はっきりと耳に残った。" },
+    { t: "星読みのミラ", s: "星見の里で、腰の曲がったおばあさんが{name}を待っていた。\n「わしはミラ。星を読む者じゃ。…よく来たね、百年待ったよ」\nミラは、ひびの入った剣にそっとふれた。\n「百年前、勇者は二人いた。そして剣は、二つに割れた。それ以上は、星が許してくれん」" },
+    { t: "霧のヴェイル", s: "とりもどしたはずの王国が、また霧につつまれていた。霧の中から、細身の男が現れた。\n「はじめまして、勇者のなりそこない。私は霧のヴェイル。黒の王さまにつかえる三将の一人だ」\nヴェイルは指を鳴らした。霧が、ポポの体にからみついた。" },
+    { t: "ポポを守れ", s: "霧の中で、{name}は夢中で剣をふった。ポポをつかんでいた霧の手が、ちぎれて消えた。\nヴェイルは目を細めた。「その剣…まだ生きていたか」そして霧とともに消えた。\nポポは、しばらく何も言わなかった。それから、小さな声で言った。\n「…ありがとな」" },
+    { t: "横取り", s: "巨大な封印獣に追いつめられたとき、灰色の風が横切った。灰の騎士だった。\n二人の剣がそろったとき、封印獣は一撃でたおれた。\n「助けてくれたの？」\n「勘ちがいするな。獲物を横取りされたくなかっただけだ」\n去っていく背中を見て、ポポがつぶやいた。「あいつの剣の動き、お前とそっくりだな」" },
+    { t: "割れる剣", s: "三つ目の記憶のかけら。\n——まっ黒な空。落ちてくる赤い星。光る剣が、まっぷたつに割れる音。\nだれかの手が、指のあいだからすべり落ちていく。\n{name}は、汗びっしょりで目を覚ました。剣のひびが、あの夢と同じ形をしていた。" },
+    { t: "顔のない像", s: "とりもどした王国の広場に、勇者の像があった。剣をかかげた、二人の勇者の像。\nでも、二人とも顔がけずり取られていた。\n「だれがこんなことを…」\n村人は首をふった。「百年前、ある日とつぜん、国じゅうの勇者の顔が消えたんです」" },
+    { t: "消された名前", s: "ミラは、たき火の炎を見つめていた。\n「勇者の名は、この世界から消された。黒の王が、その名をおそれたからじゃ」\n「おそれた？」\n「…あるいは、その名を聞くのが、つらかったのかもしれんがね」\nミラはそれ以上、何も言わなかった。" },
+    { t: "ポポ、とぶ", s: "がけから落ちそうになった{name}の服を、ポポが口でくわえた。片方の翼を必死に動かす。\n一瞬、二人の体が、ふわりと宙にうかんだ。\n地面に転がったあと、ポポは目をまるくしていた。\n「…今、おれ、飛んだ？」\n二人は、日が暮れるまで笑い合った。" },
+    { t: "一騎打ち", s: "灰の騎士が、道の真ん中に立っていた。\n「剣を抜け。お前が、その剣を持つにふさわしいか、たしかめる」\n打ち合うたびに、二本の剣のひびが光った。勝負はつかなかった。\n息を切らしながら、騎士は言った。「…まだ足りない。だが、悪くない」" },
+    { t: "ノクス", s: "四つ目の記憶のかけら。\n——「ノクス！ 待って、ノクス！」\n自分の声だった。黒い服の少年が、ふり返って笑った。\n「心配するなよ。三人なら、どんな星だって受け止められるさ」\n目を覚ますと、ポポがじっとこちらを見ていた。「…今、ノクスって言ったか？」" },
+    { t: "霧の谷へ", s: "霧のヴェイルからの手紙がとどいた。\n『霧の谷で待つ。お前が本物の勇者なら、来るがいい』\n「わなに決まってるだろ」とポポ。\n「うん。でも、谷の王国の人たちが待ってる」\nポポはため息をついて、{name}の肩に乗った。「…しょうがねえな」" },
+    { t: "霧の向こう", s: "霧の谷で、ヴェイルの霧を切りさいた。ヴェイルはひざをついた。\n「なぜだ…なぜ、お前が勝てる」\nそして、ヴェイルは言った。\n「お前は何も知らない。黒の王さまが、百年、何を守っているのか」\n霧が晴れたとき、ヴェイルの姿はもうなかった。" },
+    { t: "守っている？", s: "「黒の王が、何かを守ってる…？」\n世界を灰色にした悪い王。ずっとそう思っていた。\nミラは星を見上げた。「物語には、いつも二つの面があるもんじゃよ」\nその夜、{name}はなかなか眠れなかった。" },
+    { t: "仮面の下", s: "灰の騎士が、封印獣との戦いで大けがをした。{name}はかけよって、手当てをした。\n「なぜ助ける」\n「なぜって…仲間でしょ」\n騎士はしばらくだまっていた。仮面に手をかけ、そして、やめた。\n「…いつか話す。いつか、な」" },
+    { t: "黒い翼の夢", s: "ポポが、うなされて目を覚ました。\n「夢を見た。おれ、だれかの肩に乗って、空を飛んでた。そいつの背中には、まっ黒な翼が…」\nポポは自分の片方の翼を見つめた。その翼の根もとが、ほんの少し黒ずんでいるのに、{name}は気づいた。" },
+    { t: "答えの一つ", s: "フェルナの大陸のいちばん奥に、風の神殿がある。\n「そこに、答えの一つがある」とミラは言った。「ただし、大陸の主が守っておる。お前ひとりでは、勝てんかもしれん」\n「ひとりじゃないよ」\nポポが胸をはった。「おう。おれもいるからな」" },
+    { t: "大陸の主", s: "神殿を守る封印獣は、嵐そのもののような怪物だった。剣がはじき飛ばされ、もうだめだと思ったそのとき——\n灰色のマントが、嵐の中にひるがえった。\n「立て。お前がたおれたら、だれがこの大陸を救う」\n二本の剣が、同時に光った。" },
+    { t: "ふさがるひび", s: "嵐の怪物がたおれ、フェルナの大陸に風がもどった。\n剣を見ると、ひびが半分ほどふさがっていた。灰の騎士の剣も、同じだった。\n「…やっぱり、そうか」騎士は小さくつぶやいた。\n神殿の祭壇には、七色の宝石が一つ、かがやいていた。" },
+    { t: "月夜の仮面", s: "祝いのうたげの夜。灰の騎士が、ひとりで村を出ていこうとしていた。\n「待って！」\n追いかける{name}に、騎士はふり向いた。月の光が仮面に当たり——ピシッと、仮面が割れた。\nその顔は、{name}と、まったく同じ顔だった。\n「やっと会えたな。もう一人の、自分」\n（第1部 完　→ 第2部「砂と潮の大陸」へ）" },
+    { t: "シエル", s: "「おれの名はシエル」と騎士は言った。\n「百年前、剣ルミナが割れたとき、勇者の魂も二つに割れた。片方がお前で、片方がおれだ」\n「じゃあ、わたしたちは…」\n「もともと、一人の人間だったってことさ」\nポポは口をあんぐりあけたまま、パンを落とした。" },
+    { t: "半分ずつの記憶", s: "「記憶も、半分ずつ持っている」とシエルは言った。「二人の記憶を合わせれば、百年前に何があったか、全部わかる」\n「じゃあ教えて！」\nシエルは首をふった。\n「全部思い出したら、お前はきっと後悔する。だから、まだだ」" },
+    { t: "嵐の海", s: "砂と潮の大陸サルマへ向かう船が、嵐にまきこまれた。\n大波が{name}をさらいかけた瞬間、シエルの手が、がっちりと腕をつかんだ。\n「…手を離すなよ」\nその言葉を、どこかで聞いたことがある気がした。" },
+    { t: "鉄のガルド", s: "サルマの国々は、巨大な鉄の檻にとじこめられていた。檻の上に、大男が腕を組んで立っている。\n「おれは鉄のガルド！ 三将でいちばん強い男だ！」\nガルドの拳が地面をたたくと、大地が波のようにゆれた。" },
+    { t: "檻の中の子どもたち", s: "檻の中をのぞくと、子どもたちが元気にかけ回っていた。食べ物も水も、ちゃんとある。\n「ガルドのおじちゃんが、毎日持ってきてくれるの」\n{name}は首をかしげた。悪い将軍が、なぜ子どもに優しくするのだろう。" },
+    { t: "三人の笑顔", s: "五つ目の記憶のかけら。\n——草原に寝ころぶ、三人の若者。二人の勇者と、黒い服の青年。黒い服の青年の背中には、大きな黒い翼がある。その肩には、小さなドラゴンが乗っていた。\n「ノクス、また翼の手入れしてる」\n「うるさいな。こいつが乗るから、毛並みが大事なんだ」\n三人とも、とても楽しそうに笑っていた。" },
+    { t: "親友", s: "「黒の王ノクスは…わたしたちの、親友だった？」\nシエルは、うなずいた。\n「おれの記憶でも、そうだ。三人は、いつもいっしょだった」\n「じゃあ、どうして！ どうして世界を灰色に…」\nシエルは答えなかった。答えられなかったのかもしれない。" },
+    { t: "世界を救った人", s: "その夜、シエルがぽつりと言った。\n「…ノクスは、世界を救ったんだ」\n「え？」\n「そして、黒くなった。それだけ、今は言える」\n砂漠の夜は、とても寒かった。" },
+    { t: "知っている国", s: "次の王国に近づくと、ポポの翼がうずき始めた。\n「なんだこれ…この先の国、おれ、知ってる気がする。においも、風も」\nポポは片方の翼をおさえて、小さくふるえていた。" },
+    { t: "潮の神殿", s: "潮の神殿で、鉄のガルドが待っていた。\n「ここから先へは行かせん！ ノクスさまのためだ！」\nガルドの鉄の拳と、{name}とシエルの二本の剣がぶつかり合った。" },
+    { t: "百年の痛み", s: "ガルドはひざをついた。そして、子どものように泣き出した。\n「ノクスさまは、百年ずっと、一人で痛みにたえておられる…。おれは、少しでもその痛みを軽くしたかっただけなんだ」\n「痛み…？」\nガルドは、それ以上は言わずに去っていった。" },
+    { t: "何の痛み？", s: "「痛みって、なんだろう」\n{name}は空を見上げた。夜空に、ひとつだけ、ずっと動かない赤い星がある。\n「あの星、なんだか…いやな感じがする」\nポポも、シエルも、だまってその星を見つめていた。" },
+    { t: "ミラの秘密", s: "地下水路の石板に、若い魔法使いの名前がきざまれていた。『勇者の仲間 魔法使いミラ』。\nミラは、しわだらけの手で石板をなでた。\n「…そうじゃ。わしは百年前、お前たちといっしょに旅をした。お前たちが目覚める日を、ここで待ち続けたのじゃ」" },
+    { t: "終わりの星", s: "ミラは語り始めた。\n「百年前、空から『終わりの星』が落ちてきた。世界をまるごと焼きつくす星じゃ。それを、三人で受け止めると決めた。二人の勇者と、ノクスでな」\nミラは、あの赤い星を指さした。\n「あれは、そのときの星のかけらじゃよ」" },
+    { t: "時のセレン", s: "時間が、止まった。\n風も、波も、ポポの羽ばたきも。動けるのは{name}だけだった。\n銀色の髪の女が、止まったポポをそっと抱き上げた。\n「私は時のセレン。この子は、返してもらうわ」\n時が動き出したとき、ポポの姿はなかった。" },
+    { t: "ポポを追え", s: "「ポポ！ ポポ！」\n{name}は、セレンが消えた方角へ走った。シエルが追いついた。\n「落ち着け。セレンは時を止める。正面からでは勝てない」\n「でも…！」\n「わかってる」シエルは剣を抜いた。「だから、二人で行くんだ」" },
+    { t: "止まった時の中で", s: "セレンが時を止めた。でも今度は、{name}とシエルの二人とも動けた。\n「二人の魂が近いと、時の魔法が効きにくいのね…」\nシエルが右から、{name}が左から。はじめて、言葉なしで息がぴったり合った。" },
+    { t: "黒く光る翼", s: "ポポを取りもどした。ポポの片方の翼が、黒く光っていた。\nセレンが、かすれた声で言った。\n「その翼は…もともと、ノクスさまのものよ」\nポポの目が、大きく見開かれた。" },
+    { t: "ちぎられた翼", s: "セレンは語った。\n「百年前、終わりの星を受け止めたあと、ノクスさまは星の毒で黒く染まっていった。そのとき、肩に乗っていた小さなドラゴンにまで毒が回りそうになった。だからノクスさまは…自分の翼を一枚ちぎって、その子を毒から守って、逃がしたの」\nポポの片方の翼が、ふるえていた。" },
+    { t: "敵の仲間", s: "ポポは、ひとりで夜の砂漠に飛び出していった。{name}は追いかけた。\n砂丘の上で、ポポは泣いていた。\n「おれ…敵の仲間だったのかよ。黒の王の竜だったのかよ」\n{name}は、ポポのとなりにすわった。\n「昔のことは、わからない。でも今は、わたしの仲間だよ」\nポポは、{name}の肩に顔をうずめて、朝まで泣いた。" },
+    { t: "最後の王国へ", s: "サルマの大陸の最後に、潮騒の大神殿がある。\nポポは、もう泣いていなかった。\n「行こうぜ。おれ、ノクスに会いたい。会って、言いたいことがある」\nシエルが、ふっと笑った。「…強くなったな、チビ」\n「チビって言うな！」" },
+    { t: "海の王", s: "大神殿を守っていたのは、山のように大きな海竜だった。\n苦戦する{name}たちの前に、時のセレンが立った。海竜の時間が、ゆっくりになる。\n「…勘ちがいしないで。私は、まだ迷っているだけ」" },
+    { t: "セレンの願い", s: "海竜がたおれ、サルマに潮の音がもどった。\nセレンは、ポポの頭をそっとなでた。\n「お願い。ノクスさまを…止めてあげて。あの方は、もう限界なの。百年、ひとりでがんばりすぎたのよ」\n祭壇に、二つ目の七色の宝石がはまった。" },
+    { t: "破られた約束", s: "その夜、シエルがすべての記憶を話した。\n「百年前、終わりの星を、三人で受け止めると約束した。手をつないで、三人で。…でも、星が目の前にせまった最後の瞬間、勇者は、こわくなって手を離した」\nシエルの声がふるえた。\n「ノクスは、ひとりで星を受け止めた。そして、黒く染まった。——約束を破ったのは、おれたちなんだ」\n（第2部 完　→ 第3部「氷星の大陸」へ）" },
+    { t: "今度は", s: "{name}は、長いあいだ何も言えなかった。\n黒の王を生んだのは、自分だった。\nポポが、そっと肩に乗った。シエルが、となりに立った。\n{name}は、顔を上げた。\n「…今度は、手を離さない」\n剣のひびが、強く光った。" },
+    { t: "氷の大陸", s: "北のはて、氷星の大陸ノルディア。息が白くこおる。\n空には一年じゅうオーロラがかかり、その向こうに、黒い塔がそびえていた。\n「お前、変わったな」とシエルが言った。\n「そう？」\n「ああ。百年前のおれたちより、ずっと強い」" },
+    { t: "王国はノクスの心", s: "氷の図書館で、破られていたページが見つかった。\n『石になった66の王国は、星の毒を受け止めたノクスの心のかけらである。王国が一つもどるたびに、ノクスの痛みは一つ軽くなる』\n{name}は息をのんだ。これまで王国をとりもどしてきたのは——ノクスを救うことでもあったのだ。" },
+    { t: "霧の真実", s: "霜の森で、霧のヴェイルが待っていた。でも、剣は抜かなかった。\n「私が王国を霧でかくしていたのは、星の毒が人々に広がらないようにするためだった。…ノクスさまの命令でね」\nヴェイルは、はじめて頭を下げた。「どうか、あの方を」" },
+    { t: "三将、そろう", s: "鉄のガルドが、白熊の戦士たちを連れてやってきた。時のセレンも、静かにそのとなりに立った。\n「三将は、もう戦わない。お前たちといっしょに、塔へ行く」\nかつての敵が、いちばん心強い仲間になった。" },
+    { t: "一つになる方法", s: "ミラが、最後の魔法で剣ルミナを照らした。\n「二つの魂が一つにもどれば、剣は完全に直る。そうすれば、終わりの星の毒を断ち切れるじゃろう」\n「一つにもどったら、シエルは…？」\nミラは、目をふせた。" },
+    { t: "消えてもいい", s: "「おれは、消えてもいい」とシエルは言った。「もともと、半分なんだから」\n「だめだ！」{name}はさけんだ。「もう、だれの手も離さないって決めたんだ。シエルの手も！」\nシエルは、困ったように笑った。その笑顔は、{name}にそっくりだった。" },
+    { t: "白くなる翼", s: "旅を続けるうちに、ポポの黒い翼が、根もとから少しずつ白くなっていった。\n「ノクスの痛みが、軽くなってるんだ」ポポは翼を見つめた。「なあ、{name}。ノクスに会ったら、おれ、ありがとうって言いたいんだ」" },
+    { t: "星のかけら", s: "塔の手前の王国で、赤い星のかけらが暴れ出した。大地がわれ、空が赤く染まる。\n「星が、ノクスの心から逃げ出そうとしているのじゃ！」\n{name}とシエル、三将、ミラ、白熊たち。全員で星のかけらに立ち向かった。" },
+    { t: "66の旗", s: "ふと気づくと、塔のまわりに人々が集まっていた。\nはじまりの村のパン屋のおばあさん。風車の国の少年。港町の船乗りたち。とりもどしてきた王国の人々が、それぞれの国の旗をかかげて。\n「勇者さまだけに、たたかわせるもんか！」" },
+    { t: "来るな", s: "黒い塔の扉の前に立つと、塔の中から声がひびいた。\n「…来るな。もう、だれにも会いたくない。また手を離されるのは、ごめんだ」\nノクスの声だった。百年分のさびしさが、その声にはつまっていた。\n{name}は、扉に手をかけた。" },
+    { t: "記憶の試練", s: "塔の階段をのぼると、景色が百年前に変わった。\n——落ちてくる終わりの星。つないだ三つの手。あの瞬間がやってくる。こわい。手を離せば、自分は助かる。\n{name}は、目をつぶって、手に力をこめた。\n今度は、離さなかった。" },
+    { t: "一つの剣", s: "試練をこえた{name}の手に、シエルの手が重なった。\nまばゆい光。剣ルミナのひびが、完全に消えた。七色の宝石が、剣のつかに集まってかがやく。\nシエルの姿は見えなくなった。でも、胸の中で声がした。\n「消えてないさ。ずっと、ここにいる」" },
+    { t: "黒の王ノクス", s: "塔のいちばん上に、黒い翼を広げた男が立っていた。黒の王ノクス。\n「なぜ来た。お前たちが、おれを置いていったくせに」\nノクスの黒い炎が、{name}をおそった。\n{name}は、剣で受け止めた。そして——剣を、下ろした。" },
+    { t: "いっしょに", s: "「たおしに来たんじゃない」{name}は、ノクスに手をのばした。\n「いっしょに背負いに来たんだ。百年おそくなって、ごめん」\nノクスの黒い炎が、ゆれた。\n「…今さら、何を」\n「今さらでも。今度は、手を離さない」" },
+    { t: "みんなの光", s: "そのとき、塔の下から光がのぼってきた。とりもどした王国の人々の旗が、いっせいに光っていた。\n光はノクスの体に流れこみ、星の毒を、少しずつ、みんなで分け合っていく。\nひとりで背負えば、世界をこわす重さ。でも、みんなで分ければ——。" },
+    { t: "両方の翼", s: "ノクスの体から、黒い色がとけていった。\nノクスは、ポポを見た。ポポの片方の翼は、もう真っ白だった。\n「…大きくなったな、チビ」\n「チビって言うな！ …ありがとな、ノクス」\nノクスがそっと手をかざすと、ポポの背中に、もう一枚の翼が生えた。ポポは、両方の翼で、はじめて高く高く飛んだ。" },
+    { t: "新しい旅", s: "世界に、すべての色がもどった。\nノクスは人の姿にもどり、「世界を、自分の足で見て回りたい」と旅立った。三将とミラが、そのあとを追った。\n{name}は、直った剣をさやにおさめた。胸の中で、シエルの声がする。\n「次は、どこへ行く？」\n{name}は、ポポといっしょに、まだ見たことのない空を見上げた。\n「まだ見ていない場所へ」\n——七色の剣と黒の王　おわり。そして、きみの次の冒険が始まる。" }
+  ]
+};
+
+
+/* =====================================================================
+   ストーリーモード「七色の剣と黒の王」と、ホームの「現在地」
+   ・王国は文法の順番どおり（学年→順番）。1つの王国＝1つの文法＝1体の封印獣
+   ・封印獣の体力＝その文法の段階1〜4（重み 1・2・3・4）。マスターすると体力0
+   ・「とどめの一撃」＝その文法と、それまでの文法がまざった問題。合格すると王国がもどる
+   ・とどめに合格できるのは、前の王国をすべてとりもどし、その王国までの文法をすべてマスターしたときだけ
+   ===================================================================== */
+const STAGE_W = [1, 2, 3, 4];
+const storyName = () => (state.profile.nickname || "きみ");
+const storyText = (s) => esc(String(s || "").replace(/\{name\}/g, storyName())).replace(/\n/g, "<br>");
+// 全体の現在地（使う文法をすべてマスター＝100）
+function positionOf(progress) {
+  if (!CONTENT.length) return 0;
+  let got = 0;
+  CONTENT.forEach((it) => { const pc = ((progress || {})[it.id] || {}).passCount || [0, 0, 0, 0]; STAGE_W.forEach((w, k) => { if (pc[k] >= requiredPasses(k + 1)) got += w; }); });
+  return Math.round((got / (CONTENT.length * 10)) * 1000) / 10;
+}
+// その文法の封印獣の残り体力（0〜10）
+function monsterHP(id, progress) {
+  const pc = ((progress || state.progress)[id] || {}).passCount || [0, 0, 0, 0];
+  return 10 - STAGE_W.reduce((a, w, k) => a + (pc[k] >= requiredPasses(k + 1) ? w : 0), 0);
+}
+// 王国の情報（文法IDから。アプリに入っている66の文法には決まった王国、それ以外は名前を作る）
+function kingdomOf(it) {
+  const bi = BUILTIN.findIndex((b) => b.id === it.id);
+  const K = STORY.kingdoms[bi];
+  if (K) return { name: K[0], monster: K[1], kind: K[2], episode: K[3] };
+  const h = strHash(it.id);
+  const kinds = ["slime", "bat", "plant", "fish", "golem", "ghost", "dragon"];
+  return { name: "なぞの国 " + it.short, monster: "ナゾノフウインジュウ", kind: kinds[h % 7] + "-" + (h % 7), episode: "王国に色がもどった。人々は、{name}の名前を、ずっと語りついでいくと約束した。" };
+}
+function storyState(history) {
+  const done = new Set(storyDone(history || state.history));
+  const order = CONTENT.slice();
+  let cur = order.findIndex((it) => !done.has(it.id));
+  if (cur < 0) cur = order.length; // すべてとりもどした
+  const restored = order.filter((it) => done.has(it.id)).length;
+  const chapters = !order.length ? 0 : cur >= order.length ? STORY.chapters.length - 1 : Math.floor((cur * (STORY.chapters.length - 1)) / order.length);
+  return { done, order, cur, restored, chapters, total: order.length };
+}
+// 次の王国に、とどめの一撃を打てるか（その王国までの文法をすべてマスター）
+function storyReady(st, k) {
+  return st.order.slice(0, k + 1).every((it) => clearedCount(it.id) === 4);
+}
+
+/* ---------- 絵：封印獣・城 ---------- */
+const MON_COLORS = ["#7950f2", "#e8590c", "#2f9e44", "#1c7ed6", "#c2255c", "#495057", "#0b7285"];
+function monsterSVG(kind, size, opt) {
+  opt = opt || {};
+  const [shape, ci] = String(kind || "slime-0").split("-");
+  const c = MON_COLORS[(+ci || 0) % MON_COLORS.length], d = tintHex(c, -0.35), l = tintHex(c, 0.45);
+  const eye = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff"/><circle cx="${x + r * 0.2}" cy="${y + r * 0.15}" r="${r * 0.55}" fill="#1a1a2e"/><circle cx="${x + r * 0.45}" cy="${y - r * 0.25}" r="${r * 0.2}" fill="#fff"/>`;
+  const angry = `<path d="M38 40 L52 45 M82 40 L68 45" stroke="#1a1a2e" stroke-width="3.5" stroke-linecap="round"/>`;
+  const fang = `<path d="M50 72 L54 80 L58 72 M62 72 L66 80 L70 72" fill="#fff" stroke="${d}" stroke-width="1.5" stroke-linejoin="round"/><path d="M46 70 Q60 78 74 70" stroke="#1a1a2e" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  let body = "";
+  if (shape === "slime") body = `<path d="M20 98 C14 70 34 30 60 30 C86 30 106 70 100 98 Z" fill="${c}" stroke="${d}" stroke-width="3"/><ellipse cx="44" cy="46" rx="10" ry="6" fill="${l}" opacity=".6"/>`;
+  else if (shape === "bat") body = `<path d="M60 48 L10 30 L22 58 L8 70 L36 70 Z M60 48 L110 30 L98 58 L112 70 L84 70 Z" fill="${d}"/><ellipse cx="60" cy="62" rx="28" ry="30" fill="${c}" stroke="${d}" stroke-width="3"/><path d="M40 36 L44 20 L52 34 M80 36 L76 20 L68 34" fill="${c}" stroke="${d}" stroke-width="3" stroke-linejoin="round"/>`;
+  else if (shape === "plant") body = `<path d="M60 100 L60 70" stroke="#2b8a3e" stroke-width="8"/><path d="M60 92 Q36 92 30 76 Q48 74 60 88 M60 88 Q84 88 90 72 Q72 70 60 84" fill="#51cf66" stroke="#2b8a3e" stroke-width="2"/>` + Array.from({ length: 8 }, (_, k) => { const a = (k / 8) * Math.PI * 2; return `<ellipse cx="${(60 + Math.cos(a) * 26).toFixed(1)}" cy="${(48 + Math.sin(a) * 24).toFixed(1)}" rx="13" ry="9" fill="${l}" stroke="${d}" stroke-width="2" transform="rotate(${(a * 180) / Math.PI} ${(60 + Math.cos(a) * 26).toFixed(1)} ${(48 + Math.sin(a) * 24).toFixed(1)})"/>`; }).join("") + `<circle cx="60" cy="50" r="26" fill="${c}" stroke="${d}" stroke-width="3"/>`;
+  else if (shape === "fish") body = `<path d="M96 60 L114 42 L114 78 Z" fill="${d}"/><ellipse cx="58" cy="60" rx="44" ry="32" fill="${c}" stroke="${d}" stroke-width="3"/><path d="M44 30 Q60 14 74 30" fill="${d}"/><path d="M70 50 q6 10 0 20 M80 52 q5 8 0 16" stroke="${l}" stroke-width="3" fill="none"/>`;
+  else if (shape === "golem") body = `<rect x="22" y="28" width="76" height="72" rx="10" fill="${c}" stroke="${d}" stroke-width="3"/><path d="M30 44 L44 50 L38 62 M90 72 L80 78 L84 90" stroke="${d}" stroke-width="2.5" fill="none"/><rect x="10" y="60" width="14" height="30" rx="5" fill="${d}"/><rect x="96" y="60" width="14" height="30" rx="5" fill="${d}"/>`;
+  else if (shape === "ghost") body = `<path d="M24 100 L24 58 C24 28 96 28 96 58 L96 100 L84 90 L72 100 L60 90 L48 100 L36 90 Z" fill="${l}" stroke="${c}" stroke-width="3" opacity=".95"/>`;
+  else body = `<path d="M30 40 L20 14 L44 32 M90 40 L100 14 L76 32" fill="${l}" stroke="${d}" stroke-width="3" stroke-linejoin="round"/><path d="M14 64 L2 50 L18 52 M106 64 L118 50 L102 52" fill="${d}"/><ellipse cx="60" cy="62" rx="40" ry="36" fill="${c}" stroke="${d}" stroke-width="3"/><ellipse cx="60" cy="80" rx="22" ry="14" fill="${l}"/><circle cx="52" cy="80" r="2.5" fill="${d}"/><circle cx="68" cy="80" r="2.5" fill="${d}"/>`;
+  const face = shape === "ghost" ? eye(46, 56, 8) + eye(74, 56, 8) + `<ellipse cx="60" cy="76" rx="7" ry="9" fill="#1a1a2e"/>`
+    : shape === "fish" ? eye(40, 52, 9) + `<path d="M24 66 Q34 74 44 68" stroke="#1a1a2e" stroke-width="3" fill="none" stroke-linecap="round"/>`
+    : eye(46, 54, 9) + eye(74, 54, 9) + angry + fang;
+  const defeated = opt.down ? ` opacity=".35" transform="rotate(90 60 60) translate(0 10)"` : "";
+  return `<svg class="monster-svg" width="${size}" height="${size}" viewBox="0 0 120 120" role="img" aria-label="封印獣"><g${defeated}>${body}${opt.down ? "" : face}</g>${opt.down ? `<text x="60" y="70" text-anchor="middle" font-size="34">💫</text>` : ""}</svg>`;
+}
+function tintHex(hex, amt) {
+  const n = parseInt(hex.slice(1), 16), r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  const f = (v) => Math.round(amt >= 0 ? v + (255 - v) * amt : v * (1 + amt));
+  return "#" + [f(r), f(g), f(b)].map((v) => v.toString(16).padStart(2, "0")).join("");
+}
+function castleSVG(stateKey, color, size) {
+  const c = stateKey === "done" ? color : "#adb5bd", d = stateKey === "done" ? tintHex(color, -0.35) : "#868e96";
+  return `<svg width="${size}" height="${size}" viewBox="0 0 60 60" aria-hidden="true"><path d="M10 52 V26 h6 v-6 h6 v6 h4 v-12 h8 v12 h4 v-6 h6 v6 h6 V52 Z" fill="${c}" stroke="${d}" stroke-width="2" stroke-linejoin="round"/><path d="M26 52 v-10 a4 4 0 0 1 8 0 v10" fill="${d}"/>${stateKey === "done" ? `<path d="M30 14 V4 l10 3 -10 3" fill="#ffd43b" stroke="#c99200" stroke-width="1.2"/>` : ""}</svg>`;
+}
+
+/* ---------- ホーム：現在地のリング（G3）と次の目標（G2） ---------- */
+function positionRing(pos, size) {
+  const r = size / 2 - 4, len = 2 * Math.PI * r, on = (Math.min(100, pos) / 100) * len;
+  return `<svg class="pos-ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="var(--line)" stroke-width="6"/><circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="url(#posg)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${on.toFixed(1)} ${len.toFixed(1)}" transform="rotate(-90 ${size / 2} ${size / 2})"/><defs><linearGradient id="posg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd43b"/><stop offset="1" stop-color="#f08a24"/></linearGradient></defs></svg>`;
+}
+function nextGoalHTML() {
+  const nx = nextStep();
+  if (!nx) return `<div class="next-goal done">🎉 すべての文法をマスターしました！</div>`;
+  const gain = Math.round((STAGE_W[nx.stage - 1] / (CONTENT.length * 10)) * 1000) / 10;
+  return `<button class="next-goal" id="goNext"><span class="ng-label">次の目標</span><span class="ng-text">「${esc(nx.it.short)}」の段階${nx.stage}をクリア</span><span class="ng-gain">現在地 +${gain}</span><span class="ng-go">▶</span></button>`;
+}
+
+/* ---------- ストーリーモードの画面 ---------- */
+function storyCardHTML() {
+  if (state.settings.story && state.settings.story.on === false) return "";
+  const st = storyState();
+  const it = st.order[st.cur], K = it ? kingdomOf(it) : null;
+  const goal = storyGoalInfo(st);
+  return `<button class="story-card" id="toStory">
+    <span class="sc-art">${K ? monsterSVG(K.kind, 64) : "👑"}</span>
+    <span class="sc-main"><span class="sc-title">📖 ストーリーモード<small>${esc(STORY.title)}</small></span>
+      <span class="sc-text">${K ? `第${st.cur + 1}の王国「${esc(K.name)}」で ${esc(K.monster)} が待っている` : "すべての王国をとりもどした！"}</span>
+      <span class="sc-bar"><i style="width:${st.total ? (st.restored / st.total) * 100 : 0}%"></i></span>
+      <span class="sc-sub">とりもどした王国 ${st.restored} / ${st.total}　物語 ${st.chapters ? `第${st.chapters}話まで` : "序章"}</span>
+      ${goal ? `<span class="sc-goal ${goal.cls}">🚩 先生の課題：${esc(goal.text)}</span>` : ""}</span>
+  </button>`;
+}
+// 先生の課題「ストーリーモードの〇〇まで」
+function storyGoalInfo(st) {
+  const g = state.settings.storyGoal;
+  if (!g || !g.upto) return null;
+  const k = st.order.findIndex((it) => it.id === g.upto);
+  if (k < 0) return null;
+  const K = kingdomOf(st.order[k]), reached = st.done.has(g.upto);
+  const d = g.due ? dueState(g.due, reached ? Date.now() : null) : null;
+  const left = d && !reached ? (d.state === "over" ? "（締め切りを過ぎています）" : `（${fmtDue(g.due)}まで・あと${d.left}日）`) : g.due ? `（${fmtDue(g.due)}まで）` : "";
+  return { k, reached, text: `第${k + 1}の王国「${K.name}」までとりもどす${reached ? "　✓ 達成" : left}`, cls: reached ? "ok" : d && d.state === "over" ? "ng" : "" };
+}
+async function renderStory(focus) {
+  const st = storyState();
+  const it = st.order[st.cur], K = it ? kingdomOf(it) : null;
+  const ready = it && storyReady(st, st.cur);
+  const goal = storyGoalInfo(st);
+  const sc = state.settings.story || {};
+  const missing = it ? st.order.slice(0, st.cur + 1).filter((x) => clearedCount(x.id) < 4) : [];
+  const hp = it ? monsterHP(it.id) : 0;
+  render(`${header("ストーリーモード", true)}
+    <main class="wrap story">
+      <section class="story-head">
+        <div class="sh-title">${esc(STORY.title)}</div>
+        <div class="sh-sub">とりもどした王国 <b>${st.restored}</b> / ${st.total}　・　物語 ${st.chapters ? `第${st.chapters}話まで` : "序章"}</div>
+        <div class="btn-row"><button class="btn" id="readStory">📜 物語を読む</button><button class="btn" id="toMap">🗺️ 地図を見る</button></div>
+        ${goal ? `<div class="sc-goal ${goal.cls}">🚩 先生の課題：${esc(goal.text)}</div>` : ""}
+      </section>
+      ${it ? `<section class="battle-card">
+        <div class="bc-kingdom">第${st.cur + 1}の王国（${esc(STORY.continents[gradeOf(it) - 1] ? STORY.continents[gradeOf(it) - 1].name : "")}）</div>
+        <h2>${esc(K.name)}</h2>
+        <div class="bc-monster">${monsterSVG(K.kind, 132)}</div>
+        <div class="bc-name">${esc(K.monster)}</div>
+        <div class="hp"><span>体力</span><div class="hp-bar"><i style="width:${hp * 10}%"></i></div><b>${hp}/10</b></div>
+        <p class="hint">この封印獣は、文法「<b>${esc(it.title)}</b>」の力で守られている。段階1〜4をクリアするたびに体力がへり、0になったら「とどめの一撃」をうてる。</p>
+        ${ready ? `<button class="btn primary big" id="goBattle">⚔️ とどめの一撃！（${Math.max(3, Math.min(30, Math.round(Number(sc.num) || 10)))}問）</button>
+          <p class="hint">とどめの一撃は、この文法と、これまでの王国の文法がまざって出る。${pct(Math.min(1, Math.max(0.1, Number(sc.pass) || 0.8)))}%以上正解でたおせる。</p>`
+        : `<p class="hint">${hp > 0 ? "まずは体力を0にしよう。" : ""}${missing.length > (hp > 0 ? 1 : 0) ? `とどめの一撃には、これまでの文法もすべてマスターしている必要がある。` : ""}</p>
+          <div class="need-list">${missing.slice(0, 6).map((x) => `<button class="need" data-i="${CONTENT.indexOf(x)}"><span>${esc(x.title)}</span><span class="tag">${clearedCount(x.id)}/4</span></button>`).join("")}${missing.length > 6 ? `<span class="hint">ほか${missing.length - 6}つ</span>` : ""}</div>`}
+      </section>` : `<section class="battle-card"><h2>👑 すべての王国をとりもどした！</h2><p>物語の最後まで読めるよ。</p></section>`}
+      ${footerNote()}
+    </main>`);
+  bindBack(renderHome);
+  $("#readStory").onclick = () => renderChapters();
+  $("#toMap").onclick = () => renderStoryMap();
+  if ($("#goBattle")) $("#goBattle").onclick = () => startStoryBattle(st.cur);
+  $$(".need").forEach((b) => (b.onclick = () => renderItem(+b.dataset.i)));
+  if (focus === "map") renderStoryMap();
+}
+async function renderStoryMap() {
+  const st = storyState();
+  render(`${header("冒険の地図", true)}<main class="wrap story"><div id="mapBody">${storyMapHTML(st, [])}</div>${footerNote()}</main>`);
+  bindBack(() => renderStory());
+  bindMap(st);
+  if (MODE !== "demo" && (state.settings.story || {}).peers !== false) {
+    try { const r = await api.call("storyPeers"); if ($("#mapBody")) { $("#mapBody").innerHTML = storyMapHTML(st, r.peers || []); bindMap(st); } } catch (e) { /* 仲間が出なくても地図は使える */ }
+  }
+}
+function storyMapHTML(st, peers) {
+  const at = {}; (peers || []).forEach((p) => { (at[p.at] = at[p.at] || []).push(p.avatar); });
+  return STORY.continents.map((c) => {
+    const list = st.order.map((it, k) => ({ it, k })).filter((x) => gradeOf(x.it) === c.id);
+    if (!list.length) return "";
+    const reached = list.some((x) => x.k <= st.cur);
+    return `<section class="continent ${reached ? "" : "fog"}" style="--cc:${c.color};--cs:${c.sky}">
+      <h2>${esc(c.name)}</h2><p class="hint">${esc(c.desc)}</p>
+      <div class="kmap">${list.map(({ it, k }) => {
+        const K = kingdomOf(it), done = st.done.has(it.id), cur = k === st.cur;
+        const ps = at[it.id] || [];
+        return `<button class="kn ${done ? "done" : cur ? "cur" : "lock"}" data-k="${k}" title="${esc(K.name)}">
+          <span class="kn-art">${cur ? monsterSVG(K.kind, 40) : castleSVG(done ? "done" : "lock", c.color, 40)}</span>
+          <span class="kn-no">${k + 1}</span>
+          ${ps.length ? `<span class="kn-peers">${ps.slice(0, 3).map((a) => avatarHTML(a, 20)).join("")}${ps.length > 3 ? `<small>+${ps.length - 3}</small>` : ""}</span>` : ""}
+        </button>`;
+      }).join("")}</div>
+      ${reached ? "" : `<div class="fog-cover">☁️ 霧につつまれている…<br><small>前の大陸の王国をとりもどすと、霧が晴れる</small></div>`}
+    </section>`;
+  }).join("") + `<p class="hint">🏰＝とりもどした王国（押すと王国の話が読める）　👾＝いま戦っている封印獣${(peers || []).length ? "　小さなアバター＝同じクラスの仲間がいる王国" : ""}</p>`;
+}
+function bindMap(st) {
+  $$(".kn").forEach((b) => (b.onclick = () => {
+    const k = +b.dataset.k, it = st.order[k], K = kingdomOf(it);
+    if (st.done.has(it.id)) showGifts([{ html: castleSVG("done", (STORY.continents[gradeOf(it) - 1] || {}).color || "#2f9e44", 90), title: K.name, text: String(K.episode).replace(/\{name\}/g, storyName()) }], "とじる");
+    else if (k === st.cur) renderStory();
+    else showGifts([{ html: monsterSVG(K.kind, 90), title: "まだ近づけない", text: `第${k + 1}の王国「${K.name}」。前の王国をとりもどすと進める。（文法：${it.title}）` }], "とじる");
+  }));
+}
+function renderChapters() {
+  const st = storyState();
+  render(`${header("物語", true)}
+    <main class="wrap story">
+      <section class="panel"><h2>📜 ${esc(STORY.title)}</h2>
+        <p class="hint">王国をとりもどすたびに、続きが読めるようになる。</p>
+        <ol class="chapter-list">${STORY.chapters.map((c, n) => n <= st.chapters
+          ? `<li><button class="ch" data-n="${n}"><span class="ch-no">${n === 0 ? "序章" : "第" + n + "話"}</span><span>${esc(c.t)}</span></button></li>`
+          : n === st.chapters + 1 ? `<li><div class="ch lock"><span class="ch-no">第${n}話</span><span>🔒 次の王国をとりもどすと読める</span></div></li>` : "").join("")}</ol>
+      </section>
+      ${footerNote()}
+    </main>`);
+  bindBack(() => renderStory());
+  $$(".ch[data-n]").forEach((b) => (b.onclick = () => renderChapter(+b.dataset.n)));
+}
+function renderChapter(n) {
+  const st = storyState(), c = STORY.chapters[n];
+  render(`${header(n === 0 ? "序章" : "第" + n + "話", true)}
+    <main class="wrap story">
+      <article class="chapter"><h2>${esc(c.t)}</h2><p>${storyText(c.s)}</p></article>
+      <div class="btn-row">${n > 0 ? `<button class="btn" id="prevCh">◀ 前の話</button>` : ""}${n < st.chapters ? `<button class="btn primary" id="nextCh">次の話 ▶</button>` : `<button class="btn primary" id="toStoryB">冒険にもどる</button>`}</div>
+      ${n >= st.chapters && n < STORY.chapters.length - 1 ? `<p class="hint center">続きは、次の王国をとりもどすと読める…！</p>` : ""}
+      ${footerNote()}
+    </main>`);
+  bindBack(renderChapters);
+  if ($("#prevCh")) $("#prevCh").onclick = () => renderChapter(n - 1);
+  if ($("#nextCh")) $("#nextCh").onclick = () => renderChapter(n + 1);
+  if ($("#toStoryB")) $("#toStoryB").onclick = () => renderStory();
+}
+
+/* ---------- とどめの一撃（この文法＋それまでの文法がまざる。アプリの問題から出す） ---------- */
+function startStoryBattle(k) {
+  const st = storyState(), it = st.order[k], K = kingdomOf(it), sc = state.settings.story || {};
+  const num = Math.max(3, Math.min(30, Math.round(Number(sc.num) || 10)));
+  const pool = (x) => ({
+    s2: shuffle(x.stage2.questions).map((q) => Object.assign({ grammar: x.title, _st: 2, _from: x.short }, q)),
+    s4: shuffle(x.stage4.questions.concat(x.stage3.questions)).map((q) => Object.assign({ grammar: x.title, _st: 4, _from: x.short }, q))
+  });
+  const cur = pool(it), prev = st.order.slice(0, k).map(pool);
+  const qs = [], fromCur = prev.length ? Math.ceil(num / 2) : num;
+  for (let n = 0; n < fromCur; n++) { const q = cur[n % 2 ? "s4" : "s2"].shift() || cur[n % 2 ? "s2" : "s4"].shift(); if (q) qs.push(q); }
+  const P = shuffle(prev.slice());
+  for (let n = 0; qs.length < num && n < num * 6 && P.length; n++) { const L = P[n % P.length], w = Math.floor(n / P.length) % 2 ? "s4" : "s2"; const q = L[w].shift() || L[w === "s2" ? "s4" : "s2"].shift(); if (q) qs.push(q); }
+  while (qs.length < num) { const q = cur.s2.shift() || cur.s4.shift(); if (!q) break; qs.push(q); }
+  const pass = Math.min(1, Math.max(0.1, Number(sc.pass) || 0.8));
+  session = { i: CONTENT.indexOf(it), stage: 2, story: { k, it, K, pass, need: Math.ceil(qs.length * pass) }, qs: shuffle(qs), index: 0, log: [], startedAt: Date.now() };
+  render(`${header("とどめの一撃", true)}
+    <main class="wrap story">
+      <section class="battle-card intro">
+        <div class="bc-monster shake">${monsterSVG(K.kind, 140)}</div>
+        <h2>${esc(K.monster)} があらわれた！</h2>
+        <ul class="rules">
+          <li>全部で <b>${session.qs.length}問</b>。「${esc(it.short)}」と、これまでの王国の文法がまざって出る。</li>
+          <li>段階2の問題と、制限時間のある段階4の問題（<b>${state.settings.stage4.timeLimitSec}秒以内</b>に話し始める）。</li>
+          <li><b>${session.story.need}問</b>正解すると、${esc(K.monster)} をたおせる！</li>
+        </ul>
+      </section>
+      <button class="btn primary big" id="go">たたかう！</button>
+      ${footerNote()}
+    </main>`);
+  bindBack(() => renderStory());
+  $("#go").onclick = renderQuestion;
+}
+function storyBattleBar() {
+  const s = session.story, hit = session.log.filter((l) => l.correct).length;
+  const left = Math.max(0, s.need - hit);
+  return `<div class="battle-bar">${monsterSVG(s.K.kind, 36)}<span class="bb-name">${esc(s.K.monster)}</span><div class="hp-bar"><i style="width:${(left / s.need) * 100}%"></i></div><b>あと${left}</b></div>`;
+}
+async function renderStoryResult() {
+  const { log, story: s } = session;
+  const score = log.filter((l) => l.correct).length, total = log.length;
+  const passed = score >= s.need;
+  const before = storyState();
+  render(`${header("とどめの一撃　結果", true)}
+    <main class="wrap story">
+      <section class="battle-card ${passed ? "win" : ""}">
+        <div class="bc-monster">${monsterSVG(s.K.kind, 120, { down: passed })}</div>
+        <div class="big-score">${score}<span>/${total}</span></div>
+        <h2>${passed ? `${esc(s.K.monster)} をたおした！` : `${esc(s.K.monster)} は、まだ立っている…`}</h2>
+        ${passed ? `<div class="restored">${castleSVG("done", (STORY.continents[gradeOf(s.it) - 1] || {}).color || "#2f9e44", 70)}<p><b>王国「${esc(s.K.name)}」がもどった！</b></p><p>${storyText(s.K.episode)}</p></div>` : `<p class="hint">あと${s.need - score}問で、たおせた。もう一度いどもう！</p>`}
+      </section>
+      <ol class="log">${log.map((l) => `<li class="${l.correct ? "ok" : "ng"}"><span class="mark">${l.correct ? "○" : "×"}</span><span><span class="lq">${esc(l.q)}</span><span class="la">${esc(l.a)}</span></span></li>`).join("")}</ol>
+      <div class="save" id="saveState">記録しています…</div>
+      <div class="btn-row">${passed ? `<button class="btn primary" id="readNew">📜 物語の続きを読む</button>` : `<button class="btn primary" id="again">もう一度いどむ</button>`}<button class="btn" id="toStoryR">ストーリーモードへ</button></div>
+      ${footerNote()}
+    </main>`);
+  bindBack(() => renderStory());
+  if ($("#again")) $("#again").onclick = () => startStoryBattle(s.k);
+  $("#toStoryR").onclick = () => renderStory();
+  await saveResult({ itemId: "story", stage: 0, kingdom: s.it.id, score, total, passed, tags: passed ? ["s:" + s.it.id] : [], durationSec: Math.round((Date.now() - session.startedAt) / 1000), details: log });
+  const after = storyState();
+  if ($("#readNew")) $("#readNew").onclick = () => renderChapter(Math.min(after.chapters, Math.max(1, before.chapters + 1)));
+  if (passed && after.chapters > before.chapters && !$(".gift-overlay")) showGifts([{ big: "📜", title: `物語 第${after.chapters}話が読めるようになった！`, text: `「${STORY.chapters[after.chapters].t}」` }]);
+}
+
+/* ---------- 先生用：現在地の分布 ---------- */
+function positionFromSummary(progress) { return positionOf(progress); }
+function distributionHTML(list) {
+  if (!list.length) return "";
+  const pos = list.map((st) => positionFromSummary(st.progress));
+  const bins = Array.from({ length: 10 }, () => 0);
+  pos.forEach((p) => { bins[Math.min(9, Math.floor(p / 10))]++; });
+  const max = Math.max(1, ...bins), avg = Math.round((pos.reduce((a, b) => a + b, 0) / pos.length) * 10) / 10;
+  const twoWeeks = Date.now() - 14 * 86400000;
+  const idle = list.filter((st) => !st.last || new Date(st.last).getTime() < twoWeeks);
+  const stories = list.map((st) => (st.story || []).length);
+  const sAvg = Math.round((stories.reduce((a, b) => a + b, 0) / stories.length) * 10) / 10;
+  return `<section class="panel"><h2>現在地の分布</h2>
+    <p class="hint">すべての文法をマスター＝100。平均 <b>${avg}</b>　／　ストーリーモードでとりもどした王国の平均 <b>${sAvg}</b></p>
+    <div class="dist">${bins.map((n, k) => `<div class="dist-col"><span class="dist-n">${n || ""}</span><i style="height:${(n / max) * 100}%"></i><small>${k * 10}〜</small></div>`).join("")}</div>
+    ${idle.length ? `<details class="idle"><summary>2週間以上練習していない生徒（要確認）：${idle.length}人</summary><p class="hint">欠席などの理由もあるので、声かけの参考にしてください（生徒には表示されません）。</p><div class="chips">${idle.map((st) => `<span class="chip small">${esc(personName(st))}${st.cls ? `（${esc(st.cls)}）` : ""}</span>`).join("")}</div></details>` : ""}
+  </section>`;
+}
 
 </script>
 </body>
