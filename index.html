@@ -566,6 +566,29 @@ textarea.full { width: 100%; font: inherit; font-size: 14px; padding: 10px; bord
 table.sets td, table.sets th { vertical-align: top; }
 .form-grid select { padding: 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
 
+/* ===== マスターモード ===== */
+.master-list { display: grid; gap: 10px; margin-bottom: 6px; }
+.master-card { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; width: 100%; text-align: left; padding: 14px 16px; border-radius: 16px; border: 2px solid var(--gold); background: linear-gradient(135deg, var(--surface), var(--orange-soft)); box-shadow: var(--shadow); color: var(--ink); }
+.master-card.ready { border-color: var(--orange); }
+.master-card.done { background: linear-gradient(135deg, #fff9db, #ffe8a3); color: #3b2f00; }
+.mc-head { display: flex; align-items: center; gap: 8px; }
+.mc-ico { font-size: 24px; }
+.mc-title { font-weight: 800; font-size: 17px; }
+.mc-items { display: flex; flex-wrap: wrap; gap: 4px; }
+.mc-items .chip.on, .master-card .chip.on { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.mc-state { font-size: 14px; font-weight: 700; color: var(--orange); }
+.master-card.done .mc-state { color: #8a6d00; }
+.master-panel.done { border: 2px solid var(--gold); }
+.master-steps { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 6px; }
+.master-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; text-align: left; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); font: inherit; }
+.master-item.ok { border-color: var(--accent); }
+.master-final { border-top: 1px dashed var(--line); margin-top: 10px; padding-top: 8px; }
+.master-final.lock h3 { color: var(--muted); }
+.master-edit { border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; margin: 10px 0; background: var(--surface-2); }
+.cls-checks { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+.cls-checks .check { margin: 0; }
+table.dash th.mcol, table.dash td.mcol { border-left: 2px solid var(--gold); }
+
 </style>
 </head>
 <body>
@@ -1099,7 +1122,8 @@ table.sets td, table.sets th { vertical-align: top; }
     ghost: { f: '#ffffff', l: '#a5a4d4', b: '#ffffff', e: '#5f3dc4', m: 'open' },
     alien: { f: '#a9e34b', l: '#5c940d', b: '#d8f5a2', e: '#5f3dc4', m: 'open' },
     dragon: { f: '#69db7c', l: '#2b8a3e', b: '#fff3bf', e: '#e67700', m: 'open', n: 'dragon' },
-    unicorn: { f: '#ffffff', l: '#c39bd3', b: '#fff0f6', e: '#9c36b5', m: 'cat', lash: 1 }
+    unicorn: { f: '#ffffff', l: '#c39bd3', b: '#fff0f6', e: '#9c36b5', m: 'cat', lash: 1 },
+    owl: { f: '#b07d4f', l: '#6f4518', b: '#f3e1c7', e: '#8a5a12', m: 'beak' }
   };
   function chibiEye(x, y, col, gid, lash) {
     var D = '#2a1a14';
@@ -1184,6 +1208,13 @@ table.sets td, table.sets th { vertical-align: top; }
         back = round(29, 27, 11.5, c.b, 6);
         back += round(91, 27, 11.5, c.b, 6);
         mark = '<ellipse cx="60" cy="72" rx="12" ry="8.5" fill="' + c.b + '"/>';
+        break;
+      case 'owl':
+        back = ears('M26 44 L22 12 L48 28Z M94 44 L98 12 L72 28Z', 'M30 36 L28 20 L42 29Z M90 36 L92 20 L78 29Z', '#e9c9a0');
+        mark = '<ellipse cx="45" cy="61" rx="15" ry="16" fill="' + c.b + '"/><ellipse cx="75" cy="61" rx="15" ry="16" fill="' + c.b + '"/>' +
+          '<path d="M38 40 Q46 35 54 41 M82 40 Q74 35 66 41" stroke="' + l + '" stroke-width="2.4" fill="none" stroke-linecap="round"/>' +
+          '<path d="M50 100 q5 4 10 0 q5 4 10 0 M52 108 q4 3 8 0 q4 3 8 0" stroke="' + tint(f, -0.25) + '" stroke-width="1.8" fill="none" stroke-linecap="round"/>';
+        front = '<g fill="none" stroke="#e0a800" stroke-width="2.2"><circle cx="45" cy="60" r="11"/><circle cx="75" cy="60" r="11"/><path d="M56 59 h8"/></g>';
         break;
       case 'koala':
         back = '<circle cx="24" cy="36" r="16" fill="' + f + '"' + sw + '/><circle cx="96" cy="36" r="16" fill="' + f + '"' + sw + '/><circle cx="25" cy="38" r="9" fill="#f8f9fa"/><circle cx="95" cy="38" r="9" fill="#f8f9fa"/>';
@@ -1304,6 +1335,7 @@ table.sets td, table.sets th { vertical-align: top; }
     else if (id === 'bg_space') { o = grad('#1b1f3b', '#3b2f7a'); for (var j = 0; j < 22; j++) o += '<circle cx="' + ((j * 47 + 5) % 120) + '" cy="' + ((j * 31 + 9) % 120) + '" r="' + (j % 4 ? 0.9 : 1.6) + '" fill="#fff"/>'; o += '<circle cx="98" cy="24" r="10" fill="#ffa94d"/><ellipse cx="98" cy="24" rx="16" ry="4" fill="none" stroke="#ffe066" stroke-width="2" transform="rotate(-20 98 24)"/>'; }
     else if (id === 'bg_stage') o = '<rect width="120" height="120" fill="#2b0f16"/><path d="M60 0 L20 120 H100Z" fill="#fff3bf" opacity=".35"/><path d="M0 0 H26 Q20 60 30 120 H0Z M120 0 H94 Q100 60 90 120 H120Z" fill="#c92a2a"/><path d="M0 0 H120 V12 Q60 22 0 12Z" fill="#a61e4d"/>';
     else if (id === 'bg_gold') { o = '<rect width="120" height="120" fill="#fff3bf"/>'; for (var k = 0; k < 16; k++) { var a1 = k * 22.5 * Math.PI / 180, a2 = (k * 22.5 + 11) * Math.PI / 180; o += '<path d="M60 60 L' + (60 + 90 * Math.cos(a1)).toFixed(1) + ' ' + (60 + 90 * Math.sin(a1)).toFixed(1) + ' L' + (60 + 90 * Math.cos(a2)).toFixed(1) + ' ' + (60 + 90 * Math.sin(a2)).toFixed(1) + 'Z" fill="#ffd43b"/>'; } o += sparkle(18, 22, 6, '#fff') + sparkle(102, 26, 5, '#fff'); }
+    else if (id === 'bg_master') { o = grad('#1c1f4a', '#3b2a6b'); for (var q = 0; q < 18; q++) o += '<circle cx="' + ((q * 43 + 9) % 120) + '" cy="' + ((q * 29 + 13) % 120) + '" r="' + (q % 3 ? 0.9 : 1.5) + '" fill="#ffe8a3"/>'; o += '<path d="M14 120 Q8 84 26 62 M106 120 Q112 84 94 62" stroke="#ffd43b" stroke-width="2.4" fill="none"/>'; for (var lf = 0; lf < 5; lf++) { o += '<ellipse cx="' + (16 + lf * 2) + '" cy="' + (110 - lf * 11) + '" rx="5" ry="2.4" fill="#ffd43b" transform="rotate(-50 ' + (16 + lf * 2) + ' ' + (110 - lf * 11) + ')"/><ellipse cx="' + (104 - lf * 2) + '" cy="' + (110 - lf * 11) + '" rx="5" ry="2.4" fill="#ffd43b" transform="rotate(50 ' + (104 - lf * 2) + ' ' + (110 - lf * 11) + ')"/>'; } o += '<text x="60" y="18" text-anchor="middle" font-family="' + FONT + '" font-size="10" font-weight="900" fill="#ffd43b" letter-spacing="1">MASTER</text>'; }
     else o = grad('#d0ebff', '#e7f5ff') + '<g fill="#fff"><ellipse cx="24" cy="30" rx="16" ry="7"/><ellipse cx="34" cy="26" rx="10" ry="7"/><ellipse cx="94" cy="44" rx="14" ry="6"/></g>';
     return '<g clip-path="url(#' + clip + ')">' + o + '</g>';
   }
@@ -1320,6 +1352,7 @@ table.sets td, table.sets th { vertical-align: top; }
     else if (id === 'h_wizard') o = '<path d="M38 ' + (t + 6) + ' L64 ' + (t - 34) + ' L84 ' + (t + 6) + 'Z" fill="#7048e8" stroke="#4c2fb0" stroke-width="2.2" stroke-linejoin="round"/><ellipse cx="60" cy="' + (t + 6) + '" rx="34" ry="6" fill="#5f3dc4" stroke="#4c2fb0" stroke-width="2"/><path d="' + starPath(62, t - 8, 5, 2.2, 5) + '" fill="#ffd43b"/>' + sparkle(70, t - 20, 3, '#ffe066');
     else if (id === 'h_grad') o = '<path d="M60 ' + (t - 16) + ' L96 ' + (t - 6) + ' L60 ' + (t + 4) + ' L24 ' + (t - 6) + 'Z" fill="#343a40" stroke="#212529" stroke-width="2" stroke-linejoin="round"/><rect x="42" y="' + (t - 4) + '" width="36" height="12" rx="3" fill="#343a40"/><path d="M60 ' + (t - 6) + ' L90 ' + (t - 2) + ' L90 ' + (t + 14) + '" stroke="#ffd43b" stroke-width="2" fill="none"/><circle cx="90" cy="' + (t + 16) + '" r="3" fill="#ffd43b"/>';
     else if (id === 'h_halo') o = '<ellipse cx="60" cy="' + (t - 12) + '" rx="22" ry="6" fill="none" stroke="#ffd43b" stroke-width="5"/><ellipse cx="60" cy="' + (t - 12) + '" rx="22" ry="6" fill="none" stroke="#fff3bf" stroke-width="1.6"/>';
+    else if (id === 'h_laurel') { o = ''; for (var lv = 0; lv < 6; lv++) { var ax = 30 + lv * 4.2, ay = t + 12 - lv * 4.4, bx = 90 - lv * 4.2; o += '<ellipse cx="' + ax.toFixed(1) + '" cy="' + ay.toFixed(1) + '" rx="6.5" ry="3" fill="#82c91e" stroke="#2b8a3e" stroke-width="1.4" transform="rotate(' + (-60 + lv * 9) + ' ' + ax.toFixed(1) + ' ' + ay.toFixed(1) + ')"/><ellipse cx="' + bx.toFixed(1) + '" cy="' + ay.toFixed(1) + '" rx="6.5" ry="3" fill="#82c91e" stroke="#2b8a3e" stroke-width="1.4" transform="rotate(' + (60 - lv * 9) + ' ' + bx.toFixed(1) + ' ' + ay.toFixed(1) + ')"/>'; } o = '<path d="M30 ' + (t + 14) + ' Q60 ' + (t - 24) + ' 90 ' + (t + 14) + '" stroke="#2b8a3e" stroke-width="2" fill="none"/>' + o + '<circle cx="60" cy="' + (t - 9) + '" r="3.4" fill="#ffd43b" stroke="#c99200" stroke-width="1.4"/>' + sparkle(94, t - 6, 4, '#ffd43b'); }
     else if (id === 'h_crown') o = '<g transform="translate(60,' + (t - 6) + ') scale(.95)"><path d="M-24 10 L-28 -14 L-13 0 L0 -20 L13 0 L28 -14 L24 10Z" fill="#ffd43b" stroke="#c99200" stroke-width="2.4" stroke-linejoin="round"/><rect x="-24" y="8" width="48" height="8" rx="2" fill="#fab005" stroke="#c99200" stroke-width="2"/><circle cx="0" cy="-20" r="3.6" fill="#ff6b6b"/><circle cx="-28" cy="-14" r="3" fill="#4dabf7"/><circle cx="28" cy="-14" r="3" fill="#4dabf7"/><circle cx="0" cy="12" r="2.6" fill="#e64980"/></g>' + sparkle(92, t - 16, 4, '#ffd43b');
     return o;
   }
@@ -1343,6 +1376,8 @@ table.sets td, table.sets th { vertical-align: top; }
     else if (id === 'w_mic') o = '<path d="M82 104 L92 82" stroke="#495057" stroke-width="4" stroke-linecap="round"/><circle cx="94" cy="78" r="7" fill="#adb5bd" stroke="#495057" stroke-width="2"/><path d="M89 76 h10 M89 80 h10" stroke="#495057" stroke-width="1" opacity=".6"/><path d="M104 66 q4 4 0 8 M108 62 q7 8 0 16" stroke="#ff6b8a" stroke-width="2" fill="none" stroke-linecap="round"/>';
     else if (id === 'w_balloon') o = '<path d="M82 104 Q92 80 100 52" stroke="#868e96" stroke-width="1.4" fill="none"/><path d="' + heartPath(101, 36, 1.7) + '" fill="#ff6b8a" stroke="#c2255c" stroke-width="2"/><ellipse cx="95" cy="30" rx="3" ry="2" fill="#fff" opacity=".7"/>';
     else if (id === 'w_wand') o = '<path d="M82 104 L100 70" stroke="#c99200" stroke-width="3" stroke-linecap="round"/><path d="' + starPath(102, 64, 10, 4.6, 5) + '" fill="#ffd43b" stroke="#e67700" stroke-width="2" stroke-linejoin="round"/>' + sparkle(112, 52, 4, '#ffe066') + sparkle(90, 54, 3, '#ffe066');
+    else if (id === 'w_belt') o = '<path d="M37 93 Q60 99 83 93 L83 101 Q60 107 37 101Z" fill="#212529" stroke="#000" stroke-width="1.6"/><path d="M56 97 L51 113 L57 112 L60 100 L63 112 L69 113 L64 97Z" fill="#212529" stroke="#000" stroke-width="1.4" stroke-linejoin="round"/><rect x="54.5" y="94" width="11" height="9" rx="2" fill="#343a40" stroke="#000" stroke-width="1.4"/><path d="M41 97 h8 M71 97 h8" stroke="#ffd43b" stroke-width="1.8"/>';
+    else if (id === 'w_scroll') o = '<g transform="translate(86,96) rotate(-18)"><rect x="-14" y="-7" width="28" height="14" rx="2" fill="#fff8e1" stroke="#c99200" stroke-width="2"/><rect x="-18" y="-9" width="5" height="18" rx="2.5" fill="#a0522d"/><rect x="13" y="-9" width="5" height="18" rx="2.5" fill="#a0522d"/><path d="M-8 -2 h16 M-8 2 h12" stroke="#c92a2a" stroke-width="1.6"/><path d="M-2 7 l-3 9 l5 -3 l5 3 l-3 -9" fill="#e03131"/></g>' + sparkle(104, 80, 3.5, '#ffd43b');
     else if (id === 'w_trophy') o = '<g transform="translate(88,92) scale(.42)"><path d="M-22 -26 H22 V-14 C22 4 12 12 0 12 C-12 12 -22 4 -22 -14Z" fill="#ffd43b" stroke="#c99200" stroke-width="4"/><path d="M-22 -20 C-36 -20 -34 0 -18 2 M22 -20 C36 -20 34 0 18 2" stroke="#e0a800" stroke-width="5" fill="none"/><rect x="-5" y="11" width="10" height="9" fill="#e0a800"/><rect x="-16" y="20" width="32" height="9" rx="2" fill="#ffd43b" stroke="#c99200" stroke-width="4"/></g>' + sparkle(100, 72, 4, '#ffd43b');
     return o;
   }
@@ -1363,7 +1398,7 @@ table.sets td, table.sets th { vertical-align: top; }
     var cape = av.w === 'w_cape' ? '<path d="M40 80 Q60 84 80 80 L94 112 Q60 118 26 112Z" fill="#e03131" stroke="#a61e1e" stroke-width="2.2" stroke-linejoin="round"/><circle cx="44" cy="81" r="3" fill="#ffd43b"/><circle cx="76" cy="81" r="3" fill="#ffd43b"/>' : '';
     if (av.b === 'maker') a = { ey: 56, top: 28, ny: 80, hs: 1 };
     var who = av.b === 'maker' ? makerChar(av.mk) : chibi(base, { skin: skin });
-    var dy = (a.ny || 80) - 80, chest = { w_bowtie: 1, w_tie: 1, w_scarf: 1, w_medal: 1 };
+    var dy = (a.ny || 80) - 80, chest = { w_bowtie: 1, w_tie: 1, w_scarf: 1, w_medal: 1, w_belt: 1 };
     if (cape && dy) cape = '<g transform="translate(0,' + dy + ')">' + cape + '</g>';
     var wear = av.w && av.w !== 'w_cape' ? wearItem(av.w, a) : '';
     if (wear && dy && chest[av.w]) wear = '<g transform="translate(0,' + dy + ')">' + wear + '</g>';
@@ -1994,6 +2029,7 @@ const DEFAULT_SETTINGS = {
   assigned: null,          // 先生が選んだ「課題」の項目ID（null = すべて課題）
   due: {},                 // 課題の締め切り {項目ID: "YYYY-MM-DD"}
   src: {},                 // 課題の問題 {項目ID: 問題セットID}（なし＝アプリの問題）
+  masters: [],             // マスターモード [{id, name, items:[項目ID], num:問題数, pass:合格ライン, classes:[クラス]（空＝全クラス）}]
   classTasks: {},          // クラスごとの課題・締め切り {クラス: {assigned, due}}
   sttStage1: "elevenlabs", // 段階1の聞き取り: "elevenlabs"（録音して文字起こし）/ "browser"（ブラウザの音声認識）
   lockProgression: true,
@@ -2161,7 +2197,7 @@ function computeRewards(history, settings, itemIds, extra) {
   return {
     days: days.length, todayDone: days.indexOf(dayKey(Date.now())) >= 0, streak: streak, bestStreak: best,
     cards: Math.floor(days.length / STAMPS_PER_CARD), onCard: days.length % STAMPS_PER_CARD,
-    badges: badges, xp: xp, level: level, mastered: c.mastered, liveBest: Number(x.liveBest) || 0,
+    badges: badges, xp: xp, level: level, mastered: c.mastered, liveBest: Number(x.liveBest) || 0, masters: mastersDone(h).length,
     points: { earned: earned, spent: spent, avail: Math.max(0, earned - spent) }
   };
 }
@@ -2201,7 +2237,11 @@ const AVATAR_SET = (function () {
     { id: "bg_class", k: "bg", name: "教室", un: "lv:1" }, { id: "bg_rainbow", k: "bg", name: "にじ", un: "badge:pass50" },
     { id: "bg_sakura", k: "bg", name: "さくら", un: "card:30" }, { id: "bg_sea", k: "bg", name: "海", un: "shop:120" },
     { id: "bg_space", k: "bg", name: "宇宙", un: "lv:6" }, { id: "bg_stage", k: "bg", name: "ライブのステージ", un: "live:10" },
-    { id: "bg_gold", k: "bg", name: "チャンピオンの金色", un: "live:1" }
+    { id: "bg_gold", k: "bg", name: "チャンピオンの金色", un: "live:1" },
+    // マスターモードに成功した回数でもらえる
+    { id: "h_laurel", k: "h", name: "月桂冠", un: "master:1" }, { id: "w_belt", k: "w", name: "黒帯", un: "master:2" },
+    { id: "bg_master", k: "bg", name: "マスターの間", un: "master:3" }, { id: "owl", k: "b", name: "はかせフクロウ", un: "master:4" },
+    { id: "w_scroll", k: "w", name: "免許皆伝の巻物", un: "master:5" }
   ];
   const byId = {}; L.forEach((d) => { byId[d.id] = d; });
   const MAKER = {
@@ -2240,6 +2280,7 @@ function isOpen(item, rw, owned) {
   if (p[0] === "badge") return rw.badges.has(p[1]);
   if (p[0] === "shop") return (owned || []).indexOf(item.id) >= 0;
   if (p[0] === "live") return rw.liveBest > 0 && rw.liveBest <= v;
+  if (p[0] === "master") return (rw.masters || 0) >= v;
   return false;
 }
 /* アバターの内容が正しく、使えるものだけでできているか */
@@ -2327,6 +2368,15 @@ function dueState(due, mastered, now) {
   return { due, left, state: (now || Date.now()) > end ? "over" : "open" };
 }
 
+/* マスターモード：成功したマスターモードのID ／ そのクラスで使うマスターモード */
+function mastersDone(history) {
+  const s = {};
+  (history || []).forEach((r) => { if (r.itemId === "master" && r.passed) (r.tags || []).forEach((t) => { if (/^m:/.test(t)) s[t.slice(2)] = 1; }); });
+  return Object.keys(s);
+}
+function mastersFor(settings, cls, all) {
+  return ((settings || {}).masters || []).filter((m) => m && m.id && Array.isArray(m.items) && m.items.length && (all || !m.classes || !m.classes.length || m.classes.indexOf(cls) >= 0));
+}
 /* PDF・Word の問題セット：文のリスト → 段階2〜4の問題（サーバーとお試しモードで共通）
    問題ID は「項目ID-段階-セットID＋種類＋文の番号」（記録・復習・まちがい集計に使う） */
 const FORM_INSTR = "（　）の中の語を正しい形にして、文全体を言おう";
@@ -3050,6 +3100,7 @@ function unlockText(un) {
   if (p[0] === "badge") { const b = BADGES.find((x) => x.id === v); return "バッジ「" + (b ? b.name : v) + "」で"; }
   if (p[0] === "shop") return "お店で " + v + "pt";
   if (p[0] === "live") return +v === 1 ? "ライブで1位になると" : "ライブで" + v + "位以内に入ると";
+  if (p[0] === "master") return "マスターモードに" + (+v === 1 ? "成功すると" : v + "回成功すると");
   return "";
 }
 const fmtDate = (ts) => { const t = new Date(ts); return isNaN(t) ? "" : `${t.getMonth() + 1}/${t.getDate()}`; };
@@ -3076,7 +3127,9 @@ function renderHome() {
   const assignedList = assignedOrder();
   const freeList = CONTENT.map((it, i) => [it, i]).filter(([it]) => !isAssigned(it.id));
   const soon = assignedList.map(([it]) => dueOf(it.id)).filter((d) => d && (d.state === "over" || (d.state === "open" && d.left <= 2)));
-  const cards = (freeList.length || soon.length ? `<h2 class="sec">課題</h2>` : "") +
+  const masters = myMasters();
+  const cards = (masters.length ? `<h2 class="sec">🏅 マスターモード</h2><div class="master-list">${masters.map(masterCard).join("")}</div>` : "") +
+    (freeList.length || soon.length || masters.length ? `<h2 class="sec">課題</h2>` : "") +
     (assignedList.length ? assignedList.map(([it, i]) => card(it, i)).join("") : `<p class="hint">課題の項目はまだありません。</p>`) +
     (freeList.length ? `<h2 class="sec">自由練習</h2>` + GRADES.map((g) => {
       const list = freeList.filter(([it]) => gradeOf(it) === g);
@@ -3136,6 +3189,7 @@ function renderHome() {
     </main>`);
   bindBack(null);
   $$(".item-card").forEach((b) => (b.onclick = () => renderItem(+b.dataset.i)));
+  $$(".master-card").forEach((b) => (b.onclick = () => renderMaster(b.dataset.m)));
   $("#meAv").onclick = () => renderAvatar("b");
   $("#toAvatar").onclick = () => renderAvatar("b");
   $("#toShop").onclick = renderShop;
@@ -3800,8 +3854,8 @@ function startQuiz(i, stage) {
 
 function quizHeader() {
   const { stage, qs, index, i } = session;
-  return `${header(session.review ? "復習" : `段階${stage}　${CONTENT[i].short}`, true)}
-    <div class="progress"><div class="progress-bar s${session.review ? 3 : stage}" style="width:${(index / qs.length) * 100}%"></div></div>
+  return `${header(session.master ? "まとめ問題" : session.review ? "復習" : `段階${stage}　${CONTENT[i].short}`, true)}
+    <div class="progress"><div class="progress-bar s${session.review || session.master ? 3 : stage}" style="width:${(index / qs.length) * 100}%"></div></div>
     <div class="progress-text">${index + 1} / ${qs.length}</div>`;
 }
 
@@ -3852,12 +3906,12 @@ function renderQuestion() {
   const stage = q._st || session.stage; // 復習では問題ごとに段階がちがう
   render(`${quizHeader()}
     <main class="wrap">
-      ${session.review ? `<div class="review-tag">${esc(q._from || "")}</div>` : ""}
+      ${session.review || session.master ? `<div class="review-tag">${esc(q._from || "")}</div>` : ""}
       ${questionCard(q, stage)}
       ${answerBlock({ lang: "en-US", placeholder: stage === 4 ? "聞き取り中に英語で言おう" : "マイクをタップして英語で言おう", multiline: false })}
       <div id="result"></div>
     </main>`);
-  bindBack(() => (session.review ? renderReview() : renderItem(session.i)));
+  bindBack(() => (session.master ? renderMaster(session.master.id) : session.review ? renderReview() : renderItem(session.i)));
 
   let shownAt = 0, latency = null;
   const limit = state.settings.stage4.timeLimitSec;
@@ -3934,6 +3988,7 @@ async function judgeQuestion(q, ans, via, latency, ctl) {
 
 async function renderQuizResult() {
   if (session.review) return renderReviewResult();
+  if (session.master) return renderMasterResult();
   const { i, stage, log } = session;
   const it = CONTENT[i];
   const conf = state.settings["stage" + stage];
@@ -4023,6 +4078,116 @@ async function renderReviewResult() {
   await saveResult({ itemId: "review", stage: 0, score, total, passed, durationSec: Math.round((Date.now() - session.startedAt) / 1000), details: log });
 }
 
+/* ===== マスターモード（選ばれた文法をすべてマスター → まとめ問題に合格） ===== */
+const MASTER_FORMAT_NOTE = "段階2の問題（穴うめ・並べかえ・書きかえ）と、段階4の問題（制限時間あり）がまざって出ます。";
+function myMasters() {
+  return mastersFor(state.rawSettings, state.profile.cls || "", state.isAdmin).map((m) => Object.assign({}, m, { list: m.items.map((id) => CONTENT.find((c) => c.id === id)).filter(Boolean) })).filter((m) => m.list.length);
+}
+const isMastered = (id) => clearedCount(id) === 4;
+function masterState(m) {
+  const done = mastersDone(state.history).includes(m.id), n = m.list.filter((it) => isMastered(it.id)).length;
+  return { done, n, ready: n === m.list.length };
+}
+function masterCard(m) {
+  const st = masterState(m);
+  return `<button class="master-card ${st.done ? "done" : st.ready ? "ready" : ""}" data-m="${esc(m.id)}">
+    <span class="mc-head"><span class="mc-ico">${st.done ? "🏅" : st.ready ? "🔥" : "🏁"}</span><span class="mc-title">${esc(m.name)}</span></span>
+    <span class="mc-items">${m.list.map((it) => `<span class="chip small ${isMastered(it.id) ? "on" : ""}">${isMastered(it.id) ? "✓ " : ""}${esc(it.short)}</span>`).join("")}</span>
+    <span class="mc-state">${st.done ? "成功！" : st.ready ? "まとめ問題に挑戦できます" : `マスター ${st.n} / ${m.list.length}`}</span>
+  </button>`;
+}
+function renderMaster(id) {
+  const m = myMasters().find((x) => x.id === id);
+  if (!m) return renderHome();
+  const st = masterState(m), num = Math.min(50, Math.max(5, Math.round(Number(m.num) || 20))), pass = Math.min(1, Math.max(0.1, Number(m.pass) || 0.8));
+  const best = state.history.filter((r) => r.itemId === "master" && (r.tags || []).includes("m:" + m.id)).reduce((a, r) => Math.max(a, r.total ? r.score / r.total : 0), 0);
+  render(`${header("マスターモード", true)}
+    <main class="wrap">
+      <section class="panel master-panel ${st.done ? "done" : ""}">
+        <h2>${st.done ? "🏅 " : ""}${esc(m.name)}</h2>
+        <p class="hint">① 下の文法をすべてマスターする（段階1〜4をクリア）→ ② まとめ問題で ${pct(pass)}% 以上正解すると、マスターモード成功です。成功すると、新しいアバターがもらえます。</p>
+        <ol class="master-steps">${m.list.map((it) => `<li><button class="master-item ${isMastered(it.id) ? "ok" : ""}" data-i="${CONTENT.indexOf(it)}"><span>${esc(it.title)}</span><span class="tag ${isMastered(it.id) ? "ok" : ""}">${isMastered(it.id) ? "マスター" : clearedCount(it.id) + "/4"}</span></button></li>`).join("")}</ol>
+        <div class="master-final ${st.ready ? "" : "lock"}">
+          <h3>まとめ問題（${num}問）</h3>
+          <p class="hint">${MASTER_FORMAT_NOTE}選んだ文法から、いろいろな問題がランダムに出ます（PDF・Word の問題とは別の問題です）。</p>
+          ${best ? `<p class="hint">これまでの最高：${pct(best)}%</p>` : ""}
+          <button class="btn primary big" id="goMaster" ${st.ready ? "" : "disabled"}>${st.ready ? (st.done ? "もう一度挑戦する" : "まとめ問題に挑戦！") : "🔒 すべてマスターすると挑戦できます"}</button>
+        </div>
+      </section>
+      ${footerNote()}
+    </main>`);
+  bindBack(renderHome);
+  $$(".master-item").forEach((b) => (b.onclick = () => renderItem(+b.dataset.i)));
+  $("#goMaster").onclick = () => startMaster(m);
+}
+function startMaster(m) {
+  const num = Math.min(50, Math.max(5, Math.round(Number(m.num) || 20)));
+  // まとめ問題は、アプリの問題（問題を自動作成）から出す。PDF・Word の問題セットは使わない
+  const lists = m.list.map((it) => ({
+    s2: shuffle(it.stage2.questions).map((q) => Object.assign({ grammar: it.title, _st: 2, _from: it.short }, q)),
+    s4: shuffle(it.stage4.questions.concat(it.stage3.questions)).map((q) => Object.assign({ grammar: it.title, _st: 4, _from: it.short }, q))
+  }));
+  const qs = [];
+  for (let k = 0; qs.length < num && k < num * 4; k++) {
+    const L = lists[k % lists.length], want = Math.floor(k / lists.length) % 2 ? "s4" : "s2";
+    const q = L[want].shift() || L[want === "s2" ? "s4" : "s2"].shift();
+    if (q) qs.push(q);
+  }
+  if (!qs.length) return renderMaster(m.id);
+  session = { i: 0, stage: 2, master: m, qs: shuffle(qs), index: 0, log: [], startedAt: Date.now() };
+  render(`${header("まとめ問題", true)}
+    <main class="wrap">
+      <section class="q-card s4 intro">
+        <div class="q-label">🏁 ${esc(m.name)}</div>
+        <div class="q-main ja">まとめ問題にチャレンジ！</div>
+        <ul class="rules">
+          <li>全部で <b>${session.qs.length}問</b>。${MASTER_FORMAT_NOTE}</li>
+          <li>段階4の問題は <b>${state.settings.stage4.timeLimitSec}秒以内</b>に話し始めよう。</li>
+          <li><b>${pct(Math.min(1, Math.max(0.1, Number(m.pass) || 0.8)))}%</b> 以上正解で、マスターモード成功！</li>
+        </ul>
+      </section>
+      <button class="btn primary big" id="go">スタート</button>
+      ${footerNote()}
+    </main>`);
+  bindBack(() => renderMaster(m.id));
+  $("#go").onclick = renderQuestion;
+}
+async function renderMasterResult() {
+  const { log, master: m } = session;
+  const score = log.filter((l) => l.correct).length, total = log.length;
+  const pass = Math.min(1, Math.max(0.1, Number(m.pass) || 0.8));
+  const passed = score / total >= pass, first = passed && !mastersDone(state.history).includes(m.id);
+  render(`${header("まとめ問題　結果", true)}
+    <main class="wrap">
+      <section class="result-card ${passed ? "ok" : "ng"}">
+        <div class="big-score">${score}<span>/${total}</span></div>
+        <div class="verdict ${passed ? "ok" : "ng"}">${passed ? "🏅 マスターモード成功！" : "もう少し！"}</div>
+        <div class="sub">「${esc(m.name)}」　合格ライン ${pct(pass)}%</div>
+      </section>
+      <ol class="log">${log.map((l) => `<li class="${l.correct ? "ok" : "ng"}"><span class="mark">${l.correct ? "○" : "×"}</span>
+        <span><span class="lq">${esc(l.q)}</span><span class="la">${esc(l.a)}${l.latency != null && l.st === 4 ? `（${l.latency}秒）` : ""}</span></span></li>`).join("")}</ol>
+      <div class="save" id="saveState">記録しています…</div>
+      <div class="btn-row"><button class="btn primary" id="again">${passed ? "もう一度挑戦する" : "もう一度挑戦する"}</button><button class="btn" id="toMaster">マスターモードにもどる</button></div>
+      ${footerNote()}
+    </main>`);
+  bindBack(() => renderMaster(m.id));
+  $("#again").onclick = () => startMaster(m);
+  $("#toMaster").onclick = () => renderMaster(m.id);
+  await saveResult({ itemId: "master", stage: 0, master: m.id, score, total, passed, tags: passed ? ["m:" + m.id] : [], durationSec: Math.round((Date.now() - session.startedAt) / 1000), details: log });
+  if (first && !$(".gift-overlay")) showGifts([{ title: "マスターモード成功！", text: `「${m.name}」をマスターしました。`, big: "🏅" }]);
+}
+// 先生用：生徒のマスターモードの状況
+function masterTable(sum) {
+  const list = (sum.masterList || []).filter((m) => m && m.items);
+  if (!list.length) return "";
+  const done = sum.masters || [];
+  const mastered = (id) => { const pc = ((sum.progress || {})[id] || {}).passCount || [0, 0, 0, 0]; return [1, 2, 3, 4].every((k) => pc[k - 1] >= requiredPasses(k)); };
+  return `<table class="prog"><thead><tr><th class="name">マスターモード</th><th>マスターした文法</th><th>まとめ問題</th></tr></thead><tbody>${list.map((m) => {
+    const n = m.items.filter(mastered).length;
+    return `<tr><th class="name">${esc(m.name)}</th><td>${n} / ${m.items.length}</td><td>${done.includes(m.id) ? "🏅 成功" : n === m.items.length ? "挑戦できる" : "－"}</td></tr>`;
+  }).join("")}</tbody></table>`;
+}
+
 /* ===== 管理者設定 ===== */
 function renderSettings() {
   const s = state.rawSettings;
@@ -4040,6 +4205,10 @@ function renderSettings() {
         ${classes.length ? `<div class="row"><span>設定するクラス</span><select id="taskCls"><option value="">全クラス共通</option>${classes.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join("")}</select></div>` : ""}
         <div id="taskBox"></div>
         <p class="hint">チェックした項目が生徒の画面の「課題」に、それ以外は「自由練習」に表示されます。締め切りまでに段階1〜4をすべてクリア（マスター）するのが目標です。締め切りは空欄でもかまいません。</p>
+        <h2>マスターモード</h2>
+        <p class="hint">選んだ文法をすべてマスターしたあと、それらをまとめた問題（段階2の問題と、制限時間のある段階4の問題がランダムにまざる）に合格すると成功です。まとめ問題はアプリの問題から出します（PDF・Word の問題とは別の問題になります）。成功するたびに、新しいアバターがもらえます。文法を1つも選んでいないマスターモードは保存されません。</p>
+        <div id="masterBox"></div>
+        <div class="btn-row"><button type="button" class="btn" id="addMaster">＋ マスターモードを追加</button></div>
         <h2>合格基準</h2>
         <div class="row"><span>段階1 合格ライン（ポイント達成率）</span>${num("s1p", pct(s.stage1.passRatio), 10, 100, 5, "%")}</div>
         <div class="row"><span>段階1 話し終わってから自動で判定するまでの時間</span>${num("s1s", s.stage1.silenceSec, 1, 10, 0.5, "秒")}</div>
@@ -4127,6 +4296,45 @@ function renderSettings() {
     $$("[data-nog]").forEach((b) => (b.onclick = () => CONTENT.filter((it) => gradeOf(it) === +b.dataset.nog).forEach((it) => { $("#as_" + it.id).checked = false; sync(it); })));
   };
   drawTasks();
+  // マスターモードの編集
+  const masters = JSON.parse(JSON.stringify(s.masters || []));
+  const newMid = () => "m" + Math.random().toString(36).slice(2, 9).replace(/[^a-z0-9]/g, "x");
+  const readMasters = () => {
+    masters.forEach((m, k) => {
+      if (!$("#mn_" + k)) return;
+      m.name = $("#mn_" + k).value.trim().slice(0, 40) || "マスターモード" + (k + 1);
+      const picked = $$(`[data-mi="${k}"]`).filter((x) => x.checked).map((x) => x.value);
+      m.items = CONTENT.filter((it) => picked.includes(it.id)).map((it) => it.id).concat((m.items || []).filter((id) => !CONTENT.some((c) => c.id === id)));
+      const n = parseFloat($("#mq_" + k).value), pp = parseFloat($("#mp_" + k).value);
+      m.num = Math.min(50, Math.max(5, Math.round(isNaN(n) ? 20 : n)));
+      m.pass = Math.min(1, Math.max(0.1, (isNaN(pp) ? 80 : pp) / 100));
+      m.classes = $$(`[data-mc="${k}"]`).filter((x) => x.checked).map((x) => x.value);
+    });
+    return masters;
+  };
+  const drawMasters = () => {
+    $("#masterBox").innerHTML = masters.length ? masters.map((m, k) => `<div class="master-edit">
+      <div class="row"><span>名前</span><input type="text" id="mn_${k}" value="${esc(m.name || "")}" maxlength="40" class="wide"></div>
+      <div class="master-items">${GRADES.map((g) => {
+        const list = CONTENT.filter((it) => gradeOf(it) === g);
+        if (!list.length) return "";
+        const n = list.filter((it) => (m.items || []).includes(it.id)).length;
+        return `<details class="grade-box" ${n || (!(m.items || []).length && g === 1) ? "open" : ""}><summary>中${g}の文法（${n}項目を選択）</summary>${list.map((it) => `<label class="check item-use"><input type="checkbox" data-mi="${k}" value="${esc(it.id)}" ${(m.items || []).includes(it.id) ? "checked" : ""}> ${itemNo(it)}. ${esc(it.title)}</label>`).join("")}</details>`;
+      }).join("")}</div>
+      <div class="row"><span>まとめ問題の数</span>${num("mq_" + k, m.num || 20, 5, 50, 1, "問")}</div>
+      <div class="row"><span>合格ライン</span>${num("mp_" + k, pct(m.pass || 0.8), 10, 100, 5, "%")}</div>
+      ${classes.length ? `<div class="row"><span>使うクラス<br><small>（選ばないと全クラス）</small></span><span class="cls-checks">${classes.map((c) => `<label class="check"><input type="checkbox" data-mc="${k}" value="${esc(c)}" ${(m.classes || []).includes(c) ? "checked" : ""}> ${esc(c)}</label>`).join("")}</span></div>` : ""}
+      <div class="btn-row"><button type="button" class="btn small danger" data-mdel="${k}">このマスターモードを削除</button></div>
+    </div>`).join("") : `<p class="hint">まだありません。</p>`;
+    $$("[data-mdel]").forEach((b) => (b.onclick = () => {
+      readMasters();
+      const m = masters[+b.dataset.mdel];
+      if (!confirm(`マスターモード「${m.name}」を削除します（保存するまでは元にもどせます）。よろしいですか？`)) return;
+      masters.splice(+b.dataset.mdel, 1); drawMasters();
+    }));
+  };
+  drawMasters();
+  $("#addMaster").onclick = () => { readMasters(); masters.push({ id: newMid(), name: "マスターモード" + (masters.length + 1), items: [], num: 20, pass: 0.8, classes: [] }); drawMasters(); };
   if ($("#taskCls")) $("#taskCls").onchange = (e) => { readTasks(); taskCls = e.target.value; if (!tasks[taskCls]) tasks[taskCls] = { assigned: tasks[""].assigned, due: Object.assign({}, tasks[""].due), src: Object.assign({}, tasks[""].src), own: false }; drawTasks(); };
   const collect = () => {
     readTasks();
@@ -4141,7 +4349,8 @@ function renderSettings() {
       stage2: { numQuestions: clampN(v("s2n")), passRatio: clampR(v("s2p")), requiredPasses: clampP(v("r2")) },
       stage3: { numQuestions: clampN(v("s3n")), passRatio: clampR(v("s3p")), requiredPasses: clampP(v("r3")) },
       stage4: { numQuestions: clampN(v("s4n")), passRatio: clampR(v("s4p")), timeLimitSec: Math.min(30, Math.max(1, isNaN(v("s4t")) ? 5 : v("s4t"))), requiredPasses: clampP(v("r4")) },
-      assigned: tasks[""].assigned, due: tasks[""].due, src: tasks[""].src || {}, classTasks, rosterOnly: $("#rosterOnly").checked,
+      assigned: tasks[""].assigned, due: tasks[""].due, src: tasks[""].src || {}, classTasks,
+      masters: readMasters().filter((m) => m.items.length).map((m) => ({ id: m.id, name: m.name, items: m.items, num: m.num, pass: m.pass, classes: m.classes })), rosterOnly: $("#rosterOnly").checked,
       sttStage1: $("#eleven").checked ? "elevenlabs" : "browser",
       lockProgression: $("#lock").checked,
       allowText: $("#allowText").checked,
@@ -4251,7 +4460,13 @@ async function renderDashboard(cls) {
   const touched = (it) => list.some((st) => (Array.isArray(st.assigned) && st.assigned.includes(it.id)) || ((st.progress[it.id] || {}).attempts || []).some((n) => n > 0));
   let cols = view === "all" ? CONTENT.slice() : /^g\d$/.test(view) ? CONTENT.filter((it) => gradeOf(it) === +view[1]) : CONTENT.filter(touched);
   if (!cols.length) cols = CONTENT.filter((it) => gradeOf(it) === 1);
-  const head = cols.map((it) => `<th title="${esc(it.title)}">${gradeOf(it)}-${itemNo(it)}<br><small>${esc(it.short)}</small></th>`).join("");
+  const mlist = mastersFor(state.rawSettings, cls, !cls);
+  const head = cols.map((it) => `<th title="${esc(it.title)}">${gradeOf(it)}-${itemNo(it)}<br><small>${esc(it.short)}</small></th>`).join("") +
+    mlist.map((m) => `<th class="mcol" title="マスターモード">🏅<br><small>${esc(m.name)}</small></th>`).join("");
+  const mcell = (st, m) => {
+    const n = m.items.filter((id) => { const pc = (st.progress[id] && st.progress[id].passCount) || [0, 0, 0, 0]; return [1, 2, 3, 4].every((k) => pc[k - 1] >= requiredPasses(k)); }).length;
+    return (st.masters || []).includes(m.id) ? `<td class="lv lv4 mcol">成功</td>` : `<td class="mcol">${n}/${m.items.length}</td>`;
+  };
   const rows = list.map((st) => `<tr><th class="name"><button class="link" data-detail="${esc(st.email)}">${st.no ? `<small>${esc(st.no)}</small> ` : ""}${esc(personName(st))}</button>${st.nickname ? `<small> ${esc(st.nickname)}</small>` : ""}${!cls && st.cls ? `<small class="cls-tag">${esc(st.cls)}</small>` : ""}</th>
     <td>${esc(st.level || "－")}</td><td>${st.days != null ? st.days + "日" : "－"}</td><td>${st.last ? fmtDate(st.last) : "－"}</td>${cols.map((it) => {
     const pc = (st.progress[it.id] && st.progress[it.id].passCount) || [0, 0, 0, 0];
@@ -4259,7 +4474,7 @@ async function renderDashboard(cls) {
     const asg = !Array.isArray(st.assigned) || st.assigned.includes(it.id);
     const ds = (st.due || {})[it.id];
     return `<td class="lv lv${lv} ${asg ? "asg" : ""}">${lv === 4 ? "マスター" : lv ? "段階" + lv : "－"}${ds && DUE_LABEL[ds] ? `<small class="due-mark ${ds}">${DUE_LABEL[ds]}</small>` : ""}</td>`;
-  }).join("")}</tr>`).join("");
+  }).join("")}${mlist.map((m) => mcell(st, m)).join("")}</tr>`).join("");
   const active = list.filter((st) => st.last && dayKey(st.last) >= week).length;
   const over = list.filter((st) => Object.values(st.due || {}).includes("over")).length;
   const recent = (d.recent || []).filter((r) => !cls || r.cls === cls).slice(0, 40).map((r) => {
@@ -4271,7 +4486,7 @@ async function renderDashboard(cls) {
     <div class="sum-cards"><div><b>${list.length}</b><small>人</small></div><div><b>${active}</b><small>今週練習した人</small></div><div><b class="${over ? "ng" : ""}">${over}</b><small>締め切りを過ぎた課題がある人</small></div></div>
     <section class="panel"><h2>到達状況</h2><p class="hint">クリアした段階（太字の列はその生徒の課題）。名前を押すと、その生徒の詳しい記録が見られます。列の上の「1-3」は「中1の3番目」です。</p>
       <div class="toolbar"><label>表に出す文法 <select id="dashCols"><option value="auto">課題と、練習した文法</option>${GRADES.map((g) => `<option value="g${g}" ${view === "g" + g ? "selected" : ""}>中${g}の文法</option>`).join("")}<option value="all" ${view === "all" ? "selected" : ""}>すべて</option></select></label></div>
-      <div class="table-wrap"><table class="dash"><thead><tr><th></th><th>級・段</th><th>練習<br><small>した日数</small></th><th>最後に<br><small>練習した日</small></th>${head}</tr></thead><tbody>${rows || `<tr><td colspan="${cols.length + 4}">まだ記録がありません</td></tr>`}</tbody></table></div></section>
+      <div class="table-wrap"><table class="dash"><thead><tr><th></th><th>級・段</th><th>練習<br><small>した日数</small></th><th>最後に<br><small>練習した日</small></th>${head}</tr></thead><tbody>${rows || `<tr><td colspan="${cols.length + mlist.length + 4}">まだ記録がありません</td></tr>`}</tbody></table></div></section>
     <section class="panel"><h2>最近の記録</h2>
       <div class="table-wrap"><table class="recent"><thead><tr><th>日時</th><th>生徒</th><th>項目</th><th>段階</th><th>得点</th><th></th></tr></thead><tbody>${recent || `<tr><td colspan="6">まだ記録がありません</td></tr>`}</tbody></table></div></section>
     ${MODE === "demo" ? `<div class="btn-row"><button class="btn danger" id="clear">この端末の記録を消す</button></div>` : ""}`;
@@ -4407,7 +4622,7 @@ async function renderStudentDetail(email, back) {
       <button class="btn small" id="toReport">🖨️ レポートを印刷</button></section>
     <div class="sum-cards"><div><b>${esc(d.level.name)}</b><small>けいけん値 ${d.xp}</small></div><div><b>${d.days}</b><small>練習した日</small></div><div><b>${d.streak}</b><small>いまの連続（最高${d.bestStreak}）</small></div>
       <div><b>${d.mastered}</b><small>マスターした文法</small></div><div><b>${d.points.avail}</b><small>ポイント</small></div><div><b>${d.badges.length}</b><small>バッジ</small></div></div>
-    <section class="panel"><h2>文法ごとの進み具合</h2><div class="table-wrap">${progressTable(d)}</div></section>
+    <section class="panel"><h2>文法ごとの進み具合</h2><div class="table-wrap">${progressTable(d)}</div>${masterTable(d) ? `<div class="table-wrap">${masterTable(d)}</div>` : ""}</section>
     <section class="panel"><h2>練習した日 <small>最近10週</small></h2>${calendarHTML(d.dayCounts, 10)}</section>
     <section class="panel"><h2>まちがえたままの問題 <small>${(d.mistakes || []).length}問</small></h2><div class="table-wrap">${mistakeList(d.mistakes, 50)}</div></section>
     <section class="panel"><h2>最近の記録 <small>${d.total}回</small></h2><p class="hint">行を押すと、問題ごとの答えが見られます（△は内容は正しいが時間オーバー）。</p>${recRows || `<p class="hint">まだ記録がありません</p>`}</section>
@@ -4469,7 +4684,7 @@ async function renderReports(opt, back) {
         <div class="rp-who">${p.cls ? `<span>${esc(p.cls)}</span>` : ""}${p.no ? `<span>${esc(p.no)}番</span>` : ""}<b>${esc(personName(p))}</b></div></header>
       <div class="rp-sum"><div><small>級・段</small><b>${esc(r.level.name)}</b></div><div><small>けいけん値</small><b>${r.xp}</b></div><div><small>練習した日</small><b>${r.days}日</b></div>
         <div><small>最高の連続</small><b>${r.bestStreak}日</b></div><div><small>マスターした文法</small><b>${r.mastered} / ${CONTENT.length}</b></div><div><small>バッジ</small><b>${r.badges.length}</b></div></div>
-      <h3>文法ごとの進み具合</h3>${progressTable(r)}
+      <h3>文法ごとの進み具合</h3>${progressTable(r)}${masterTable(r)}
       <h3>練習した日（最近8週）</h3>${calendarHTML(r.dayCounts, 8)}
       <h3>まちがえたままの問題</h3>${mistakeList(r.mistakes, 8)}
       <h3>先生から</h3><div class="rp-comment"></div>
