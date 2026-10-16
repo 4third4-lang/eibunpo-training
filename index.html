@@ -451,6 +451,89 @@ th.name { text-align: left; }
 .sent-row { display: flex; gap: 10px; align-items: center; font-size: 14px; }
 table.people td, table.people th { vertical-align: middle; }
 
+/* ===== 段階C：復習・締め切り・先生用の画面 ===== */
+.chip.small { font-size: 13px; padding: 4px 10px; border: 0; }
+button.chip { border: 1px solid var(--line); background: var(--chip); color: var(--ink); }
+.review-tag { display: inline-block; font-size: 12px; font-weight: 800; color: var(--s3); background: var(--s3-bg); border-radius: 99px; padding: 3px 10px; margin-bottom: 8px; }
+.review-list { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 6px; max-height: 360px; overflow-y: auto; }
+.review-list li { display: flex; flex-direction: column; padding: 8px 12px; border-radius: 10px; background: var(--surface-2); }
+.review-list .lq { font-weight: 700; } .review-list .la { font-size: 13px; color: var(--ng); }
+.review-list small { color: var(--muted); margin-left: 4px; }
+.due { display: inline-block; align-self: flex-start; font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 99px; background: var(--chip); color: var(--muted); }
+.due.ok { background: var(--ok-bg); color: var(--ok); } .due.warn { background: var(--warn-bg); color: var(--warn); } .due.ng { background: var(--ng-bg); color: var(--ng); }
+.due-notice { font-weight: 700; }
+.task-table { display: grid; gap: 4px; margin: 8px 0; }
+.task-table.off { opacity: .55; }
+.task-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 4px 0; border-bottom: 1px solid var(--line); }
+.task-row .check { margin: 0; flex: 1; min-width: 200px; }
+.due-in { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.due-in input, .cls-sel, .toolbar select, .form-grid input, .edit-row input { font: inherit; font-size: 14px; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.form select { font: inherit; font-size: 14px; padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
+.toolbar.center { justify-content: center; }
+.seg.small button { padding: 4px 12px; font-size: 12px; }
+.sum-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-bottom: 14px; }
+.sum-cards > div { display: flex; flex-direction: column; align-items: center; padding: 10px 6px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); text-align: center; }
+.sum-cards b { font-size: 22px; } .sum-cards b.ng { color: var(--ng); } .sum-cards small { font-size: 11px; color: var(--muted); font-weight: 700; }
+button.link { border: 0; background: none; padding: 0; color: var(--accent); font-weight: 800; text-align: left; text-decoration: underline; text-underline-offset: 3px; }
+.cls-tag { display: inline-block; margin-left: 4px; font-size: 11px; font-weight: 800; color: var(--accent); background: var(--accent-soft); border-radius: 6px; padding: 0 6px; }
+.dash td.asg { font-weight: 900; }
+.due-mark { display: block; font-size: 10px; font-weight: 800; }
+.due-mark.done { color: var(--ok); } .due-mark.over { color: var(--ng); } .due-mark.late { color: var(--warn); }
+.lv4 .due-mark { color: #fff; }
+.edit-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px; text-align: left; }
+.edit-row label { display: flex; flex-direction: column; font-size: 12px; color: var(--muted); font-weight: 700; }
+.edit-row input { width: 120px; }
+.detail-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.detail-head > div { flex: 1; min-width: 180px; }
+.cal { display: flex; gap: 3px; overflow-x: auto; padding-bottom: 4px; }
+.cal-dow, .cal-col { display: flex; flex-direction: column; gap: 3px; align-items: center; }
+.cal-dow span, .cal-dow small, .cal-col small { font-size: 10px; color: var(--muted); height: 14px; line-height: 14px; white-space: nowrap; }
+.cal-col small { min-width: 26px; text-align: center; }
+.cal-d { display: block; width: 16px; height: 14px; border-radius: 3px; background: var(--chip); }
+.cal-d.l1 { background: color-mix(in srgb, var(--ok) 35%, var(--chip)); } .cal-d.l2 { background: color-mix(in srgb, var(--ok) 65%, var(--chip)); } .cal-d.l3 { background: var(--ok); }
+.cal-d.fut { opacity: .3; }
+table.prog th.name, table.miss td { text-align: left; white-space: normal; }
+table.prog td.clr { color: var(--ok); font-weight: 900; }
+table.miss td { vertical-align: top; font-size: 13px; min-width: 90px; }
+table.miss td.ng { color: var(--ng); }
+.rate { width: 80px; height: 8px; border-radius: 99px; background: var(--chip); overflow: hidden; margin: 4px 0 2px; }
+.rate i { display: block; height: 100%; background: var(--ng); }
+.ans { display: inline-block; margin: 2px 4px 2px 0; padding: 2px 8px; border-radius: 8px; background: var(--ng-bg); color: var(--ng); font-size: 12px; }
+.ans small { margin-left: 4px; color: var(--muted); }
+details.rec { border-top: 1px solid var(--line); padding: 6px 0; }
+details.rec summary { display: grid; grid-template-columns: 90px 1fr 60px 60px 50px; gap: 6px; cursor: pointer; font-size: 14px; align-items: center; }
+details.rec summary .ok { color: var(--ok); font-weight: 800; }
+.log.small li { padding: 6px 10px; } .log.small .la { font-size: 14px; }
+.badge-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 10px; }
+.form-grid label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 700; color: var(--muted); }
+.chip-check { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 99px; border: 1px solid var(--line); font-size: 13px; font-weight: 700; }
+textarea.full { width: 100%; font: inherit; font-size: 14px; padding: 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+
+/* 個人レポート（印刷用） */
+.report-wrap { max-width: 860px; }
+.report-page { background: #fff; color: #1d2433; border: 1px solid var(--line); border-radius: 12px; padding: 22px 26px; margin-bottom: 18px; box-shadow: var(--shadow); }
+.report-page h3 { font-size: 14px; margin: 14px 0 6px; padding-left: 8px; border-left: 4px solid #1f6f8b; }
+.rp-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; border-bottom: 2px solid #1f6f8b; padding-bottom: 8px; }
+.rp-title { font-size: 18px; font-weight: 900; } .rp-sub { font-size: 12px; color: #5f687c; }
+.rp-who { display: flex; gap: 10px; align-items: baseline; font-size: 14px; } .rp-who b { font-size: 20px; }
+.rp-sum { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 10px; }
+.rp-sum > div { border: 1px solid #e2e6ee; border-radius: 8px; padding: 6px; text-align: center; display: flex; flex-direction: column; }
+.rp-sum small { font-size: 10px; color: #5f687c; } .rp-sum b { font-size: 16px; }
+.report-page table { font-size: 12px; } .report-page th, .report-page td { padding: 4px; border-bottom: 1px solid #e2e6ee; }
+.report-page .hint { color: #5f687c; }
+.report-page .cal-d { background: #edf1f7; } .report-page .cal-d.l1 { background: #a9dcc5; } .report-page .cal-d.l2 { background: #5fbf95; } .report-page .cal-d.l3 { background: #1a8a60; }
+.rp-comment { height: 90px; border: 1px solid #c9ced8; border-radius: 8px; }
+@media print {
+  @page { size: A4 portrait; margin: 12mm; }
+  html, body { background: #fff !important; }
+  .bar, .preview-bar, .no-print, .ai-note, .gift-overlay { display: none !important; }
+  .wrap, .report-wrap { max-width: none; padding: 0; margin: 0; }
+  .report-page { border: 0; border-radius: 0; box-shadow: none; padding: 0; margin: 0; page-break-after: always; break-after: page; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .report-page:last-child { page-break-after: auto; break-after: auto; }
+}
+
 </style>
 </head>
 <body>
@@ -1874,6 +1957,8 @@ const DEFAULT_SETTINGS = {
   stage3: { numQuestions: 8, passRatio: 0.8, requiredPasses: 1 },
   stage4: { numQuestions: 10, passRatio: 0.8, timeLimitSec: 5, requiredPasses: 1 },
   assigned: null,          // 先生が選んだ「課題」の項目ID（null = すべて課題）
+  due: {},                 // 課題の締め切り {項目ID: "YYYY-MM-DD"}
+  classTasks: {},          // クラスごとの課題・締め切り {クラス: {assigned, due}}
   sttStage1: "elevenlabs", // 段階1の聞き取り: "elevenlabs"（録音して文字起こし）/ "browser"（ブラウザの音声認識）
   lockProgression: true,
   allowText: true,
@@ -1883,7 +1968,8 @@ const DEFAULT_SETTINGS = {
   model: "claude-haiku-5-5",
   showRanking: false,      // 生徒にランキングを見せる
   autoStamps: true,        // 条件で自動のスタンプを出す
-  omikuji: true            // おみくじ英文を使えるようにする
+  omikuji: true,           // おみくじ英文を使えるようにする
+  rosterOnly: false        // 名簿に登録した生徒だけ使える
 };
 function mergeSettings(s) {
   const d = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
@@ -1929,6 +2015,7 @@ const stage2Model = (q) => q.type === "choice" ? q.text.replace("( )", q.answer)
 function computeProgress(results) {
   const p = {};
   for (const r of results) {
+    if (!(r.stage >= 1 && r.stage <= 4)) continue; // 復習（段階0）は数えない
     const it = (p[r.itemId] = p[r.itemId] || { passed: [false, false, false, false], passCount: [0, 0, 0, 0], best: [0, 0, 0, 0], attempts: [0, 0, 0, 0] });
     const i = r.stage - 1;
     it.attempts[i]++;
@@ -2155,10 +2242,62 @@ function nicknameProblem(n) {
   if (/[0-9０-９]{5,}/.test(s)) return "数字だけが長く続くニックネームは使えません。";
   return "";
 }
+/* ---------- まちがえたままの問題（記録の詳細から） ----------
+   それぞれの問題の「いちばん新しい答え」がまちがいなら、復習リストに入る。
+   段階4で内容は正しいが時間オーバーだったものは、まちがいに数えない。 */
+function openMistakes(records) {
+  const h = (records || []).slice().sort((a, b) => (String(a.timestamp) < String(b.timestamp) ? -1 : 1));
+  const m = {};
+  h.forEach((r) => {
+    (r.details || []).forEach((d) => {
+      if (!d || !d.qid) return;
+      const ok = d.contentCorrect !== undefined && d.contentCorrect !== null ? !!d.contentCorrect : !!d.correct;
+      const e = (m[d.qid] = m[d.qid] || { qid: d.qid, wrong: 0, right: 0, ok: true, a: "", ts: "" });
+      if (ok) { e.right++; e.ok = true; } else { e.wrong++; e.ok = false; e.a = String(d.a || "").slice(0, 200); e.ts = r.timestamp; }
+    });
+  });
+  return Object.keys(m).map((k) => m[k]).filter((e) => !e.ok).map((e) => ({ qid: e.qid, wrong: e.wrong, a: e.a, ts: e.ts }));
+}
+/* ---------- クラスごとの課題・締め切り ----------
+   settings.assigned（課題の項目）と settings.due（{項目ID: "YYYY-MM-DD"}）が全クラス共通。
+   settings.classTasks[クラス] があれば、そのクラスはそちらを使う。 */
+function settingsForClass(settings, cls) {
+  const s = Object.assign({}, settings || {});
+  const ct = s.classTasks && cls ? s.classTasks[cls] : null;
+  if (ct) { s.assigned = ct.assigned === undefined ? s.assigned : ct.assigned; s.due = ct.due || {}; }
+  s.due = s.due || {};
+  return s;
+}
+/* 文法をマスターした（段階1〜4をすべてクリアした）日時 */
+function masteredAt(history, settings) {
+  const st = settings || {};
+  const need = (s) => Math.max(1, Math.round(Number((st["stage" + s] || {}).requiredPasses) || 1));
+  const h = (history || []).slice().sort((a, b) => (String(a.timestamp) < String(b.timestamp) ? -1 : 1));
+  const pc = {}, done = {};
+  h.forEach((r) => {
+    if (!r.passed || !(r.stage >= 1 && r.stage <= 4) || done[r.itemId]) return;
+    const a = (pc[r.itemId] = pc[r.itemId] || [0, 0, 0, 0]); a[r.stage - 1]++;
+    if ([1, 2, 3, 4].every((s) => a[s - 1] >= need(s))) done[r.itemId] = r.timestamp;
+  });
+  return done;
+}
+/* 締め切りの状態：done（期限内にマスター）/ late（期限後にマスター）/ over（期限切れ・まだ）/ open（期限前・まだ） */
+function dueState(due, mastered, now) {
+  if (!due) return null;
+  const end = new Date(due + "T23:59:59").getTime();
+  const left = Math.round((new Date(due + "T00:00:00").getTime() - new Date(dayKey(now || Date.now()) + "T00:00:00").getTime()) / 86400000);
+  if (mastered) return { due, left, state: new Date(mastered).getTime() <= end ? "done" : "late" };
+  return { due, left, state: (now || Date.now()) > end ? "over" : "open" };
+}
 /*__REWARD_SHARED_END__*/
 
 /* 画面側：いまの生徒のごほうびの状態 */
 const ITEM_IDS = CONTENT.map((it) => it.id);
+/* 問題のID（記録・復習・まちがい集計に使う）：「項目ID-段階-番号」 */
+const QINDEX = {};
+CONTENT.forEach((it) => [2, 3, 4].forEach((s) => ((it["stage" + s] || {}).questions || []).forEach((q, k) => { q.qid = `${it.id}-${s}-${k}`; QINDEX[q.qid] = { q, it, stage: s }; })));
+const qText = (q) => q.ja || q.text || q.answer || "";
+const qModel = (q) => (q.type ? stage2Model(q) : (q.answers || [])[0] || "");
 function rewardExtra() {
   const pf = state.profile || {};
   return { omDays: pf.omDays || 0, teacherStamps: (state.tstamps || []).length, spent: pf.spent || 0, owned: pf.owned || [], hasAvatar: !!pf.avatar, liveBest: pf.liveBest || 0 };
@@ -2202,8 +2341,27 @@ function autoStampEvents(history) {
   return out;
 }
 /* 次にやるとよい段階（課題の中で、まだクリアしていない最初のもの） */
+/* 締め切り */
+const fmtDue = (d) => { const p = String(d || "").split("-"); return p.length === 3 ? `${+p[1]}/${+p[2]}` : ""; };
+function dueOf(id, mm) {
+  const due = (state.settings.due || {})[id];
+  return isAssigned(id) && due ? dueState(due, (mm || masteredAt(state.history, state.settings))[id]) : null;
+}
+function dueChip(d) {
+  if (!d) return "";
+  if (d.state === "done") return `<span class="due ok">✓ 期限内にマスター</span>`;
+  if (d.state === "late") return `<span class="due">マスター（締め切り後）</span>`;
+  if (d.state === "over") return `<span class="due ng">締め切り ${fmtDue(d.due)} を過ぎています</span>`;
+  return `<span class="due ${d.left <= 2 ? "warn" : ""}">締め切り ${fmtDue(d.due)}（${d.left === 0 ? "今日まで" : "あと" + d.left + "日"}）</span>`;
+}
+// 課題の順番：締め切りが近いもの（まだマスターしていないもの）から
+function assignedOrder() {
+  const mm = masteredAt(state.history, state.settings);
+  const key = (it) => { const d = dueOf(it.id, mm); return !d ? 3e15 : (d.state === "open" || d.state === "over") ? new Date(d.due).getTime() : 4e15; };
+  return CONTENT.map((it, i) => [it, i]).filter(([it]) => isAssigned(it.id)).sort((a, b) => key(a[0]) - key(b[0]) || a[1] - b[1]);
+}
 function nextStep() {
-  const order = CONTENT.map((it, i) => [it, i]).filter(([it]) => isAssigned(it.id)).concat(CONTENT.map((it, i) => [it, i]).filter(([it]) => !isAssigned(it.id)));
+  const order = assignedOrder().concat(CONTENT.map((it, i) => [it, i]).filter(([it]) => !isAssigned(it.id)));
   for (const [it, i] of order) {
     for (let st = 1; st <= 4; st++) if (!isCleared(it.id, st) && isUnlocked(it.id, st)) return { i, stage: st, it };
   }
@@ -2322,12 +2480,19 @@ const remoteApi = (callFn) => ({
   saveProfile(p) { return this.call("saveProfile", p); },
   buy(id) { return this.call("buy", { id }); },
   omikuji() { return this.call("omikuji"); },
-  ranking(period) { return this.call("ranking", { period }); },
+  ranking(period, opt) { return this.call("ranking", Object.assign({ period }, opt || {})); },
   markStampsRead() { return this.call("markStampsRead"); },
   students() { return this.call("getStudents"); },
   sendStamp(d) { return this.call("sendStamp", d); },
   updateStudent(d) { return this.call("adminUpdateStudent", d); },
-  sentStamps() { return this.call("getSentStamps"); }
+  sentStamps() { return this.call("getSentStamps"); },
+  importRoster(rows) { return this.call("importRoster", { rows }); },
+  studentDetail(email) { return this.call("getStudentDetail", { email }); },
+  mistakeStats(opt) { return this.call("getMistakeStats", opt || {}); },
+  reports(opt) { return this.call("getReports", opt || {}); },
+  teachers() { return this.call("getTeachers"); },
+  saveTeacher(t) { return this.call("saveTeacher", t); },
+  removeTeacher(email) { return this.call("removeTeacher", { email }); }
 });
 /* お試しモード：この端末だけで、ごほうびの処理をまねる */
 const DEFAULT_PROFILE = { nickname: "", avatar: null, theme: "umi", owned: [], spent: 0, omDays: 0, omLast: "", liveBest: 0 };
@@ -2364,16 +2529,73 @@ const demoRewardsApi = {
   async markStampsRead() { lsSet("eg_tstamps", lsGet("eg_tstamps", []).map((s) => Object.assign(s, { seen: true }))); return { ok: true }; },
   async students() {
     const pf = demoProfile(), rw = demoRewards(pf), res = lsGet("eg_results", []);
-    return { students: [{ email: "お試しユーザー", nickname: pf.nickname, avatar: pf.avatar, level: rw.level.name, xp: rw.xp, avail: rw.points.avail, days: rw.days, last: res.length ? res[res.length - 1].timestamp : "" }] };
+    const roster = lsGet("eg_roster", []).map((r) => Object.assign({ nickname: "", avatar: null, level: LEVELS[0][1], xp: 0, avail: 0, days: 0, last: "" }, r));
+    return { students: [{ email: "お試しユーザー", cls: "", no: "", name: "", teacher: true, nickname: pf.nickname, avatar: pf.avatar, level: rw.level.name, xp: rw.xp, avail: rw.points.avail, days: rw.days, last: res.length ? res[res.length - 1].timestamp : "" }].concat(roster), classes: demoClasses(), scope: null };
   },
   async sendStamp(d) {
     const list = lsGet("eg_tstamps", []);
     list.push({ id: "t" + Date.now(), ts: new Date().toISOString(), by: "先生", design: d.design, msg: String(d.message || "").slice(0, 60), seen: false });
     lsSet("eg_tstamps", list); return { sent: 1 };
   },
-  async updateStudent(d) { const pf = demoProfile(); if (d.nickname !== undefined) pf.nickname = ""; lsSet("eg_profile", pf); return { ok: true }; },
-  async sentStamps() { return { stamps: lsGet("eg_tstamps", []).slice().reverse().map((s) => ({ ts: s.ts, to: ["お試しユーザー"], design: s.design, msg: s.msg, seen: s.seen ? 1 : 0 })) }; }
+  async updateStudent(d) {
+    if (d.email !== "お試しユーザー") { const list = lsGet("eg_roster", []), x = list.find((y) => y.email === d.email); if (x) { ["cls", "no", "name", "reg"].forEach((k) => { if (d[k] !== undefined) x[k] = d[k]; }); lsSet("eg_roster", list); } return { ok: true }; }
+    const pf = demoProfile(); if (d.nickname !== undefined) pf.nickname = ""; lsSet("eg_profile", pf); return { ok: true };
+  },
+  async sentStamps() { return { stamps: lsGet("eg_tstamps", []).slice().reverse().map((s) => ({ ts: s.ts, to: ["お試しユーザー"], design: s.design, msg: s.msg, seen: s.seen ? 1 : 0 })) }; },
+  // 名簿・先生・詳しい記録（お試しモードでは、名簿の生徒は記録なしで表示する）
+  async importRoster(rows) {
+    const list = lsGet("eg_roster", []); let added = 0, updated = 0; const skipped = [];
+    rows.forEach((r, k) => {
+      const e = String(r.email || "").trim().toLowerCase();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) { skipped.push({ line: k + 1, reason: "メールアドレスが正しくありません" }); return; }
+      const x = list.find((y) => y.email === e);
+      if (x) { Object.assign(x, { cls: r.cls || "", no: r.no || "", name: r.name || "", reg: true }); updated++; } else { list.push({ email: e, cls: r.cls || "", no: r.no || "", name: r.name || "", reg: true }); added++; }
+    });
+    lsSet("eg_roster", list); return { added, updated, skipped };
+  },
+  async studentDetail(email) {
+    const res = lsGet("eg_results", []), mine = email === "お試しユーザー";
+    const h = mine ? res : [], pf = mine ? demoProfile() : Object.assign({}, DEFAULT_PROFILE), r = (lsGet("eg_roster", []).find((x) => x.email === email) || {});
+    const sum = demoSummary(email, h, pf, r);
+    sum.mistakes = openMistakes(h);
+    sum.records = h.slice(-150).reverse();
+    return sum;
+  },
+  async mistakeStats(opt) {
+    const stats = {};
+    lsGet("eg_results", []).forEach((r) => (r.details || []).forEach((d) => {
+      if (!d || !d.qid || d.met) return;
+      const src = d.qid.split("-")[0]; if (opt && opt.itemId && src !== opt.itemId) return;
+      const ok = d.contentCorrect !== undefined && d.contentCorrect !== null ? d.contentCorrect : d.correct;
+      const e = (stats[d.qid] = stats[d.qid] || { qid: d.qid, q: d.q, itemId: src, stage: +d.qid.split("-")[1], n: 0, wrong: 0, people: 0, ans: {} });
+      e.n++; if (!ok) { e.wrong++; e.people = 1; const a = String(d.a || "").trim() || "（答えなし）"; e.ans[a] = (e.ans[a] || 0) + 1; }
+    }));
+    const list = Object.values(stats).filter((e) => e.wrong).map((e) => Object.assign(e, { answers: Object.entries(e.ans).map(([a, n]) => ({ a, n })).sort((x, y) => y.n - x.n).slice(0, 5) }))
+      .sort((x, y) => y.wrong / y.n - x.wrong / x.n || y.wrong - x.wrong);
+    return { list, classes: demoClasses() };
+  },
+  async reports(opt) {
+    const res = lsGet("eg_results", []), roster = lsGet("eg_roster", []);
+    let targets = [{ email: "お試しユーザー", cls: "", no: "", name: "" }].concat(roster);
+    if (opt && opt.emails && opt.emails.length) targets = targets.filter((t) => opt.emails.includes(t.email));
+    else if (opt && opt.cls) targets = targets.filter((t) => t.cls === opt.cls);
+    return { reports: targets.map((t) => { const mine = t.email === "お試しユーザー", h = mine ? res : []; const sum = demoSummary(t.email, h, mine ? demoProfile() : Object.assign({}, DEFAULT_PROFILE), t); sum.mistakes = openMistakes(h).slice(0, 10); return sum; }) };
+  },
+  async teachers() { return { teachers: [{ email: "お試しユーザー", name: "", classes: [], owner: true, me: true }].concat(lsGet("eg_teachers", [])), classes: demoClasses() }; },
+  async saveTeacher(t) { const list = lsGet("eg_teachers", []).filter((x) => x.email !== t.email); list.push({ email: String(t.email).toLowerCase(), name: t.name || "", classes: t.classes || [] }); lsSet("eg_teachers", list); return this.teachers(); },
+  async removeTeacher(email) { lsSet("eg_teachers", lsGet("eg_teachers", []).filter((x) => x.email !== email)); return this.teachers(); }
 };
+const demoClasses = () => Array.from(new Set(lsGet("eg_roster", []).map((r) => r.cls).filter(Boolean))).sort();
+function demoSummary(email, h, pf, r) {
+  const st = lsGet("eg_settings", null) ? mergeSettings(lsGet("eg_settings", null)) : state.rawSettings;
+  const eff = settingsForClass(st, r.cls || pf.cls);
+  const rw = computeRewards(h, eff, ITEM_IDS, { omDays: pf.omDays, teacherStamps: email === "お試しユーザー" ? lsGet("eg_tstamps", []).length : 0, spent: pf.spent, owned: pf.owned, hasAvatar: !!pf.avatar });
+  const mm = masteredAt(h, eff), due = {}, days = {};
+  Object.keys(eff.due || {}).forEach((id) => { const d = dueState(eff.due[id], mm[id]); if (d) due[id] = d; });
+  h.forEach((x) => { const k = dayKey(x.timestamp); days[k] = (days[k] || 0) + 1; });
+  return { profile: { email, cls: r.cls || "", no: r.no || "", name: r.name || "", nickname: pf.nickname, avatar: pf.avatar, reg: !!r.reg }, level: rw.level, xp: rw.xp, points: rw.points, days: rw.days,
+    streak: rw.streak, bestStreak: rw.bestStreak, badges: Array.from(rw.badges), mastered: rw.mastered, progress: computeProgress(h), masteredAt: mm, due, assigned: Array.isArray(eff.assigned) ? eff.assigned : null, dayCounts: days, total: h.length };
+}
 const api = MODE === "api" ? remoteApi(async (action, args) => {
   const token = lsGet("eg_token", "");
   if (!token) throw new AuthError("ログインしてください");
@@ -2391,7 +2613,7 @@ const api = MODE === "api" ? remoteApi(async (action, args) => {
   async bootstrap() {
     const results = lsGet("eg_results", []);
     return { email: "お試しユーザー", isAdmin: true, settings: lsGet("eg_settings", null), progress: computeProgress(results), history: results, hasEleven: !!lsGet("eg_eleven_key", ""),
-      profile: demoProfile(), tstamps: lsGet("eg_tstamps", []) };
+      profile: demoProfile(), tstamps: lsGet("eg_tstamps", []), mistakes: openMistakes(results), classes: demoClasses(), teacher: { scope: null, owner: true } };
   },
   async saveResult(r) {
     const results = lsGet("eg_results", []);
@@ -2430,10 +2652,11 @@ const api = MODE === "api" ? remoteApi(async (action, args) => {
     return { text: String(data.text || "").trim() };
   },
   async dashboard() {
-    const results = lsGet("eg_results", []);
-    const days = Array.from(new Set(results.map((r) => dayKey(r.timestamp))));
-    const pf = demoProfile(), rw = demoRewards(pf);
-    return { students: results.length ? [{ email: "お試しユーザー", progress: computeProgress(results), days: days.length, last: results[results.length - 1].timestamp, nickname: pf.nickname, level: rw.level.name, xp: rw.xp, avail: rw.points.avail }] : [], recent: results.slice(-30).reverse() };
+    const results = lsGet("eg_results", []), pf = demoProfile(), roster = lsGet("eg_roster", []);
+    const row = (email, h, p, r) => { const sm = demoSummary(email, h, p, r), due = {}; Object.keys(sm.due).forEach((k) => { due[k] = sm.due[k].state; });
+      return { email, cls: sm.profile.cls, no: sm.profile.no, name: sm.profile.name, nickname: p.nickname, progress: sm.progress, days: sm.days, last: h.length ? h[h.length - 1].timestamp : "", level: sm.level.name, xp: sm.xp, avail: sm.points.avail, due, assigned: sm.assigned }; };
+    const students = (results.length ? [row("お試しユーザー", results, pf, {})] : []).concat(roster.map((r) => row(r.email, [], Object.assign({}, DEFAULT_PROFILE), r)));
+    return { students, recent: results.slice(-30).reverse(), classes: demoClasses() };
   }
 });
 
@@ -2566,7 +2789,9 @@ function speak(text, lang, onDone) {
 }
 
 /* ---------- アプリの状態 ---------- */
-const state = { email: "", isAdmin: false, settings: mergeSettings(null), progress: {}, history: [], hasEleven: false, profile: Object.assign({}, DEFAULT_PROFILE), tstamps: [] };
+const state = { email: "", isAdmin: false, settings: mergeSettings(null), rawSettings: mergeSettings(null), progress: {}, history: [], hasEleven: false, profile: Object.assign({}, DEFAULT_PROFILE), tstamps: [], mistakes: [] };
+// 先生の設定（全クラス共通＋クラスごと）から、この生徒のクラスの設定を作る
+function applySettings(raw) { state.rawSettings = mergeSettings(raw); state.settings = mergeSettings(settingsForClass(state.rawSettings, state.profile.cls)); }
 const useEleven = () => state.settings.sttStage1 === "elevenlabs" && state.hasEleven && recorderAvailable;
 let session = null;      // 進行中の練習
 let activeRec = null;    // 動作中の音声認識
@@ -2608,11 +2833,15 @@ function renderAdminHome() {
   const studentUrl = MODE === "api" ? LOGIN_URL : "";
   render(`${header("管理者画面")}
     <main class="wrap">
+      ${state.teacher && state.teacher.scope ? `<div class="notice">担当クラス：${state.teacher.scope.map(esc).join("、")}（このクラスの生徒だけが表示されます）</div>` : ""}
       <div class="admin-grid">
         <button class="admin-card" id="aDash"><span class="ac-ico">📊</span><span class="ac-title">学習記録</span><span class="ac-desc">生徒ごとの到達状況と最近の記録</span></button>
         <button class="admin-card" id="aSet"><span class="ac-ico">⚙️</span><span class="ac-title">管理者設定</span><span class="ac-desc">課題の項目・合格基準・合格回数・聞き取り方法</span></button>
         <button class="admin-card" id="aStamp"><span class="ac-ico">💌</span><span class="ac-title">先生スタンプ</span><span class="ac-desc">スタンプを作って生徒に送る・送ったスタンプ</span></button>
-        <button class="admin-card" id="aPeople"><span class="ac-ico">👥</span><span class="ac-title">生徒一覧</span><span class="ac-desc">級・ポイント・ニックネーム（消すこともできます）</span></button>
+        <button class="admin-card" id="aPeople"><span class="ac-ico">👥</span><span class="ac-title">生徒一覧・名簿</span><span class="ac-desc">名簿の登録（貼り付け）・クラス・番号・名前・ニックネーム</span></button>
+        <button class="admin-card" id="aMiss"><span class="ac-ico">❌</span><span class="ac-title">まちがいの多い問題</span><span class="ac-desc">クラス・文法ごとに、よくあるまちがいの答え</span></button>
+        <button class="admin-card" id="aReport"><span class="ac-ico">🖨️</span><span class="ac-title">個人レポート</span><span class="ac-desc">1人ずつ、またはクラス全員分を印刷</span></button>
+        <button class="admin-card" id="aTeach"><span class="ac-ico">🧑‍🏫</span><span class="ac-title">先生</span><span class="ac-desc">先生の追加（招待）・削除・担当クラス</span></button>
         <button class="admin-card" id="aRank"><span class="ac-ico">🏆</span><span class="ac-title">ランキング</span><span class="ac-desc">${s.showRanking ? "生徒に表示中" : "いまは先生だけに表示"}</span></button>
         <button class="admin-card" id="aStu"><span class="ac-ico">👀</span><span class="ac-title">生徒画面を見る</span><span class="ac-desc">生徒に表示される画面で、実際に練習を試せます</span></button>
       </div>
@@ -2641,7 +2870,10 @@ function renderAdminHome() {
   $("#aSet").onclick = renderSettings;
   $("#aStu").onclick = () => setView(true);
   $("#aStamp").onclick = () => renderTeacherStamps();
-  $("#aPeople").onclick = renderStudents;
+  $("#aPeople").onclick = () => renderStudents();
+  $("#aMiss").onclick = () => renderMistakes();
+  $("#aReport").onclick = () => renderReportPicker();
+  $("#aTeach").onclick = () => renderTeachers();
   $("#aRank").onclick = () => renderRanking("week");
   if ($("#copyUrl")) $("#copyUrl").onclick = async () => {
     const m = $("#copyMsg");
@@ -2698,13 +2930,14 @@ function renderHome() {
     }).join("");
     return `<button class="item-card ${done === 4 ? "mastered" : ""}" data-i="${i}">
       <span class="num">${i + 1}</span>
-      <span class="item-main"><span class="item-title">${esc(it.title)}</span><span class="dots">${dots}</span></span>
+      <span class="item-main"><span class="item-title">${esc(it.title)}</span><span class="dots">${dots}</span>${dueChip(dueOf(it.id))}</span>
       <span class="item-count">${done === 4 ? "マスター" : done + "/4"}</span>
     </button>`;
   };
-  const assignedList = CONTENT.map((it, i) => [it, i]).filter(([it]) => isAssigned(it.id));
+  const assignedList = assignedOrder();
   const freeList = CONTENT.map((it, i) => [it, i]).filter(([it]) => !isAssigned(it.id));
-  const cards = (freeList.length ? `<h2 class="sec">課題</h2>` : "") +
+  const soon = assignedList.map(([it]) => dueOf(it.id)).filter((d) => d && (d.state === "over" || (d.state === "open" && d.left <= 2)));
+  const cards = (freeList.length || soon.length ? `<h2 class="sec">課題</h2>` : "") +
     (assignedList.length ? assignedList.map(([it, i]) => card(it, i)).join("") : `<p class="hint">課題の項目はまだありません。</p>`) +
     (freeList.length ? `<h2 class="sec">自由練習</h2>` + freeList.map(([it, i]) => card(it, i)).join("") : "");
   const rw = rewardState(state.history);
@@ -2715,6 +2948,7 @@ function renderHome() {
   const menu = [
     ["toAvatar", "🎨", "着せ替え", ""],
     ["toShop", "🛍️", "お店", ""],
+    ["toReview", "📝", "復習", (state.mistakes || []).length ? String(reviewItems().length) : ""],
     state.settings.omikuji !== false ? ["toOmikuji", "🎋", "おみくじ", omToday ? "" : "今日まだ"] : null,
     state.settings.showRanking || state.isAdmin ? ["toRank", "🏆", "ランキング", state.settings.showRanking ? "" : "先生だけ"] : null,
     ["toRewards", "📮", "スタンプ帳", unread ? "NEW" : ""]
@@ -2723,6 +2957,7 @@ function renderHome() {
   render(`${header("英文法トレーニング")}
     <main class="wrap">
       ${speechAvailable ? "" : `<div class="notice">この端末のブラウザでは音声認識が使えません。キーボードのマイク（音声入力）や文字入力で答えてください。</div>`}
+      ${soon.length ? `<div class="notice due-notice">⏰ 締め切りが近い（または過ぎた）課題が ${soon.length}つ あります。下の「課題」を見てみよう。</div>` : ""}
       <section class="me-card">
         <div class="me-top">
           <button class="me-av" id="meAv" aria-label="アバターを着せ替える">${avatarHTML(pf.avatar, 78)}<span class="av-edit" aria-hidden="true">✏️</span></button>
@@ -2760,6 +2995,7 @@ function renderHome() {
   $("#meAv").onclick = () => renderAvatar("b");
   $("#toAvatar").onclick = () => renderAvatar("b");
   $("#toShop").onclick = renderShop;
+  $("#toReview").onclick = renderReview;
   if ($("#toOmikuji")) $("#toOmikuji").onclick = renderOmikuji;
   if ($("#toRank")) $("#toRank").onclick = () => renderRanking("week");
   $("#toRewards").onclick = renderRewards;
@@ -3036,20 +3272,26 @@ async function drawOmikuji(fortune, O) {
 }
 
 /* ===== ランキング ===== */
-async function renderRanking(period) {
+async function renderRanking(period, scope) {
   const tabs = [["week", "今週"], ["month", "今月"], ["total", "これまで"]];
+  const admin = state.isAdmin && !state.viewAsStudent, myCls = state.profile.cls || "";
+  if (scope === undefined) scope = admin ? lsGet("eg_cls", "") : (myCls ? "class" : "all");
   render(`${header("ランキング", true)}
     <main class="wrap">
       <div class="seg center">${tabs.map(([k, l]) => `<button data-p="${k}" class="${period === k ? "on" : ""}">${l}</button>`).join("")}</div>
+      ${admin ? `<div class="toolbar center">${clsSelect("rankCls", state.classes || [], scope)}</div>`
+        : myCls ? `<div class="seg center small"><button data-s="class" class="${scope === "class" ? "on" : ""}">${esc(myCls)}</button><button data-s="all" class="${scope === "all" ? "on" : ""}">全体</button></div>` : ""}
       ${state.isAdmin && !state.settings.showRanking ? `<div class="notice">いまは生徒には表示されていません（管理者設定の「ランキングを生徒に表示する」で切りかえ）。</div>` : ""}
       <section class="panel" id="rankBox"><div class="judging"><span class="spinner"></span>読み込んでいます…</div></section>
       <p class="hint center">けいけん値（練習 +5、正解1問 +2〜3、合格 +20）の合計でならんでいます。名前はニックネームで表示されます。</p>
       ${footerNote()}
     </main>`);
   bindBack(renderHome);
-  $$(".seg button").forEach((b) => (b.onclick = () => renderRanking(b.dataset.p)));
+  $$(".seg button[data-p]").forEach((b) => (b.onclick = () => renderRanking(b.dataset.p, scope)));
+  $$(".seg button[data-s]").forEach((b) => (b.onclick = () => renderRanking(period, b.dataset.s)));
+  if ($("#rankCls")) $("#rankCls").onchange = (e) => { lsSet("eg_cls", e.target.value); renderRanking(period, e.target.value); };
   let d;
-  try { d = await api.ranking(period); }
+  try { d = await api.ranking(period, admin ? { cls: scope } : { scope }); }
   catch (e) { $("#rankBox").innerHTML = `<div class="msg ng">${esc(e.message)}</div>`; return; }
   const medal = (n) => (n === 1 ? "🥇" : n === 2 ? "🥈" : n === 3 ? "🥉" : n);
   const row = (r) => `<div class="rank-row ${r.me ? "me" : ""}"><span class="rank-no r${r.rank}">${medal(r.rank)}</span>${avatarHTML(r.av, 40)}
@@ -3370,7 +3612,9 @@ async function saveResult(r) {
     const before = rewardState(state.history);
     const prog = await api.saveResult(r);
     if (prog) state.progress = prog;
-    state.history = state.history.concat([{ timestamp: new Date().toISOString(), itemId: r.itemId, stage: r.stage, score: r.score, total: r.total, passed: r.passed, tags: r.tags || [] }]);
+    const ts = new Date().toISOString();
+    state.history = state.history.concat([{ timestamp: ts, itemId: r.itemId, stage: r.stage, score: r.score, total: r.total, passed: r.passed, tags: r.tags || [] }]);
+    applyToMistakes(r.details, ts);
     const { gained, after } = rewardGifts(before);
     if (el) { el.innerHTML = `記録しました　<span class="gain">けいけん値 +${after.xp - before.xp}${gained > 0 ? `　🪙 +${gained}pt` : ""}</span>`; el.classList.add("ok"); }
     const ci = $("#clearInfo");
@@ -3407,8 +3651,8 @@ function startQuiz(i, stage) {
 
 function quizHeader() {
   const { stage, qs, index, i } = session;
-  return `${header(`段階${stage}　${CONTENT[i].short}`, true)}
-    <div class="progress"><div class="progress-bar s${stage}" style="width:${(index / qs.length) * 100}%"></div></div>
+  return `${header(session.review ? "復習" : `段階${stage}　${CONTENT[i].short}`, true)}
+    <div class="progress"><div class="progress-bar s${session.review ? 3 : stage}" style="width:${(index / qs.length) * 100}%"></div></div>
     <div class="progress-text">${index + 1} / ${qs.length}</div>`;
 }
 
@@ -3453,15 +3697,17 @@ function questionCard(q, stage) {
 }
 
 function renderQuestion() {
-  const { stage, qs, index } = session;
+  const { qs, index } = session;
   const q = qs[index];
+  const stage = q._st || session.stage; // 復習では問題ごとに段階がちがう
   render(`${quizHeader()}
     <main class="wrap">
+      ${session.review ? `<div class="review-tag">${esc(q._from || "")}</div>` : ""}
       ${questionCard(q, stage)}
       ${answerBlock({ lang: "en-US", placeholder: stage === 4 ? "聞き取り中に英語で言おう" : "マイクをタップして英語で言おう", multiline: false })}
       <div id="result"></div>
     </main>`);
-  bindBack(() => renderItem(session.i));
+  bindBack(() => (session.review ? renderReview() : renderItem(session.i)));
 
   let shownAt = 0, latency = null;
   const limit = state.settings.stage4.timeLimitSec;
@@ -3490,7 +3736,7 @@ function renderQuestion() {
 }
 
 async function judgeQuestion(q, ans, via, latency, ctl) {
-  const { stage } = session;
+  const stage = q._st || session.stage;
   ctl.disable();
   const res = $("#result");
   let correct = false, model = "", feedback = "", by = "local";
@@ -3521,7 +3767,7 @@ async function judgeQuestion(q, ans, via, latency, ctl) {
   }
   const late = stage === 4 && (latency == null || latency > state.settings.stage4.timeLimitSec);
   const finalCorrect = correct && !late;
-  session.log.push({ q: q.ja || q.text || q.answer, a: ans.text, correct: finalCorrect, contentCorrect: correct, latency: latency == null ? null : Math.round(latency * 10) / 10, via, by });
+  session.log.push({ qid: q.qid, st: stage, q: qText(q), a: ans.text, correct: finalCorrect, contentCorrect: correct, latency: latency == null ? null : Math.round(latency * 10) / 10, via, by });
 
   const isLast = session.index + 1 >= session.qs.length;
   res.innerHTML = `<div class="panel">
@@ -3537,6 +3783,7 @@ async function judgeQuestion(q, ans, via, latency, ctl) {
 }
 
 async function renderQuizResult() {
+  if (session.review) return renderReviewResult();
   const { i, stage, log } = session;
   const it = CONTENT[i];
   const conf = state.settings["stage" + stage];
@@ -3563,17 +3810,86 @@ async function renderQuizResult() {
   await saveResult({ itemId: it.id, stage, score, total, passed, tags, durationSec: Math.round((Date.now() - session.startedAt) / 1000), details: log });
 }
 
+
+/* ===== 復習（まちがえた問題だけ） ===== */
+const reviewItems = () => (state.mistakes || []).map((m) => ({ m, x: QINDEX[m.qid] })).filter((e) => e.x);
+// 練習の結果を、まちがえたままの問題のリストに反映する
+function applyToMistakes(details, ts) {
+  const map = new Map((state.mistakes || []).map((m) => [m.qid, m]));
+  (details || []).forEach((d) => {
+    if (!d || !d.qid) return;
+    const ok = d.contentCorrect !== undefined && d.contentCorrect !== null ? d.contentCorrect : d.correct;
+    if (ok) map.delete(d.qid);
+    else { const e = Object.assign({ qid: d.qid, wrong: 0 }, map.get(d.qid) || {}); e.wrong++; e.a = d.a || ""; e.ts = ts; map.set(d.qid, e); }
+  });
+  state.mistakes = Array.from(map.values());
+}
+function renderReview() {
+  const list = reviewItems(), byItem = {};
+  list.forEach(({ x }) => { byItem[x.it.id] = (byItem[x.it.id] || 0) + 1; });
+  render(`${header("復習", true)}
+    <main class="wrap">
+      <section class="panel">
+        <h2>まちがえた問題の復習 <small>${list.length}問</small></h2>
+        ${list.length ? `<p class="hint">段階2〜4でまちがえたままの問題です。正解すると、このリストから消えます。</p>
+          <div class="chips">${CONTENT.filter((it) => byItem[it.id]).map((it) => `<span class="chip small">${esc(it.short)} ${byItem[it.id]}問</span>`).join("")}</div>
+          <ul class="review-list">${list.slice(0, 40).map(({ m, x }) => `<li><span class="lq">${esc(qText(x.q))}</span><span class="la">あなたの答え：${esc(m.a || "（なし）")}${m.wrong > 1 ? `<small>（${m.wrong}回まちがい）</small>` : ""}</span></li>`).join("")}</ul>
+          <button class="btn primary big" id="goReview">復習をはじめる（${Math.min(10, list.length)}問）</button>`
+        : `<p class="center">まちがえたままの問題はありません。すばらしい！ 🎉</p>`}
+      </section>
+      ${footerNote()}
+    </main>`);
+  bindBack(renderHome);
+  if ($("#goReview")) $("#goReview").onclick = startReview;
+}
+function startReview() {
+  const list = shuffle(reviewItems()).slice(0, 10);
+  if (!list.length) return renderReview();
+  // 段階4の問題も、復習では時間制限なしの「日本語→英語」として出す
+  const qs = list.map(({ x }) => Object.assign({ grammar: x.it.title, _st: x.stage === 2 ? 2 : 3, _from: `${x.it.short}・段階${x.stage}の問題` }, x.q));
+  session = { i: 0, stage: 3, review: true, qs, index: 0, log: [], startedAt: Date.now() };
+  renderQuestion();
+}
+async function renderReviewResult() {
+  const { log } = session;
+  const score = log.filter((l) => l.correct).length, total = log.length;
+  const passed = score / total >= 0.8;
+  render(`${header("復習　結果", true)}
+    <main class="wrap">
+      <section class="result-card ${passed ? "ok" : "ng"}">
+        <div class="big-score">${score}<span>/${total}</span></div>
+        <div class="verdict ${passed ? "ok" : "ng"}">${score === total ? "全部正解！" : passed ? "よくできました！" : "もう少し！"}</div>
+        <div class="sub">正解した問題は、復習リストから消えます</div>
+      </section>
+      <ol class="log">${log.map((l) => `<li class="${l.correct ? "ok" : "ng"}"><span class="mark">${l.correct ? "○" : "×"}</span>
+        <span><span class="lq">${esc(l.q)}</span><span class="la">${esc(l.a)}</span></span></li>`).join("")}</ol>
+      <div class="save" id="saveState">記録しています…</div>
+      <div class="btn-row"><button class="btn primary" id="again">続けて復習する</button><button class="btn" id="toHome">ホームへ</button></div>
+      ${footerNote()}
+    </main>`);
+  bindBack(renderHome);
+  $("#again").onclick = renderReview;
+  $("#toHome").onclick = renderHome;
+  await saveResult({ itemId: "review", stage: 0, score, total, passed, durationSec: Math.round((Date.now() - session.startedAt) / 1000), details: log });
+}
+
 /* ===== 管理者設定 ===== */
 function renderSettings() {
-  const s = state.settings;
+  const s = state.rawSettings;
+  // 課題と締め切り（"" = 全クラス共通、ほかはクラスごと）
+  const tasks = { "": { assigned: s.assigned, due: Object.assign({}, s.due || {}) } };
+  Object.keys(s.classTasks || {}).forEach((c) => { tasks[c] = { assigned: s.classTasks[c].assigned, due: Object.assign({}, s.classTasks[c].due || {}), own: true }; });
+  const classes = Array.from(new Set((state.classes || []).concat(Object.keys(s.classTasks || {})))).filter(Boolean).sort();
+  let taskCls = "";
   const num = (id, v, min, max, step, unit) => `<span class="num-in"><input type="number" id="${id}" value="${v}" min="${min}" max="${max}" step="${step || 1}">${unit || ""}</span>`;
   const chk = (id, v, label) => `<label class="check"><input type="checkbox" id="${id}" ${v ? "checked" : ""}> ${label}</label>`;
   render(`${header("管理者設定", true)}
     <main class="wrap">
       <section class="panel form">
-        <h2>課題（生徒にマスターしてほしい項目）</h2>
-        <div class="checks">${CONTENT.map((it, i) => chk("as_" + it.id, isAssigned(it.id), `${i + 1}. ${esc(it.title)}`)).join("")}</div>
-        <p class="hint">チェックした項目が生徒の画面の「課題」に表示されます。チェックしなかった項目は「自由練習」に表示されます。</p>
+        <h2>課題と締め切り</h2>
+        ${classes.length ? `<div class="row"><span>設定するクラス</span><select id="taskCls"><option value="">全クラス共通</option>${classes.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join("")}</select></div>` : ""}
+        <div id="taskBox"></div>
+        <p class="hint">チェックした項目が生徒の画面の「課題」に、それ以外は「自由練習」に表示されます。締め切りまでに段階1〜4をすべてクリア（マスター）するのが目標です。締め切りは空欄でもかまいません。</p>
         <h2>合格基準</h2>
         <div class="row"><span>段階1 合格ライン（ポイント達成率）</span>${num("s1p", pct(s.stage1.passRatio), 10, 100, 5, "%")}</div>
         <div class="row"><span>段階1 話し終わってから自動で判定するまでの時間</span>${num("s1s", s.stage1.silenceSec, 1, 10, 0.5, "秒")}</div>
@@ -3594,6 +3910,9 @@ function renderSettings() {
         ${chk("confirm", s.confirmBeforeSubmit, "段階2・3で、聞き取った文を確認してから答える")}
         ${chk("auto4", s.autoSubmitStage4, "段階4は確認なしで自動で答える")}
         ${chk("tts4", s.ttsStage4, "段階4で日本語を読み上げる")}
+        <h2>生徒の登録</h2>
+        ${chk("rosterOnly", s.rosterOnly, "名簿に登録した生徒だけ使えるようにする（名簿は「生徒一覧」で登録します）")}
+        <p class="hint">オフのときは、学校のアカウントを持つ人ならだれでも使えます（はじめて開いた人は自動で生徒一覧に入ります）。先生はいつでも使えます。</p>
         <h2>ごほうび・ランキング</h2>
         ${chk("showRank", s.showRanking, "ランキングを生徒に表示する（名前はニックネームで表示）")}
         ${chk("autoSt", s.autoStamps !== false, "条件で自動のスタンプを出す（はじめての練習・週3日練習・マスターなど）")}
@@ -3611,7 +3930,31 @@ function renderSettings() {
       </section>
     </main>`);
   bindBack(renderHome);
+  // 課題の表をかく ／ 画面の内容を tasks に読みこむ
+  const readTasks = () => {
+    const t = tasks[taskCls] || (tasks[taskCls] = { assigned: tasks[""].assigned, due: Object.assign({}, tasks[""].due) });
+    if (taskCls && $("#ownTask")) t.own = $("#ownTask").checked;
+    if (taskCls && !t.own) return;
+    const on = CONTENT.filter((it) => $("#as_" + it.id).checked).map((it) => it.id);
+    t.assigned = on.length === CONTENT.length ? null : on;
+    t.due = {}; CONTENT.forEach((it) => { const v = $("#du_" + it.id).value; if (v && on.includes(it.id)) t.due[it.id] = v; });
+  };
+  const drawTasks = () => {
+    const own = !taskCls || (tasks[taskCls] && tasks[taskCls].own);
+    const t = own ? tasks[taskCls] : tasks[""];
+    const isA = (id) => !Array.isArray(t.assigned) || t.assigned.includes(id);
+    $("#taskBox").innerHTML = (taskCls ? `<label class="check"><input type="checkbox" id="ownTask" ${own ? "checked" : ""}> ${esc(taskCls)} だけの課題・締め切りにする（オフのときは全クラス共通と同じ）</label>` : "") +
+      `<div class="task-table ${own ? "" : "off"}">${CONTENT.map((it, i) => `<div class="task-row"><label class="check"><input type="checkbox" id="as_${it.id}" ${isA(it.id) ? "checked" : ""} ${own ? "" : "disabled"}> ${i + 1}. ${esc(it.title)}</label>
+        <label class="due-in">締め切り <input type="date" id="du_${it.id}" value="${esc(isA(it.id) ? (t.due || {})[it.id] || "" : "")}" ${own && isA(it.id) ? "" : "disabled"}></label></div>`).join("")}</div>`;
+    if ($("#ownTask")) $("#ownTask").onchange = (e) => { tasks[taskCls].own = e.target.checked; drawTasks(); };
+    CONTENT.forEach((it) => { const c = $("#as_" + it.id); c.onchange = () => { const d = $("#du_" + it.id); d.disabled = !c.checked; if (!c.checked) d.value = ""; }; });
+  };
+  drawTasks();
+  if ($("#taskCls")) $("#taskCls").onchange = (e) => { readTasks(); taskCls = e.target.value; if (!tasks[taskCls]) tasks[taskCls] = { assigned: tasks[""].assigned, due: Object.assign({}, tasks[""].due), own: false }; drawTasks(); };
   const collect = () => {
+    readTasks();
+    const classTasks = {};
+    Object.keys(tasks).filter((c) => c && tasks[c].own).forEach((c) => { classTasks[c] = { assigned: tasks[c].assigned, due: tasks[c].due }; });
     const v = (id) => parseFloat($("#" + id).value);
     const clampR = (x) => Math.min(1, Math.max(0.1, (isNaN(x) ? 80 : x) / 100));
     const clampN = (x) => Math.min(30, Math.max(1, Math.round(isNaN(x) ? 10 : x)));
@@ -3621,7 +3964,7 @@ function renderSettings() {
       stage2: { numQuestions: clampN(v("s2n")), passRatio: clampR(v("s2p")), requiredPasses: clampP(v("r2")) },
       stage3: { numQuestions: clampN(v("s3n")), passRatio: clampR(v("s3p")), requiredPasses: clampP(v("r3")) },
       stage4: { numQuestions: clampN(v("s4n")), passRatio: clampR(v("s4p")), timeLimitSec: Math.min(30, Math.max(1, isNaN(v("s4t")) ? 5 : v("s4t"))), requiredPasses: clampP(v("r4")) },
-      assigned: CONTENT.every((it) => $("#as_" + it.id).checked) ? null : CONTENT.filter((it) => $("#as_" + it.id).checked).map((it) => it.id),
+      assigned: tasks[""].assigned, due: tasks[""].due, classTasks, rosterOnly: $("#rosterOnly").checked,
       sttStage1: $("#eleven").checked ? "elevenlabs" : "browser",
       lockProgression: $("#lock").checked,
       allowText: $("#allowText").checked,
@@ -3641,7 +3984,7 @@ function renderSettings() {
   $("#saveSet").onclick = async () => {
     const ns = collect(); keepKey();
     const m = $("#setMsg"); m.textContent = "保存しています…"; m.className = "msg";
-    try { await api.saveSettings(ns); state.settings = mergeSettings(ns); m.textContent = "保存しました"; m.className = "msg ok"; }
+    try { await api.saveSettings(ns); applySettings(ns); m.textContent = "保存しました"; m.className = "msg ok"; }
     catch (e) { m.textContent = "保存できませんでした：" + e.message; m.className = "msg ng"; }
   };
   $("#testAi").onclick = async () => {
@@ -3656,57 +3999,350 @@ function renderSettings() {
   };
 }
 
+/* ===== 先生用の共通部品 ===== */
+const personName = (p) => (p && p.name) || String((p && p.email) || "").split("@")[0];
+const itemShort = (id) => (id === "review" ? "復習" : (CONTENT.find((c) => c.id === id) || {}).short || id);
+const stageLabel = (st) => (Number(st) === 0 ? "復習" : "段階" + st);
+function clsSelect(id, classes, cur, allLabel) {
+  if (!classes || !classes.length) return "";
+  return `<select id="${id}" class="cls-sel"><option value="">${esc(allLabel || "すべてのクラス")}</option>${classes.map((c) => `<option value="${esc(c)}" ${c === cur ? "selected" : ""}>${esc(c)}</option>`).join("")}</select>`;
+}
+const loadingMain = (title, back) => { render(`${header(title, true)}<main class="wrap"><div class="judging"><span class="spinner"></span>読み込んでいます…</div></main>`); bindBack(back || renderHome); };
+const failMain = (e) => { $("main").innerHTML = `<div class="msg ng">読み込めませんでした：${esc(e.message)}</div>`; };
+const DUE_LABEL = { done: "✓期限内", late: "期限後", over: "期限切れ", open: "" };
+function dueText(d) {
+  if (!d) return "";
+  const base = `〆${fmtDue(d.due)}`;
+  if (d.state === "done") return `<span class="due ok">${base} ✓期限内</span>`;
+  if (d.state === "late") return `<span class="due">${base} 期限後にマスター</span>`;
+  if (d.state === "over") return `<span class="due ng">${base} 期限切れ</span>`;
+  return `<span class="due ${d.left <= 2 ? "warn" : ""}">${base}（あと${d.left}日）</span>`;
+}
+// 練習した日のカレンダー（月曜はじまり・weeks 週ぶん）
+function calendarHTML(dayCounts, weeks) {
+  const today = new Date(dayKey(Date.now()) + "T00:00:00");
+  const start = today.getTime() - ((today.getDay() + 6) % 7) * 86400000 - (weeks - 1) * 7 * 86400000;
+  let cols = "";
+  for (let w = 0; w < weeks; w++) {
+    let cells = "";
+    for (let d = 0; d < 7; d++) {
+      const t = new Date(start + (w * 7 + d) * 86400000), k = dayKey(t), n = (dayCounts || {})[k] || 0;
+      cells += `<i class="cal-d l${n === 0 ? 0 : n < 3 ? 1 : n < 6 ? 2 : 3} ${t > today ? "fut" : ""}" title="${k}：${n}回"></i>`;
+    }
+    cols += `<div class="cal-col"><small>${new Date(start + w * 7 * 86400000).getMonth() + 1}/${new Date(start + w * 7 * 86400000).getDate()}</small>${cells}</div>`;
+  }
+  return `<div class="cal"><div class="cal-dow"><small>&nbsp;</small><span>月</span><span></span><span>水</span><span></span><span>金</span><span></span><span>日</span></div>${cols}</div>`;
+}
+// 文法ごとの進み具合の表（詳しい記録・レポート共通）
+function progressTable(sum) {
+  const rows = CONTENT.map((it) => {
+    const p = (sum.progress || {})[it.id] || {}, pc = p.passCount || [0, 0, 0, 0], best = p.best || [0, 0, 0, 0], at = p.attempts || [0, 0, 0, 0];
+    const assigned = !Array.isArray(sum.assigned) || sum.assigned.includes(it.id);
+    const cells = [1, 2, 3, 4].map((k) => {
+      const need = requiredPasses(k), ok = pc[k - 1] >= need;
+      return `<td class="${ok ? "clr" : ""}">${ok ? "✓" : pc[k - 1] ? `${pc[k - 1]}/${need}` : at[k - 1] ? pct(best[k - 1]) + "%" : "－"}</td>`;
+    }).join("");
+    const m = (sum.masteredAt || {})[it.id];
+    return `<tr><th class="name">${assigned ? "★" : ""}${esc(it.title)}</th>${cells}<td>${m ? fmtDate(m) : ""}</td><td>${dueText((sum.due || {})[it.id])}</td></tr>`;
+  }).join("");
+  return `<table class="prog"><thead><tr><th class="name">文法（★は課題）</th><th>段階1</th><th>段階2</th><th>段階3</th><th>段階4</th><th>マスター</th><th>締め切り</th></tr></thead><tbody>${rows}</tbody></table>
+    <p class="hint">✓＝クリア　n/m＝合格回数／クリアに必要な回数　％＝最高の正答率（まだ合格していない段階）</p>`;
+}
+function mistakeList(mistakes, max) {
+  const list = (mistakes || []).map((m) => ({ m, x: QINDEX[m.qid] })).filter((e) => e.x).slice(0, max || 50);
+  if (!list.length) return `<p class="hint">まちがえたままの問題はありません。</p>`;
+  return `<table class="miss"><thead><tr><th>問題</th><th>生徒の答え</th><th>正しい答え（例）</th></tr></thead><tbody>${list.map(({ m, x }) =>
+    `<tr><td><small>${esc(x.it.short)}・段階${x.stage}</small><br>${esc(qText(x.q))}</td><td class="ng">${esc(m.a || "（なし）")}${m.wrong > 1 ? `<small>（${m.wrong}回）</small>` : ""}</td><td>${esc(qModel(x.q))}</td></tr>`).join("")}</tbody></table>`;
+}
+
 /* ===== 学習記録（先生用） ===== */
-async function renderDashboard() {
-  render(`${header("学習記録", true)}<main class="wrap"><div class="judging"><span class="spinner"></span>読み込んでいます…</div></main>`);
-  bindBack(renderHome);
+async function renderDashboard(cls) {
+  if (cls === undefined) cls = lsGet("eg_cls", "");
+  loadingMain("学習記録");
   let d;
-  try { d = await api.dashboard(); }
-  catch (e) { $("main").innerHTML = `<div class="msg ng">読み込めませんでした：${esc(e.message)}</div>`; return; }
-  const head = CONTENT.map((it, i) => `<th title="${esc(it.title)}">${isAssigned(it.id) ? "★" : ""}${i + 1}<br><small>${esc(it.short)}</small></th>`).join("");
-  const fmtD = (ts) => { const t = new Date(ts); return isNaN(t) ? "－" : `${t.getMonth() + 1}/${t.getDate()}`; };
-  const rows = (d.students || []).map((st) => `<tr><th class="name">${esc(String(st.email).split("@")[0])}${st.nickname ? `<small> ${esc(st.nickname)}</small>` : ""}</th><td>${esc(st.level || "－")}</td><td>${st.days != null ? st.days + "日" : "－"}</td><td>${st.last ? fmtD(st.last) : "－"}</td>${CONTENT.map((it) => {
+  try { d = await api.dashboard(); } catch (e) { return failMain(e); }
+  const classes = d.classes || [];
+  state.classes = classes;
+  if (cls && !classes.includes(cls)) cls = "";
+  const list = (d.students || []).filter((st) => !cls || st.cls === cls);
+  const week = weekOf(dayKey(Date.now()));
+  const head = CONTENT.map((it, i) => `<th title="${esc(it.title)}">${i + 1}<br><small>${esc(it.short)}</small></th>`).join("");
+  const rows = list.map((st) => `<tr><th class="name"><button class="link" data-detail="${esc(st.email)}">${st.no ? `<small>${esc(st.no)}</small> ` : ""}${esc(personName(st))}</button>${st.nickname ? `<small> ${esc(st.nickname)}</small>` : ""}${!cls && st.cls ? `<small class="cls-tag">${esc(st.cls)}</small>` : ""}</th>
+    <td>${esc(st.level || "－")}</td><td>${st.days != null ? st.days + "日" : "－"}</td><td>${st.last ? fmtDate(st.last) : "－"}</td>${CONTENT.map((it) => {
     const pc = (st.progress[it.id] && st.progress[it.id].passCount) || [0, 0, 0, 0];
     const lv = [1, 2, 3, 4].filter((k) => pc[k - 1] >= requiredPasses(k)).length;
-    return `<td class="lv lv${lv}">${lv === 4 ? "マスター" : lv ? "段階" + lv : "－"}</td>`;
+    const asg = !Array.isArray(st.assigned) || st.assigned.includes(it.id);
+    const ds = (st.due || {})[it.id];
+    return `<td class="lv lv${lv} ${asg ? "asg" : ""}">${lv === 4 ? "マスター" : lv ? "段階" + lv : "－"}${ds && DUE_LABEL[ds] ? `<small class="due-mark ${ds}">${DUE_LABEL[ds]}</small>` : ""}</td>`;
   }).join("")}</tr>`).join("");
-  const fmt = (ts) => { const t = new Date(ts); if (isNaN(t)) return String(ts || ""); const z = (n) => String(n).padStart(2, "0"); return `${t.getMonth() + 1}/${t.getDate()} ${z(t.getHours())}:${z(t.getMinutes())}`; };
-  const recent = (d.recent || []).map((r) => `<tr><td>${esc(fmt(r.timestamp))}</td><td>${esc(String(r.email).split("@")[0])}</td><td>${esc((CONTENT.find((c) => c.id === r.itemId) || {}).short || r.itemId)}</td><td>段階${r.stage}</td><td>${r.score}/${r.total}</td><td>${r.passed ? "合格" : ""}</td></tr>`).join("");
+  const active = list.filter((st) => st.last && dayKey(st.last) >= week).length;
+  const over = list.filter((st) => Object.values(st.due || {}).includes("over")).length;
+  const recent = (d.recent || []).filter((r) => !cls || r.cls === cls).slice(0, 40).map((r) => {
+    const t = new Date(r.timestamp);
+    return `<tr><td>${isNaN(t) ? "" : `${t.getMonth() + 1}/${t.getDate()} ${z2(t.getHours())}:${z2(t.getMinutes())}`}</td><td>${esc(personName(r))}</td><td>${esc(itemShort(r.itemId))}</td><td>${stageLabel(r.stage)}</td><td>${r.score}/${r.total}</td><td>${r.passed ? "合格" : ""}</td></tr>`;
+  }).join("");
   $("main").innerHTML = `
-    <section class="panel"><h2>到達状況</h2><p class="hint">クリアした段階を表示しています（★は課題の項目）。</p>
+    <div class="toolbar">${clsSelect("dashCls", classes, cls)}<button class="btn small" id="dashReport">${cls ? esc(cls) + "の" : ""}レポートを印刷</button><button class="btn small" id="dashMiss">まちがいの多い問題</button></div>
+    <div class="sum-cards"><div><b>${list.length}</b><small>人</small></div><div><b>${active}</b><small>今週練習した人</small></div><div><b class="${over ? "ng" : ""}">${over}</b><small>締め切りを過ぎた課題がある人</small></div></div>
+    <section class="panel"><h2>到達状況</h2><p class="hint">クリアした段階（太字の列はその生徒の課題）。名前を押すと、その生徒の詳しい記録が見られます。</p>
       <div class="table-wrap"><table class="dash"><thead><tr><th></th><th>級・段</th><th>練習<br><small>した日数</small></th><th>最後に<br><small>練習した日</small></th>${head}</tr></thead><tbody>${rows || `<tr><td colspan="${CONTENT.length + 4}">まだ記録がありません</td></tr>`}</tbody></table></div></section>
     <section class="panel"><h2>最近の記録</h2>
       <div class="table-wrap"><table class="recent"><thead><tr><th>日時</th><th>生徒</th><th>項目</th><th>段階</th><th>得点</th><th></th></tr></thead><tbody>${recent || `<tr><td colspan="6">まだ記録がありません</td></tr>`}</tbody></table></div></section>
-    ${MODE === "demo" ? `<div class="btn-row"><button class="btn danger" id="clear">この端末の記録を消す</button></div><div class="msg" id="clearMsg"></div>` : ""}`;
+    ${MODE === "demo" ? `<div class="btn-row"><button class="btn danger" id="clear">この端末の記録を消す</button></div>` : ""}`;
+  if ($("#dashCls")) $("#dashCls").onchange = (e) => { lsSet("eg_cls", e.target.value); renderDashboard(e.target.value); };
+  $("#dashReport").onclick = () => renderReports(cls ? { cls } : {}, () => renderDashboard(cls));
+  $("#dashMiss").onclick = () => renderMistakes(cls);
+  $$("[data-detail]").forEach((b) => (b.onclick = () => renderStudentDetail(b.dataset.detail, () => renderDashboard(cls))));
   if ($("#clear")) {
     let armed = false;
     $("#clear").onclick = () => {
       if (!armed) { armed = true; $("#clear").textContent = "本当に消す（もう一度タップ）"; return; }
-      lsSet("eg_results", []); state.progress = {}; state.history = []; renderDashboard();
+      lsSet("eg_results", []); state.progress = {}; state.history = []; state.mistakes = []; renderDashboard(cls);
     };
   }
 }
 
-/* ===== 生徒一覧（先生用） ===== */
-async function renderStudents() {
-  render(`${header("生徒一覧", true)}<main class="wrap"><div class="judging"><span class="spinner"></span>読み込んでいます…</div></main>`);
-  bindBack(renderHome);
+/* ===== 生徒一覧・名簿（先生用） ===== */
+function parseRoster(text) {
+  const lines = String(text || "").split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+  if (!lines.length) return { rows: [], errors: [] };
+  const split = (l) => (l.includes("\t") ? l.split("\t") : l.split(/[,，]/)).map((c) => c.trim().replace(/^"|"$/g, ""));
+  let map = null, start = 0;
+  const h = split(lines[0]);
+  if (!h.some((c) => c.includes("@"))) { // 1行目が見出し
+    const find = (re) => h.findIndex((c) => re.test(c));
+    map = { email: find(/メール|mail/i), cls: find(/クラス|組|class/i), no: find(/番号|出席|no|num/i), name: find(/名前|氏名|name/i) };
+    start = 1;
+  }
+  const rows = [], errors = [];
+  lines.slice(start).forEach((l, k) => {
+    const c = split(l);
+    let r;
+    if (map && map.email >= 0) r = { email: c[map.email] || "", cls: map.cls >= 0 ? c[map.cls] || "" : "", no: map.no >= 0 ? c[map.no] || "" : "", name: map.name >= 0 ? c[map.name] || "" : "" };
+    else { const ei = c.findIndex((x) => x.includes("@")); const rest = c.filter((x, i) => i !== ei); r = { email: ei >= 0 ? c[ei] : "", cls: rest[0] || "", no: rest[1] || "", name: rest[2] || "" }; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(r.email)) errors.push(`${k + 1 + start}行目：メールアドレスが見つかりません`);
+    else rows.push(r);
+  });
+  return { rows, errors };
+}
+async function renderStudents(cls) {
+  if (cls === undefined) cls = lsGet("eg_cls", "");
+  loadingMain("生徒一覧・名簿");
   let d;
-  try { d = await api.students(); }
-  catch (e) { $("main").innerHTML = `<div class="msg ng">読み込めませんでした：${esc(e.message)}</div>`; return; }
-  const list = d.students || [];
-  $("main").innerHTML = `<section class="panel"><h2>生徒一覧 <small>${list.length}人</small></h2>
-    <p class="hint">一度でもアプリを開いた生徒が表示されます。ふさわしくないニックネームは［消す］で消せます（生徒はまた付け直せます）。</p>
-    <div class="table-wrap"><table class="people"><thead><tr><th></th><th class="name">生徒</th><th>ニックネーム</th><th>級・段</th><th>けいけん値</th><th>ポイント</th><th>練習した日</th><th>最後</th></tr></thead><tbody>
-    ${list.map((p) => `<tr><td>${avatarHTML(p.avatar, 34)}</td><th class="name">${esc(String(p.email).split("@")[0])}</th>
-      <td>${p.nickname ? `${esc(p.nickname)} <button class="link-btn small" data-clear="${esc(p.email)}">消す</button>` : `<span class="hint">なし</span>`}</td>
-      <td>${esc(p.level || "")}</td><td>${p.xp || 0}</td><td>${p.avail || 0}</td><td>${p.days || 0}日</td><td>${p.last ? fmtDate(p.last) : "－"}</td></tr>`).join("") || `<tr><td colspan="8">まだ生徒がいません</td></tr>`}
-    </tbody></table></div><div class="msg" id="pplMsg"></div></section>`;
-  $$("[data-clear]").forEach((b) => (b.onclick = async () => {
-    if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "本当に消す"; return; }
-    try { await api.updateStudent({ email: b.dataset.clear, nickname: "" }); renderStudents(); }
-    catch (e) { const m = $("#pplMsg"); m.textContent = e.message; m.className = "msg ng"; }
-  }));
+  try { d = await api.students(); } catch (e) { return failMain(e); }
+  const classes = d.classes || [];
+  state.classes = classes;
+  if (cls && !classes.includes(cls)) cls = "";
+  const list = (d.students || []).filter((p) => !cls || p.cls === cls);
+  const draw = () => {
+    $("main").innerHTML = `
+      <section class="panel"><h2>名簿の登録</h2>
+        <p class="hint">Excel やスプレッドシートからコピーして貼り付けてください。1行に1人、「メール・クラス・番号・名前」の順（1行目に「メール」「クラス」「番号」「名前」の見出しがあれば、列の順番は自由）。同じメールの生徒は上書きされます。</p>
+        <textarea id="rosterIn" rows="5" class="full" placeholder="s001@hi.hkg.ac.jp	1A	1	広島 太郎"></textarea>
+        <div class="btn-row"><button class="btn" id="rosterCheck">読みこむ</button></div>
+        <div id="rosterPrev"></div>
+        ${state.rawSettings.rosterOnly ? `<p class="hint">いまは「名簿に登録した生徒だけ使える」設定です。</p>` : `<p class="hint">いまは名簿にない生徒も使えます（管理者設定で「名簿に登録した生徒だけ」にできます）。</p>`}
+      </section>
+      <section class="panel"><h2>生徒一覧 <small>${list.length}人</small></h2>
+        <div class="toolbar">${clsSelect("stuCls", classes, cls)}</div>
+        <p class="hint">名前を押すと詳しい記録が見られます。［編集］でクラス・番号・名前を直せます。ふさわしくないニックネームは［消す］で消せます。</p>
+        <div class="table-wrap"><table class="people"><thead><tr><th></th><th>番号</th><th class="name">名前</th><th>クラス</th><th>ニックネーム</th><th>級・段</th><th>ポイント</th><th>練習日</th><th>最後</th><th>名簿</th><th></th></tr></thead><tbody>
+        ${list.map((p) => `<tr data-row="${esc(p.email)}"><td>${avatarHTML(p.avatar, 32)}</td><td>${esc(p.no || "")}</td>
+          <th class="name"><button class="link" data-detail="${esc(p.email)}">${esc(personName(p))}</button>${p.teacher ? `<small class="cls-tag">先生</small>` : ""}<br><small class="hint">${esc(p.email)}</small></th>
+          <td>${esc(p.cls || "")}</td>
+          <td>${p.nickname ? `${esc(p.nickname)} <button class="link-btn small" data-clear="${esc(p.email)}">消す</button>` : `<span class="hint">なし</span>`}</td>
+          <td>${esc(p.level || "")}</td><td>${p.avail || 0}</td><td>${p.days || 0}日</td><td>${p.last ? fmtDate(p.last) : "－"}</td><td>${p.reg ? "✓" : "－"}</td>
+          <td><button class="link-btn small" data-edit="${esc(p.email)}">編集</button></td></tr>`).join("") || `<tr><td colspan="11">まだ生徒がいません</td></tr>`}
+        </tbody></table></div><div class="msg" id="pplMsg"></div></section>`;
+    bind();
+  };
+  const msg = (t, ok) => { const m = $("#pplMsg"); m.textContent = t; m.className = "msg " + (ok ? "ok" : "ng"); };
+  function bind() {
+    if ($("#stuCls")) $("#stuCls").onchange = (e) => { lsSet("eg_cls", e.target.value); renderStudents(e.target.value); };
+    $("#rosterCheck").onclick = () => {
+      const r = parseRoster($("#rosterIn").value);
+      $("#rosterPrev").innerHTML = (r.errors.length ? `<div class="msg ng">${r.errors.slice(0, 5).map(esc).join("<br>")}${r.errors.length > 5 ? `<br>ほか${r.errors.length - 5}行` : ""}</div>` : "") +
+        (r.rows.length ? `<div class="table-wrap"><table class="people"><thead><tr><th>メール</th><th>クラス</th><th>番号</th><th>名前</th></tr></thead><tbody>${r.rows.slice(0, 50).map((x) => `<tr><td>${esc(x.email)}</td><td>${esc(x.cls)}</td><td>${esc(x.no)}</td><td>${esc(x.name)}</td></tr>`).join("")}</tbody></table></div>
+          ${r.rows.length > 50 ? `<p class="hint">ほか ${r.rows.length - 50}人</p>` : ""}<div class="btn-row"><button class="btn primary" id="rosterGo">この ${r.rows.length}人 を登録する</button></div>` : "");
+      if ($("#rosterGo")) $("#rosterGo").onclick = async (e) => {
+        e.target.disabled = true;
+        try {
+          const res = await api.importRoster(r.rows);
+          const skipped = (res.skipped || []).map((x) => `${x.line}人目：${x.reason}`);
+          renderStudents(cls).then(() => { const m = $("#pplMsg"); if (m) { m.innerHTML = `${res.added}人を追加、${res.updated}人を更新しました。` + (skipped.length ? `<br>登録しなかった人：${skipped.slice(0, 5).map(esc).join("、")}` : ""); m.className = "msg ok"; } });
+        } catch (err) { $("#rosterPrev").insertAdjacentHTML("beforeend", `<div class="msg ng">${esc(err.message)}</div>`); e.target.disabled = false; }
+      };
+    };
+    $$("[data-detail]").forEach((b) => (b.onclick = () => renderStudentDetail(b.dataset.detail, () => renderStudents(cls))));
+    $$("[data-clear]").forEach((b) => (b.onclick = async () => {
+      if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "本当に消す"; return; }
+      try { await api.updateStudent({ email: b.dataset.clear, nickname: "" }); renderStudents(cls); } catch (e) { msg(e.message); }
+    }));
+    $$("[data-edit]").forEach((b) => (b.onclick = () => {
+      const p = list.find((x) => x.email === b.dataset.edit), tr = b.closest("tr");
+      tr.innerHTML = `<td colspan="11"><div class="edit-row"><b>${esc(p.email)}</b>
+        <label>クラス<input type="text" id="edCls" value="${esc(p.cls || "")}" list="clsList" maxlength="20"></label>
+        <label>番号<input type="text" id="edNo" value="${esc(p.no || "")}" maxlength="10"></label>
+        <label>名前<input type="text" id="edName" value="${esc(p.name || "")}" maxlength="40"></label>
+        <datalist id="clsList">${classes.map((c) => `<option value="${esc(c)}">`).join("")}</datalist>
+        <button class="btn small primary" id="edSave">保存</button>${p.reg ? `<button class="btn small" id="edOut">名簿から外す</button>` : ""}<button class="btn small" id="edCancel">やめる</button></div></td>`;
+      $("#edCancel").onclick = draw;
+      $("#edSave").onclick = async () => {
+        try { await api.updateStudent({ email: p.email, cls: $("#edCls").value.trim(), no: $("#edNo").value.trim(), name: $("#edName").value.trim(), reg: true }); renderStudents(cls); }
+        catch (e) { msg(e.message); }
+      };
+      if ($("#edOut")) $("#edOut").onclick = async (e) => {
+        if (e.target.dataset.armed !== "1") { e.target.dataset.armed = "1"; e.target.textContent = "本当に外す"; return; }
+        try { await api.updateStudent({ email: p.email, reg: false }); renderStudents(cls); } catch (err) { msg(err.message); }
+      };
+    }));
+  }
+  draw();
+}
+
+/* ===== 生徒別の詳しい記録（先生用） ===== */
+async function renderStudentDetail(email, back) {
+  back = back || (() => renderStudents());
+  loadingMain("詳しい記録", back);
+  let d;
+  try { d = await api.studentDetail(email); } catch (e) { return failMain(e); }
+  const p = d.profile, rec = d.records || [];
+  const recRows = rec.slice(0, 60).map((r, k) => {
+    const t = new Date(r.timestamp);
+    const det = (r.details || []).filter((x) => !x.met).map((x) => `<li class="${x.correct ? "ok" : "ng"}"><span class="mark">${x.correct ? "○" : (x.contentCorrect ? "△" : "×")}</span><span><span class="lq">${esc(x.q)}</span><span class="la">${esc(x.a)}${x.latency != null ? `（${x.latency}秒）` : ""}</span></span></li>`).join("");
+    const s1 = (r.details || []).find((x) => x.met);
+    return `<details class="rec"><summary><span>${isNaN(t) ? "" : `${t.getMonth() + 1}/${t.getDate()} ${z2(t.getHours())}:${z2(t.getMinutes())}`}</span><span>${esc(itemShort(r.itemId))}</span><span>${stageLabel(r.stage)}</span><span>${r.score}/${r.total}</span><span class="${r.passed ? "ok" : ""}">${r.passed ? "合格" : ""}</span></summary>
+      ${det ? `<ol class="log small">${det}</ol>` : s1 ? `<div class="feedback">${esc(s1.a)}</div>` : `<p class="hint">詳細はありません</p>`}</details>`;
+  }).join("");
+  $("main").innerHTML = `
+    <section class="panel detail-head">${avatarHTML(p.avatar, 72)}
+      <div><div class="me-hello">${esc(personName(p))}</div><div class="hint">${p.cls ? esc(p.cls) + "　" : ""}${p.no ? esc(p.no) + "番　" : ""}${esc(p.email)}${p.nickname ? `　ニックネーム：${esc(p.nickname)}` : ""}</div></div>
+      <button class="btn small" id="toReport">🖨️ レポートを印刷</button></section>
+    <div class="sum-cards"><div><b>${esc(d.level.name)}</b><small>けいけん値 ${d.xp}</small></div><div><b>${d.days}</b><small>練習した日</small></div><div><b>${d.streak}</b><small>いまの連続（最高${d.bestStreak}）</small></div>
+      <div><b>${d.mastered}</b><small>マスターした文法</small></div><div><b>${d.points.avail}</b><small>ポイント</small></div><div><b>${d.badges.length}</b><small>バッジ</small></div></div>
+    <section class="panel"><h2>文法ごとの進み具合</h2><div class="table-wrap">${progressTable(d)}</div></section>
+    <section class="panel"><h2>練習した日 <small>最近10週</small></h2>${calendarHTML(d.dayCounts, 10)}</section>
+    <section class="panel"><h2>まちがえたままの問題 <small>${(d.mistakes || []).length}問</small></h2><div class="table-wrap">${mistakeList(d.mistakes, 50)}</div></section>
+    <section class="panel"><h2>最近の記録 <small>${d.total}回</small></h2><p class="hint">行を押すと、問題ごとの答えが見られます（△は内容は正しいが時間オーバー）。</p>${recRows || `<p class="hint">まだ記録がありません</p>`}</section>
+    <section class="panel"><h2>バッジ</h2><div class="badge-row">${BADGES.filter((b) => d.badges.includes(b.id)).map((b) => `<span class="chip small" title="${esc(b.desc)}">${b.ico} ${esc(b.name)}</span>`).join("") || `<span class="hint">まだありません</span>`}</div></section>`;
+  $("#toReport").onclick = () => renderReports({ emails: [email] }, () => renderStudentDetail(email, back));
+}
+
+/* ===== まちがいの多い問題（先生用） ===== */
+async function renderMistakes(cls, itemId) {
+  if (cls === undefined) cls = lsGet("eg_cls", "");
+  loadingMain("まちがいの多い問題");
+  let d;
+  try { d = await api.mistakeStats({ cls, itemId }); } catch (e) { return failMain(e); }
+  const list = d.list || [];
+  $("main").innerHTML = `
+    <div class="toolbar">${clsSelect("missCls", d.classes || [], cls)}<select id="missItem"><option value="">すべての文法</option>${CONTENT.map((it) => `<option value="${it.id}" ${it.id === itemId ? "selected" : ""}>${esc(it.short)}</option>`).join("")}</select></div>
+    <section class="panel"><h2>まちがいの多い問題 <small>${list.length}問</small></h2>
+      <p class="hint">段階2〜4の問題を、まちがえた割合の高い順にならべています（段階4で内容は正しいが時間オーバーだったものは、まちがいに数えていません）。授業での復習にお使いください。</p>
+      <div class="table-wrap"><table class="miss"><thead><tr><th>問題</th><th>解答数</th><th>まちがい</th><th>人数</th><th>よくある答え</th><th>正しい答え（例）</th></tr></thead><tbody>
+      ${list.map((e) => {
+        const x = QINDEX[e.qid], rate = e.n ? e.wrong / e.n : 0;
+        return `<tr><td><small>${esc(itemShort(e.itemId))}・段階${e.stage}</small><br>${esc(x ? qText(x.q) : e.q)}</td><td>${e.n}</td>
+          <td><div class="rate"><i style="width:${pct(rate)}%"></i></div><small>${pct(rate)}%（${e.wrong}回）</small></td><td>${e.people}人</td>
+          <td>${(e.answers || []).slice(0, 3).map((a) => `<span class="ans">${esc(a.a)}<small>×${a.n}</small></span>`).join("")}</td><td>${esc(x ? qModel(x.q) : "")}</td></tr>`;
+      }).join("") || `<tr><td colspan="6">まだまちがいの記録はありません</td></tr>`}
+      </tbody></table></div></section>`;
+  if ($("#missCls")) $("#missCls").onchange = (e) => { lsSet("eg_cls", e.target.value); renderMistakes(e.target.value, itemId); };
+  $("#missItem").onchange = (e) => renderMistakes(cls, e.target.value);
+}
+
+/* ===== 個人レポート（印刷） ===== */
+async function renderReportPicker() {
+  loadingMain("個人レポート");
+  let d;
+  try { d = await api.students(); } catch (e) { return failMain(e); }
+  const classes = d.classes || [], list = (d.students || []).filter((p) => !p.teacher);
+  $("main").innerHTML = `
+    <section class="panel"><h2>クラス全員分を印刷</h2>
+      ${classes.length ? `<div class="toolbar">${clsSelect("repCls", classes, lsGet("eg_cls", ""), "クラスを選ぶ")}<button class="btn primary" id="repClsGo">印刷画面を開く</button></div>` : `<p class="hint">名簿でクラスを登録すると、クラスごとに印刷できます。</p><button class="btn primary" id="repAll">全員分の印刷画面を開く</button>`}
+      <p class="hint">1人1ページ（A4たて）で印刷されます。</p></section>
+    <section class="panel"><h2>生徒をえらんで印刷</h2>
+      <div class="people-pick">${list.map((p) => `<label class="person"><input type="checkbox" data-rep="${esc(p.email)}">${avatarHTML(p.avatar, 28)}<span>${p.cls ? `<small>${esc(p.cls)} ${esc(p.no || "")}</small>` : ""}${esc(personName(p))}</span></label>`).join("") || `<p class="hint">まだ生徒がいません</p>`}</div>
+      <div class="btn-row"><button class="btn primary" id="repPick">えらんだ生徒の印刷画面を開く</button></div><div class="msg" id="repMsg"></div></section>`;
+  if ($("#repClsGo")) $("#repClsGo").onclick = () => { const c = $("#repCls").value; if (!c) { $("#repMsg").textContent = "クラスを選んでください"; $("#repMsg").className = "msg ng"; return; } renderReports({ cls: c }, renderReportPicker); };
+  if ($("#repAll")) $("#repAll").onclick = () => renderReports({}, renderReportPicker);
+  $("#repPick").onclick = () => { const emails = $$("[data-rep]:checked").map((c) => c.dataset.rep); if (!emails.length) { $("#repMsg").textContent = "生徒をえらんでください"; $("#repMsg").className = "msg ng"; return; } renderReports({ emails }, renderReportPicker); };
+}
+async function renderReports(opt, back) {
+  back = back || renderReportPicker;
+  loadingMain("個人レポート", back);
+  let d;
+  try { d = await api.reports(opt); } catch (e) { return failMain(e); }
+  const reps = d.reports || [];
+  const today = new Date();
+  const page = (r) => {
+    const p = r.profile;
+    return `<article class="report-page">
+      <header class="rp-head"><div><div class="rp-title">英文法トレーニング　学習レポート</div><div class="rp-sub">${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日 現在</div></div>
+        <div class="rp-who">${p.cls ? `<span>${esc(p.cls)}</span>` : ""}${p.no ? `<span>${esc(p.no)}番</span>` : ""}<b>${esc(personName(p))}</b></div></header>
+      <div class="rp-sum"><div><small>級・段</small><b>${esc(r.level.name)}</b></div><div><small>けいけん値</small><b>${r.xp}</b></div><div><small>練習した日</small><b>${r.days}日</b></div>
+        <div><small>最高の連続</small><b>${r.bestStreak}日</b></div><div><small>マスターした文法</small><b>${r.mastered} / ${CONTENT.length}</b></div><div><small>バッジ</small><b>${r.badges.length}</b></div></div>
+      <h3>文法ごとの進み具合</h3>${progressTable(r)}
+      <h3>練習した日（最近8週）</h3>${calendarHTML(r.dayCounts, 8)}
+      <h3>まちがえたままの問題</h3>${mistakeList(r.mistakes, 8)}
+      <h3>先生から</h3><div class="rp-comment"></div>
+    </article>`;
+  };
+  render(`${header("個人レポート", true)}
+    <main class="wrap report-wrap">
+      <div class="toolbar no-print"><button class="btn primary" id="doPrint">🖨️ 印刷する（${reps.length}人）</button><span class="hint">印刷画面で「A4・たて」を選んでください。背景のグラフィックをオンにすると色もつきます。</span></div>
+      ${reps.map(page).join("") || `<p class="hint">印刷できる生徒がいません。</p>`}
+    </main>`);
+  bindBack(back);
+  $("#doPrint").onclick = () => window.print();
+}
+
+/* ===== 先生（管理者）の追加・削除・担当クラス ===== */
+async function renderTeachers() {
+  loadingMain("先生");
+  let d;
+  try { d = await api.teachers(); } catch (e) { return failMain(e); }
+  const draw = (data, note) => {
+    const classes = data.classes || [];
+    const invite = `【英文法トレーニング】先生用の画面にご招待します。\n学校の Google アカウントで次のURLを開き、「英文法トレーニングをはじめる」を押してください。管理者画面が開きます。\n${MODE === "api" ? LOGIN_URL : "（公開用のURL）"}`;
+    $("main").innerHTML = `
+      <section class="panel"><h2>先生の一覧</h2>
+        <p class="hint">ここにいる先生は、ログインすると管理者画面になります。担当クラスがある先生は、そのクラスの生徒だけが表示されます（空欄の先生は全クラス）。</p>
+        <div class="table-wrap"><table class="people"><thead><tr><th class="name">メール</th><th>名前</th><th>担当クラス</th><th></th></tr></thead><tbody>
+        ${data.teachers.map((t) => `<tr><th class="name">${esc(t.email)}${t.owner ? `<small class="cls-tag">持ち主</small>` : ""}${t.me ? `<small class="cls-tag">あなた</small>` : ""}</th><td>${esc(t.name || "")}</td><td>${t.classes.length ? t.classes.map(esc).join("、") : `<span class="hint">すべて</span>`}</td>
+          <td><button class="link-btn small" data-tedit="${esc(t.email)}">編集</button>${t.owner || t.me ? "" : `<button class="link-btn small" data-tdel="${esc(t.email)}">削除</button>`}</td></tr>`).join("")}
+        </tbody></table></div><div class="msg ${note ? "ok" : ""}" id="tMsg">${note ? esc(note) : ""}</div></section>
+      <section class="panel"><h2 id="tFormTitle">先生を追加（招待）</h2>
+        <div class="form-grid"><label>メールアドレス<input type="email" id="tEmail" class="full" placeholder="sensei@hi.hkg.ac.jp"></label>
+          <label>名前（なくてもOK）<input type="text" id="tName" class="full" maxlength="40"></label></div>
+        <div class="mk-label">担当クラス（えらばなければ全クラス）</div>
+        <div class="chips">${classes.map((c) => `<label class="chip-check"><input type="checkbox" data-tcls="${esc(c)}"> ${esc(c)}</label>`).join("") || `<span class="hint">名簿でクラスを登録すると選べます。</span>`}</div>
+        <label class="hint">名簿にまだないクラス（「、」区切り）<input type="text" id="tExtra" class="full" placeholder="例：2A、2B"></label>
+        <div class="btn-row"><button class="btn primary" id="tSave">保存する</button></div>
+        <h2>招待の案内文</h2><p class="hint">追加した先生に、この文をメールなどで送ってください（スプレッドシートの共有は不要です）。</p>
+        <textarea id="tInvite" class="full" rows="4" readonly>${esc(invite)}</textarea><div class="btn-row"><button class="btn" id="tCopy">案内文をコピー</button></div></section>`;
+    const msg = (t, ok) => { const m = $("#tMsg"); m.textContent = t; m.className = "msg " + (ok ? "ok" : "ng"); };
+    $$("[data-tedit]").forEach((b) => (b.onclick = () => {
+      const t = data.teachers.find((x) => x.email === b.dataset.tedit);
+      $("#tEmail").value = t.email; $("#tName").value = t.name || "";
+      $$("[data-tcls]").forEach((c) => { c.checked = t.classes.includes(c.dataset.tcls); });
+      $("#tExtra").value = t.classes.filter((c) => !classes.includes(c)).join("、");
+      $("#tFormTitle").textContent = "先生を編集"; $("#tEmail").scrollIntoView({ behavior: "smooth", block: "center" });
+    }));
+    $$("[data-tdel]").forEach((b) => (b.onclick = async () => {
+      if (b.dataset.armed !== "1") { b.dataset.armed = "1"; b.textContent = "本当に削除"; return; }
+      try { draw(await api.removeTeacher(b.dataset.tdel), "削除しました"); } catch (e) { msg(e.message); }
+    }));
+    $("#tSave").onclick = async () => {
+      const email = $("#tEmail").value.trim();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return msg("メールアドレスを入れてください");
+      const cl = $$("[data-tcls]:checked").map((c) => c.dataset.tcls).concat($("#tExtra").value.split(/[,、，\s]+/).map((c) => c.trim()).filter(Boolean));
+      try { draw(await api.saveTeacher({ email, name: $("#tName").value.trim(), classes: Array.from(new Set(cl)) }), `${email} を保存しました。下の案内文を送ってください。`); }
+      catch (e) { msg(e.message); }
+    };
+    $("#tCopy").onclick = async () => { try { await navigator.clipboard.writeText(invite); msg("コピーしました", true); } catch (e) { $("#tInvite").select(); msg("選択しました。コピーしてください"); } };
+  };
+  draw(d);
 }
 
 /* ===== 先生スタンプ（作って送る） ===== */
@@ -3717,7 +4353,7 @@ async function renderTeacherStamps() {
   const st = { mode: "pick", design: { id: (choices[0] || {}).id }, make: { a: "cat", t: "よくできました", c: "#e03131", po: "banzai", ex: "sparkle", cr: false }, to: new Set(), all: false, msg: "", students: null, sent: null };
   render(`${header("先生スタンプ", true)}<main class="wrap"><div class="judging"><span class="spinner"></span>読み込んでいます…</div></main>`);
   bindBack(renderHome);
-  try { const [a, b] = await Promise.all([api.students(), api.sentStamps()]); st.students = a.students || []; st.sent = b.stamps || []; }
+  try { const [a, b] = await Promise.all([api.students(), api.sentStamps()]); st.students = a.students || []; st.classes = a.classes || []; st.sent = b.stamps || []; }
   catch (e) { $("main").innerHTML = `<div class="msg ng">読み込めませんでした：${esc(e.message)}</div>`; return; }
   const cur = () => (st.mode === "make" ? { make: Object.assign({}, st.make) } : st.design);
   function draw() {
@@ -3732,13 +4368,14 @@ async function renderTeacherStamps() {
           <div class="mk-row"><div class="mk-label">ことばの色</div><div class="mk-opts">${STAMP_COLORS.map((c) => `<button type="button" class="mk-color ${st.make.c === c ? "active" : ""}" data-col="${c}" style="background:${c}" aria-label="色"></button>`).join("")}</div></div>
           <label class="check"><input type="checkbox" id="mkCr" ${st.make.cr ? "checked" : ""}> 王冠をつける</label>
         </div>`;
-    const people = st.students.map((p) => `<label class="person ${st.to.has(p.email) ? "on" : ""}"><input type="checkbox" data-to="${esc(p.email)}" ${st.to.has(p.email) || st.all ? "checked" : ""} ${st.all ? "disabled" : ""}>${avatarHTML(p.avatar, 30)}<span>${esc(String(p.email).split("@")[0])}${p.nickname ? `<small>${esc(p.nickname)}</small>` : ""}</span></label>`).join("");
+    const people = st.students.map((p) => `<label class="person ${st.to.has(p.email) ? "on" : ""}"><input type="checkbox" data-to="${esc(p.email)}" ${st.to.has(p.email) || (st.all && !p.teacher) ? "checked" : ""} ${st.all ? "disabled" : ""}>${avatarHTML(p.avatar, 30)}<span>${p.cls ? `<small>${esc(p.cls)} ${esc(p.no || "")}</small>` : ""}${esc(personName(p))}${p.nickname ? `<small>${esc(p.nickname)}</small>` : ""}</span></label>`).join("");
     $("main").innerHTML = `
       <section class="panel"><h2>1. スタンプをえらぶ・つくる</h2>
         <div class="seg"><button data-m="pick" class="${st.mode === "pick" ? "on" : ""}">えらぶ</button><button data-m="make" class="${st.mode === "make" ? "on" : ""}">つくる</button></div>
         <div class="stamp-editor"><div class="stamp-preview">${stampArt(cur(), 150)}</div>${designBox}</div></section>
       <section class="panel"><h2>2. 送る相手</h2>
-        <label class="check"><input type="checkbox" id="toAll" ${st.all ? "checked" : ""}> 全員に送る（${st.students.length}人）</label>
+        <label class="check"><input type="checkbox" id="toAll" ${st.all ? "checked" : ""}> 全員に送る（${st.students.filter((p) => !p.teacher).length}人）</label>
+        ${(st.classes || []).length && !st.all ? `<div class="chips">${st.classes.map((c) => `<button class="chip small" data-pickcls="${esc(c)}">${esc(c)} の全員をえらぶ</button>`).join("")}</div>` : ""}
         <div class="people-pick">${people || `<p class="hint">まだ生徒がいません（一度アプリを開いた生徒が表示されます）。</p>`}</div></section>
       <section class="panel"><h2>3. ひとこと（なくてもOK）</h2>
         <input type="text" class="full" id="stMsg" maxlength="60" value="${esc(st.msg)}" placeholder="例：毎日よくがんばっていますね！">
@@ -3759,6 +4396,7 @@ async function renderTeacherStamps() {
       $$("[data-col]").forEach((b) => (b.onclick = () => { st.make.c = b.dataset.col; draw(); }));
     }
     $("#toAll").onchange = (e) => { st.all = e.target.checked; draw(); };
+    $$("[data-pickcls]").forEach((b) => (b.onclick = () => { st.students.filter((p) => p.cls === b.dataset.pickcls).forEach((p) => st.to.add(p.email)); draw(); }));
     $$("[data-to]").forEach((c) => (c.onchange = () => { if (c.checked) st.to.add(c.dataset.to); else st.to.delete(c.dataset.to); c.closest(".person").classList.toggle("on", c.checked); }));
     $("#stMsg").oninput = (e) => { st.msg = e.target.value; };
     $("#sendSt").onclick = async (e) => {
@@ -3803,15 +4441,25 @@ async function init() {
     state.email = b.email || "";
     state.isAdmin = !!b.isAdmin;
     state.viewAsStudent = state.isAdmin && !!lsGet("eg_preview", false);
-    state.settings = mergeSettings(b.settings);
     state.progress = b.progress || {};
     state.history = b.history || [];
     state.hasEleven = !!b.hasEleven;
     state.profile = Object.assign({}, DEFAULT_PROFILE, b.profile || {});
+    applySettings(b.settings);
     state.tstamps = b.tstamps || [];
+    state.mistakes = b.mistakes || [];
+    state.teacher = b.teacher || null;
+    state.classes = b.classes || [];
     renderHome();
   } catch (e) {
     if (e instanceof AuthError) return renderLogin(e.message);
+    if (/名簿に登録されていない/.test(e.message)) {
+      app().innerHTML = `<header class="bar"><span class="logo">G</span><h1>英文法トレーニング</h1></header><main class="wrap"><section class="panel login">
+        <h2>まだ使えません</h2><p class="msg ng">${esc(e.message)}</p><p>先生が名簿に登録すると使えるようになります。別のアカウントでログインしている場合は、ログインし直してください。</p>
+        <button class="btn primary big" id="relogin">ログインし直す</button></section></main>`;
+      $("#relogin").onclick = () => { lsSet("eg_token", ""); renderLogin(""); };
+      return;
+    }
     app().innerHTML = `<div class="boot ng">起動できませんでした：${esc(e.message)}</div>`;
   }
 }
