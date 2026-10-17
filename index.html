@@ -672,6 +672,118 @@ table.dash th.mcol, table.dash td.mcol { border-left: 2px solid var(--gold); }
 .order-row select { font: inherit; font-size: 13px; padding: 4px; border-radius: 6px; border: 1px solid var(--line); }
 .order-row .btn.small { padding: 4px 8px; min-width: 0; }
 
+/* ===== 生徒ホーム（入り口が一目で見える・課題がいちばん目立つ） ===== */
+.wrap.home { max-width: 820px; padding-top: 12px; padding-bottom: 24px; }
+.notice.small { font-size: 13px; padding: 6px 12px; margin-bottom: 8px; }
+.me-bar { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); padding: 8px 12px; margin-bottom: 10px; }
+.me-bar .me-info { flex: 1; min-width: 0; }
+.me-bar .me-hello { font-size: 17px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mb-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.me-bar .pos-line { margin: 0; font-size: 13px; }
+.me-bar .pos-line b { font-size: 17px; }
+.me-bar .lv-bar { height: 6px; margin-top: 4px; max-width: 260px; }
+.mb-stats { display: flex; gap: 6px; flex: none; }
+.mb-stats .stat { padding: 3px 8px; min-width: 58px; }
+.mb-stats .stat b { font-size: 15px; line-height: 1.3; }
+.mb-stats .stat small { font-size: 10px; }
+.home-grid { display: grid; gap: 12px; }
+/* 課題パネル */
+.task-panel { background: var(--surface); border: 3px solid var(--accent); border-radius: 20px; box-shadow: 0 4px 18px color-mix(in srgb, var(--accent) 22%, transparent); overflow: hidden; }
+.tp-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 14px; background: var(--accent); color: var(--accent-ink); }
+.tp-head h2 { margin: 0; font-size: 20px; font-weight: 900; letter-spacing: .04em; }
+.tp-count { font-size: 14px; font-weight: 700; }
+.tp-count b { font-size: 22px; margin: 0 2px; }
+.tp-alert { background: var(--ng); color: #fff; font-weight: 800; font-size: 14px; padding: 5px 14px; }
+.tp-list { display: grid; gap: 8px; padding: 10px; }
+.tp-empty { margin: 6px 4px; color: var(--muted); font-weight: 700; text-align: center; }
+.tp-empty.done { color: var(--ok); font-size: 17px; }
+.tp-all { display: block; width: calc(100% - 20px); margin: 0 10px 10px; padding: 8px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface-2); color: var(--accent); font-weight: 800; font-size: 14px; }
+.task-card { display: flex; align-items: stretch; gap: 10px; width: 100%; text-align: left; padding: 0; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); overflow: hidden; min-height: 72px; }
+.task-card:active { transform: scale(.99); }
+.tc-due { flex: none; width: 96px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px 4px; background: var(--accent-soft); color: var(--accent); line-height: 1.15; text-align: center; }
+.tc-due b { font-size: 24px; font-weight: 900; letter-spacing: -.02em; }
+.tc-due b.nd { font-size: 16px; }
+.tc-due small { font-size: 12px; font-weight: 700; }
+.tc-due em { font-style: normal; font-size: 12px; font-weight: 900; margin-top: 2px; }
+.task-card.due-soon .tc-due { background: var(--orange); color: #fff; }
+.task-card.due-over .tc-due { background: var(--ng); color: #fff; }
+.task-card.due-over { border-color: var(--ng); }
+.task-card.due-soon { border-color: var(--orange); }
+.task-card.due-none .tc-due { background: var(--chip); color: var(--muted); }
+.tc-main { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 3px; padding: 6px 0; }
+.tc-main .kind-chip { margin: 0; }
+.tc-title { font-weight: 800; font-size: 16px; line-height: 1.3; }
+.tc-sub { font-size: 12px; color: var(--muted); font-weight: 700; }
+.tc-main .dots { gap: 4px; }
+.tc-main .dot { width: 20px; height: 20px; font-size: 11px; border-radius: 6px; }
+.tc-go { flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; padding: 0 12px 0 4px; color: var(--accent); font-weight: 900; font-size: 20px; }
+.tc-go small { font-size: 11px; font-weight: 800; white-space: nowrap; }
+.kind-chip.story { background: #ece6ff; color: #5f3dc4; border: 1px solid #b9a5f5; }
+/* 入り口 */
+.entry-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; align-content: start; }
+.entry { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 76px; padding: 8px 4px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow); text-align: center; }
+.entry:active { transform: scale(.98); }
+.en-ico { font-size: 28px; line-height: 1.1; }
+.en-label { font-size: 13px; font-weight: 800; line-height: 1.3; word-break: keep-all; }
+.entry.learn .en-label { white-space: nowrap; }
+.entry .q-note { top: -6px; right: -4px; }
+.entry.learn { grid-column: span 2; flex-direction: row; justify-content: flex-start; gap: 10px; padding: 8px 12px; text-align: left; }
+.entry.learn .en-label { font-size: 17px; }
+.entry.learn .en-ico { font-size: 34px; }
+.en-text { display: flex; flex-direction: column; min-width: 0; }
+.en-text small { font-size: 12px; font-weight: 700; color: var(--muted); line-height: 1.3; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.entry.free { background: linear-gradient(135deg, var(--s2-bg), var(--surface)); border-color: color-mix(in srgb, var(--s2) 40%, transparent); }
+.entry.story { background: linear-gradient(135deg, #2b1f5c, #4c2f9e); border-color: #5f3dc4; color: #fff; }
+.entry.story .en-text small { color: rgba(255,255,255,.82); }
+.en-art { flex: none; line-height: 0; background: rgba(255,255,255,.12); border-radius: 12px; padding: 2px; }
+.entry.review { grid-column: span 1; flex-direction: column; justify-content: center; text-align: center; padding: 8px 4px; gap: 2px; background: linear-gradient(135deg, var(--s3-bg), var(--surface)); border-color: color-mix(in srgb, var(--s3) 40%, transparent); }
+.entry.review .en-label { font-size: 14px; }
+.entry.review .en-ico { font-size: 28px; }
+.home-more { margin-top: 12px; display: grid; gap: 10px; }
+.home-more .next-goal { margin-top: 0; }
+.home-more .stamp-card { margin-top: 0; }
+/* iPad 縦・横、パソコン */
+@media (min-width: 700px) {
+  .entry-grid { grid-template-columns: repeat(5, 1fr); }
+  .entry { min-height: 92px; }
+  .en-ico { font-size: 32px; }
+  .en-label { font-size: 14px; }
+  .entry.learn .en-label { font-size: 18px; }
+  .tc-title { font-size: 18px; }
+  .task-card { min-height: 80px; }
+  .tc-due { width: 112px; }
+  .tc-due b { font-size: 28px; }
+}
+@media (min-width: 1000px) {
+  .wrap.home { max-width: 1160px; }
+  .home-grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; }
+  .entry-grid { grid-template-columns: repeat(4, 1fr); }
+  .home-more { grid-template-columns: 1fr 1fr; align-items: start; }
+}
+@media (max-width: 520px) {
+  .mb-stats .stat:nth-child(3) { display: none; }
+  .mb-stats .stat { min-width: 50px; padding: 2px 6px; }
+  .me-bar .lv-chip { display: none; }
+  .entry-grid { grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .entry.story { grid-column: span 3; }
+  .entry { min-height: 66px; padding: 6px 2px; }
+  .en-ico { font-size: 24px; }
+  .en-label { font-size: 11px; }
+  .entry.review .en-label { font-size: 12px; }
+  .entry.review .en-ico { font-size: 24px; }
+  .entry.learn { padding: 6px 8px; gap: 6px; }
+  .entry.learn .en-label { font-size: 14px; }
+  .en-text small { font-size: 11px; }
+  .entry.learn .en-ico { font-size: 28px; }
+  .entry.story .en-art svg { width: 36px; height: 36px; }
+  .tc-due { width: 80px; }
+  .tc-due b { font-size: 20px; }
+  .tc-title { font-size: 15px; }
+  .tc-go { padding-right: 8px; }
+  .task-card { min-height: 64px; }
+  .tc-main .kind-chip { font-size: 10px; }
+}
+
 </style>
 </head>
 <body>
@@ -3220,89 +3332,138 @@ function unlockText(un) {
 const fmtDate = (ts) => { const t = new Date(ts); return isNaN(t) ? "" : `${t.getMonth() + 1}/${t.getDate()}`; };
 const myName = () => state.profile.nickname || (MODE === "demo" ? "お試しユーザー" : state.email.split("@")[0]);
 
-/* ===== ホーム（生徒画面） ===== */
+/* ===== ホーム（生徒画面）：入り口が一目で見え、課題がいちばん目立つ ===== */
+const WEEK_JA = ["日", "月", "火", "水", "木", "金", "土"];
+const dueWeek = (d) => { const t = new Date(String(d) + "T00:00:00"); return isNaN(t) ? "" : WEEK_JA[t.getDay()]; };
+let itemBack = null; // 文法の画面から「もどる」で帰る先（ホーム・課題の一覧・自由練習）
+// 課題がクリアしているか（課題（通常）＝マスター、課題（マスターモード）＝マスター＋まとめ問題に合格）
+const taskCleared = (id) => clearedCount(id) === 4 && (!isMmTask(id) || taskPassedNow(id));
+function itemCardHTML(it, i) {
+  const p = itemProg(it.id);
+  const done = clearedCount(it.id);
+  const dots = [1, 2, 3, 4].map((s) => {
+    const need = requiredPasses(s), n = Math.min(p.passCount[s - 1], need);
+    const partial = !isCleared(it.id, s) && n > 0 ? `<i style="width:${(n / need) * 100}%"></i>` : "";
+    return `<span class="dot s${s} ${isCleared(it.id, s) ? "on" : ""}" title="段階${s}：${n}/${need}回合格">${partial}<b>${s}</b></span>`;
+  }).join("");
+  const asg = isAssigned(it.id), mmT = asg && isMmTask(it.id), ok = mmT ? done === 4 && taskPassedNow(it.id) : done === 4;
+  return `<button class="item-card ${ok ? "mastered" : ""} ${mmT ? "mm-task" : ""}" data-i="${i}">
+    <span class="num">${itemNo(it)}</span>
+    <span class="item-main"><span class="item-title">${esc(it.title)}</span><span class="dots">${dots}${mmT ? `<span class="dot mm ${taskPassedNow(it.id) ? "on" : ""}" title="まとめ問題"><b>ま</b></span>` : ""}</span>${asg ? `<span class="kind-chip ${mmT ? "mm" : ""}">${mmT ? "課題（マスターモード）" : "課題（通常）"}</span>` : ""}${dueChip(dueOf(it.id))}</span>
+    <span class="item-count">${ok ? (mmT ? "クリア" : "マスター") : mmT && done === 4 ? "まとめ問題へ" : done + "/4"}</span>
+  </button>`;
+}
+// ホームの課題カード：締め切りを左に大きく出す
+function taskCardHTML(it, i, mm) {
+  const d = dueOf(it.id, mm), done = clearedCount(it.id), mmT = isMmTask(it.id);
+  const cls = !d ? "none" : d.state === "over" ? "over" : d.left <= 2 ? "soon" : "open";
+  const date = d ? `<b>${fmtDue(d.due)}</b><small>（${dueWeek(d.due)}）</small><em>${d.state === "over" ? "期限切れ" : d.left === 0 ? "今日まで！" : `あと${d.left}日`}</em>` : `<small>締め切り</small><b class="nd">なし</b>`;
+  const dots = [1, 2, 3, 4].map((s) => `<span class="dot s${s} ${isCleared(it.id, s) ? "on" : ""}"><b>${s}</b></span>`).join("") + (mmT ? `<span class="dot mm ${taskPassedNow(it.id) ? "on" : ""}"><b>ま</b></span>` : "");
+  const step = mmT && done === 4 ? "まとめ問題に挑戦" : `段階${Math.min(4, done + 1)}から`;
+  return `<button class="task-card due-${cls}" data-i="${i}">
+    <span class="tc-due">${date}</span>
+    <span class="tc-main"><span class="kind-chip ${mmT ? "mm" : ""}">${mmT ? "課題（マスターモード）" : "課題（通常）"}</span><span class="tc-title">${esc(it.title)}</span><span class="dots">${dots}</span></span>
+    <span class="tc-go"><small>${step}</small><span aria-hidden="true">▶</span></span>
+  </button>`;
+}
+// 先生の課題「ストーリーモードの〇〇まで」のカード
+function storyTaskCardHTML(st, sg) {
+  const g = state.settings.storyGoal, d = g.due ? dueState(g.due, sg.reached ? Date.now() : null) : null;
+  const cls = !d ? "none" : d.state === "over" ? "over" : d.left <= 2 ? "soon" : "open";
+  const date = d ? `<b>${fmtDue(g.due)}</b><small>（${dueWeek(g.due)}）</small><em>${d.state === "over" ? "期限切れ" : d.left === 0 ? "今日まで！" : `あと${d.left}日`}</em>` : `<small>締め切り</small><b class="nd">なし</b>`;
+  const K = kingdomOf(st.order[sg.k]);
+  return `<button class="task-card story-task due-${cls}" id="toStoryGoal">
+    <span class="tc-due">${date}</span>
+    <span class="tc-main"><span class="kind-chip story">課題（ストーリーモード）</span><span class="tc-title">第${sg.k + 1}の王国「${esc(K.name)}」まで</span><span class="tc-sub">いま とりもどした王国 ${st.restored} / ${sg.k + 1}</span></span>
+    <span class="tc-go"><small>冒険へ</small><span aria-hidden="true">▶</span></span>
+  </button>`;
+}
 function renderHome() {
   if (state.isAdmin && !state.viewAsStudent) return renderAdminHome();
   applySkin(state.profile.theme);
-  const card = (it, i) => {
-    const p = itemProg(it.id);
-    const done = clearedCount(it.id);
-    const dots = [1, 2, 3, 4].map((s) => {
-      const need = requiredPasses(s), n = Math.min(p.passCount[s - 1], need);
-      const partial = !isCleared(it.id, s) && n > 0 ? `<i style="width:${(n / need) * 100}%"></i>` : "";
-      return `<span class="dot s${s} ${isCleared(it.id, s) ? "on" : ""}" title="段階${s}：${n}/${need}回合格">${partial}<b>${s}</b></span>`;
-    }).join("");
-    const asg = isAssigned(it.id), mmT = asg && isMmTask(it.id), ok = mmT ? done === 4 && taskPassedNow(it.id) : done === 4;
-    return `<button class="item-card ${ok ? "mastered" : ""} ${mmT ? "mm-task" : ""}" data-i="${i}">
-      <span class="num">${itemNo(it)}</span>
-      <span class="item-main"><span class="item-title">${esc(it.title)}</span><span class="dots">${dots}${mmT ? `<span class="dot mm ${taskPassedNow(it.id) ? "on" : ""}" title="まとめ問題"><b>ま</b></span>` : ""}</span>${asg ? `<span class="kind-chip ${mmT ? "mm" : ""}">${mmT ? "課題（マスターモード）" : "課題（通常）"}</span>` : ""}${dueChip(dueOf(it.id))}</span>
-      <span class="item-count">${ok ? (mmT ? "クリア" : "マスター") : mmT && done === 4 ? "まとめ問題へ" : done + "/4"}</span>
-    </button>`;
-  };
+  itemBack = renderHome;
+  const mm = taskDoneAt(state.history, state.settings);
   const assignedList = assignedOrder();
-  const freeList = CONTENT.map((it, i) => [it, i]).filter(([it]) => !isAssigned(it.id));
-  const soon = assignedList.map(([it]) => dueOf(it.id)).filter((d) => d && (d.state === "over" || (d.state === "open" && d.left <= 2)));
-  const cards = (freeList.length || soon.length ? `<h2 class="sec">課題</h2>` : "") +
-    (assignedList.length ? assignedList.map(([it, i]) => card(it, i)).join("") : `<p class="hint">課題の項目はまだありません。</p>`) +
-    (freeList.length ? `<h2 class="sec">自由練習</h2>` + GRADES.map((g) => {
-      const list = freeList.filter(([it]) => gradeOf(it) === g);
-      if (!list.length) return "";
-      const started = list.some(([it]) => itemProg(it.id).attempts.some((n) => n > 0));
-      return `<details class="grade-box free" ${started || (g === 1 && !assignedList.length) ? "open" : ""}><summary>中${g}の文法（${list.length}）</summary>${list.map(([it, i]) => card(it, i)).join("")}</details>`;
-    }).join("") : "");
+  const todo = assignedList.filter(([it]) => !taskCleared(it.id));
+  const freeList = CONTENT.filter((it) => !isAssigned(it.id));
+  let over = todo.filter(([it]) => { const d = dueOf(it.id, mm); return d && d.state === "over"; }).length;
+  const SHOW = window.innerWidth < 600 && window.innerHeight < 860 ? 2 : 3; // スマホでは2つ（入り口がスクロールせずに見えるように）
   const rw = rewardState(state.history);
   const nx = nextStep();
   const posNow = positionOf(state.progress);
   const pf = state.profile, lv = rw.level;
   const unread = state.tstamps.filter((s) => !s.seen).length;
   const omToday = pf.omLast === dayKey(Date.now());
-  const menu = [
-    ["toAvatar", "🎨", "着せ替え", ""],
-    ["toShop", "🛍️", "お店", ""],
-    ["toReview", "📝", "復習", (state.mistakes || []).length ? String(reviewItems().length) : ""],
-    state.settings.omikuji !== false ? ["toOmikuji", "🎋", "おみくじ", omToday ? "" : "今日まだ"] : null,
-    state.settings.showRanking || state.isAdmin ? ["toRank", "🏆", "ランキング", state.settings.showRanking ? "" : "先生だけ"] : null,
-    ["toRewards", "📮", "スタンプ帳", unread ? "NEW" : ""]
+  const story = state.settings.story && state.settings.story.on === false ? null : storyState();
+  const sIt = story ? story.order[story.cur] : null, sK = sIt ? kingdomOf(sIt) : null;
+  const reviewN = (state.mistakes || []).length ? reviewItems().length : 0;
+  // 課題の並び：文法の課題とストーリーモードの課題を、締め切りが近い順に
+  const sg = story ? storyGoalInfo(story) : null;
+  const dkey = (due) => (due ? new Date(due).getTime() : 3e15);
+  const rows = todo.map(([it, i]) => ({ key: (() => { const d = dueOf(it.id, mm); return d ? dkey(d.due) : 3e15; })(), html: taskCardHTML(it, i, mm) }));
+  if (sg && !sg.reached) rows.push({ key: dkey(state.settings.storyGoal.due), html: storyTaskCardHTML(story, sg), story: 1 });
+  rows.sort((x, y) => x.key - y.key);
+  const total = assignedList.length + (sg ? 1 : 0), left = rows.length;
+  // 入り口（学習の3つは大きく、ほかはふつうの大きさ）
+  const tiles = [
+    `<button class="entry learn free" id="toFree"><span class="en-ico">📚</span><span class="en-text"><span class="en-label">自由練習</span><small>好きな文法を練習（${freeList.length || CONTENT.length}）</small></span></button>`,
+    story ? `<button class="entry learn story" id="toStory"><span class="en-art">${sK ? monsterSVG(sK.kind, 46) : "👑"}</span><span class="en-text"><span class="en-label">ストーリーモード</span><small>${sK ? `第${story.cur + 1}の王国「${esc(sK.name)}」` : "すべての王国をとりもどした！"}</small></span></button>` : "",
+    `<button class="entry learn review" id="toReview"><span class="en-ico">📝</span><span class="en-label">復習</span>${reviewN ? `<span class="q-note">${reviewN}</span>` : ""}</button>`,
+    `<button class="entry" id="toAvatar"><span class="en-ico">🎨</span><span class="en-label">着せ替え</span></button>`,
+    `<button class="entry" id="toShop"><span class="en-ico">🛍️</span><span class="en-label">お店</span></button>`,
+    state.settings.omikuji !== false ? `<button class="entry" id="toOmikuji"><span class="en-ico">🎋</span><span class="en-label">おみくじ</span>${omToday ? "" : `<span class="q-note">今日まだ</span>`}</button>` : "",
+    state.settings.showRanking || state.isAdmin ? `<button class="entry" id="toRank"><span class="en-ico">🏆</span><span class="en-label">ランキング</span>${state.settings.showRanking ? "" : `<span class="q-note">先生だけ</span>`}</button>` : "",
+    `<button class="entry" id="toRewards"><span class="en-ico">📮</span><span class="en-label">スタンプ帳</span>${unread ? `<span class="q-note new">NEW</span>` : rw.todayDone ? "" : `<span class="q-note">今日まだ</span>`}</button>`
   ].filter(Boolean);
+  if (sg && !sg.reached && state.settings.storyGoal.due && dueState(state.settings.storyGoal.due, null).state === "over") over++;
+  const taskPanel = `<section class="task-panel ${over ? "has-over" : ""}" aria-labelledby="taskHead">
+    <div class="tp-head"><h2 id="taskHead">📌 課題</h2>
+      <span class="tp-count">${total ? (left ? `のこり <b>${left}</b> / ${total}` : `${total}つ すべてクリア`) : ""}</span></div>
+    ${over ? `<div class="tp-alert">⏰ 締め切りを過ぎた課題が ${over}つ あります</div>` : ""}
+    <div class="tp-list">${!total ? `<p class="tp-empty">いまは課題がありません。自由練習やストーリーモードに挑戦しよう！</p>`
+      : !left ? `<p class="tp-empty done">🎉 課題はすべてクリア！ よくがんばりました。</p>`
+      : rows.slice(0, SHOW).map((r) => r.html).join("")}</div>
+    ${assignedList.length && (left > SHOW || assignedList.length > rows.slice(0, SHOW).filter((r) => !r.story).length) ? `<button class="tp-all" id="toTasks">課題をすべて見る（${assignedList.length}）▶</button>` : ""}
+  </section>`;
   const slots = Array.from({ length: STAMPS_PER_CARD }, (_, k) => `<span class="slot ${k < rw.onCard ? "on" : ""} ${k === rw.onCard - 1 && rw.todayDone ? "today" : ""}">${k < rw.onCard ? "🐾" : k + 1}</span>`).join("");
   render(`${header("英文法トレーニング")}
-    <main class="wrap">
-      ${speechAvailable ? "" : `<div class="notice">この端末のブラウザでは音声認識が使えません。キーボードのマイク（音声入力）や文字入力で答えてください。</div>`}
-      ${soon.length ? `<div class="notice due-notice">⏰ 締め切りが近い（または過ぎた）課題が ${soon.length}つ あります。下の「課題」を見てみよう。</div>` : ""}
-      <section class="me-card">
-        <div class="me-top">
-          <button class="me-av ringed" id="meAv" aria-label="アバターを着せ替える"><span class="ring-wrap">${positionRing(posNow, 98)}</span>${avatarHTML(pf.avatar, 78)}<span class="av-edit" aria-hidden="true">✏️</span></button>
-          <div class="me-info">
-            <div class="me-hello">${esc(myName())} さん</div>
-            <div class="pos-line" title="すべての文法をマスターすると100">現在地 <b>${posNow.toFixed(1)}</b><small> / 100</small></div>
-            <div class="lv-row"><span class="lv-chip">🥋 ${esc(lv.name)}</span><span class="lv-next">${lv.next ? `${esc(lv.next)}まで あと ${lv.nextAt - rw.xp}` : "最高の段位です！"}</span></div>
-            <div class="lv-bar" title="けいけん値 ${rw.xp}"><i style="width:${pct(lv.progress)}%"></i></div>
-          </div>
+    <main class="wrap home">
+      ${speechAvailable ? "" : `<div class="notice small">この端末では音声認識が使えません。キーボードのマイクや文字入力で答えてください。</div>`}
+      <section class="me-bar">
+        <button class="me-av ringed" id="meAv" aria-label="アバターを着せ替える"><span class="ring-wrap">${positionRing(posNow, 70)}</span>${avatarHTML(pf.avatar, 54)}<span class="av-edit" aria-hidden="true">✏️</span></button>
+        <div class="me-info">
+          <div class="me-hello">${esc(myName())} さん</div>
+          <div class="mb-row"><span class="pos-line" title="すべての文法をマスターすると100">現在地 <b>${posNow.toFixed(1)}</b><small> / 100</small></span><span class="lv-chip small">🥋 ${esc(lv.name)}</span></div>
+          <div class="lv-bar" title="けいけん値 ${rw.xp}${lv.next ? `・${lv.next}まで あと ${lv.nextAt - rw.xp}` : ""}"><i style="width:${pct(lv.progress)}%"></i></div>
         </div>
-        <div class="me-stats">
+        <div class="mb-stats">
           <span class="stat"><b>🔥 ${rw.streak}</b><small>日連続</small></span>
           <span class="stat"><b>🪙 ${rw.points.avail}</b><small>ポイント</small></span>
-          <span class="stat"><b>🏅 ${rw.badges.size}</b><small>バッジ</small></span>
           <span class="stat"><b>👑 ${rw.mastered}</b><small>マスター</small></span>
         </div>
+      </section>
+      <div class="home-grid">
+        ${taskPanel}
+        <nav class="entry-grid" aria-label="メニュー">${tiles.join("")}</nav>
+      </div>
+      <section class="home-more">
+        ${nextGoalHTML()}
         <button class="stamp-card" id="toCard" aria-label="スタンプ帳を見る">
           <span class="sc-head"><span>スタンプカード${rw.cards ? `（${rw.cards}枚うめた）` : ""}</span><span class="sc-more">${rw.todayDone ? "今日のスタンプ ゲット！" : "今日も1回練習しよう"}</span></span>
           <span class="slots">${slots}</span>
         </button>
-        ${nextGoalHTML()}
       </section>
-      ${storyCardHTML()}
-      <nav class="quick-grid">${menu.map(([id, ico, label, note]) => `<button class="quick" id="${id}"><span class="q-ico">${ico}</span><span class="q-label">${label}</span>${note ? `<span class="q-note ${note === "NEW" ? "new" : ""}">${note}</span>` : ""}</button>`).join("")}</nav>
-      <p class="lead">文法の項目をえらぼう。段階1〜4をすべてクリアすると、その文法はマスターです。</p>
-      <div class="items">${cards}</div>
       <div class="home-links">
         ${MODE === "api" ? `<button class="link-btn" id="logout">ログアウト</button>` : ""}
       </div>
       ${footerNote()}
     </main>`);
   bindBack(null);
-  $$(".item-card").forEach((b) => (b.onclick = () => renderItem(+b.dataset.i)));
+  $$(".task-card").forEach((b) => (b.onclick = () => renderItem(+b.dataset.i)));
+  if ($("#toTasks")) $("#toTasks").onclick = renderTasks;
+  $("#toFree").onclick = renderFree;
   if ($("#toStory")) $("#toStory").onclick = () => renderStory();
+  if ($("#toStoryGoal")) $("#toStoryGoal").onclick = () => renderStory();
   $("#meAv").onclick = () => renderAvatar("b");
   $("#toAvatar").onclick = () => renderAvatar("b");
   $("#toShop").onclick = renderShop;
@@ -3316,6 +3477,45 @@ function renderHome() {
   // はじめての生徒にはアバターを選んでもらう → 先生からのスタンプが届いていれば見せる
   if (!pf.avatar && !state.isAdmin) avatarPicker();
   else if (unread) showTeacherStamps();
+}
+// 課題の一覧（のこり → クリアした課題）
+function renderTasks() {
+  itemBack = renderTasks;
+  const mm = taskDoneAt(state.history, state.settings);
+  const list = assignedOrder(), todo = list.filter(([it]) => !taskCleared(it.id)), done = list.filter(([it]) => taskCleared(it.id));
+  const st = state.settings.story && state.settings.story.on === false ? null : storyState(), sg = st ? storyGoalInfo(st) : null;
+  const sgHTML = sg && !sg.reached ? `<h2 class="sec">ストーリーモードの課題</h2><div class="items">${storyTaskCardHTML(st, sg)}</div>` : "";
+  render(`${header("課題", true)}
+    <main class="wrap">
+      <p class="lead">締め切りが近い順にならんでいます。課題（マスターモード）は、マスターしたあと「まとめ問題」に合格するとクリアです。</p>
+      ${sgHTML}
+      <h2 class="sec">のこりの課題（${todo.length}）</h2>
+      <div class="items task-list">${todo.length ? todo.map(([it, i]) => taskCardHTML(it, i, mm)).join("") : `<p class="hint">🎉 のこりの課題はありません。</p>`}</div>
+      ${done.length ? `<h2 class="sec">クリアした課題（${done.length}）</h2><div class="items">${done.map(([it, i]) => itemCardHTML(it, i)).join("")}</div>` : ""}
+      ${footerNote()}
+    </main>`);
+  bindBack(renderHome);
+  $$(".item-card, .task-card[data-i]").forEach((b) => (b.onclick = () => renderItem(+b.dataset.i)));
+  if ($("#toStoryGoal")) $("#toStoryGoal").onclick = () => renderStory();
+}
+// 自由練習（課題になっていない文法。中1〜中3）
+function renderFree() {
+  itemBack = renderFree;
+  const free = CONTENT.map((it, i) => [it, i]).filter(([it]) => !isAssigned(it.id));
+  const list = free.length ? free : CONTENT.map((it, i) => [it, i]);
+  render(`${header("自由練習", true)}
+    <main class="wrap">
+      <p class="lead">好きな文法をえらぼう。段階1〜4をすべてクリアすると、その文法はマスターです。中3の文法まで、先に練習してもかまいません。</p>
+      <div class="items">${GRADES.map((g) => {
+        const L = list.filter(([it]) => gradeOf(it) === g);
+        if (!L.length) return "";
+        const started = L.some(([it]) => itemProg(it.id).attempts.some((n) => n > 0));
+        return `<details class="grade-box free" ${started || g === gradeOf(L[0][0]) && g === 1 ? "open" : ""}><summary>中${g}の文法（${L.length}）</summary>${L.map(([it, i]) => itemCardHTML(it, i)).join("")}</details>`;
+      }).join("")}</div>
+      ${footerNote()}
+    </main>`);
+  bindBack(renderHome);
+  $$(".item-card").forEach((b) => (b.onclick = () => renderItem(+b.dataset.i)));
 }
 
 /* ===== はじめてのアバター選び ===== */
@@ -3719,7 +3919,7 @@ function renderItem(i) {
       ${mt ? taskPanelHTML(mt) : ""}
       ${footerNote()}
     </main>`);
-  bindBack(renderHome);
+  bindBack(itemBack || renderHome);
   if ($("#goMaster")) $("#goMaster").onclick = () => startMaster(mt);
   $$(".stage-card").forEach((b) => (b.onclick = () => {
     const s = +b.dataset.s;
