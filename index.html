@@ -784,6 +784,103 @@ table.dash th.mcol, table.dash td.mcol { border-left: 2px solid var(--gold); }
   .tc-main .kind-chip { font-size: 10px; }
 }
 
+/* ===== 課題のフォルダ（生徒） ===== */
+.folder-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.folder-card { position: relative; display: flex; align-items: center; gap: 10px; width: 100%; min-height: 72px; text-align: left; padding: 10px 12px; border-radius: 14px; border: 2px solid var(--line); background: var(--surface-2); }
+.folder-card:active { transform: scale(.99); }
+.folder-card.has-task { border-color: var(--orange); background: linear-gradient(135deg, var(--orange-soft), var(--surface)); box-shadow: 0 3px 12px color-mix(in srgb, var(--orange) 22%, transparent); }
+.folder-card.has-over { border-color: var(--ng); background: linear-gradient(135deg, var(--ng-bg), var(--surface)); }
+.folder-card.all-done { opacity: .85; }
+.fc-ico { font-size: 30px; line-height: 1; flex: none; }
+.fc-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.fc-name { font-weight: 900; font-size: 16px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fc-sub { font-size: 12px; font-weight: 700; color: var(--muted); }
+.fc-due { color: var(--accent); }
+.fc-due.soon { color: var(--orange); }
+.fc-due.over { color: var(--ng); }
+.fc-badge { flex: none; display: flex; flex-direction: column; align-items: center; background: var(--orange); color: #fff; font-size: 11px; font-weight: 900; border-radius: 12px; padding: 4px 8px; line-height: 1.2; animation: badgePulse 2.4s ease-in-out infinite; }
+.has-over .fc-badge { background: var(--ng); }
+.fc-badge b { font-size: 20px; }
+@keyframes badgePulse { 0%, 100% { transform: none; } 50% { transform: scale(1.06); } }
+@media (prefers-reduced-motion: reduce) { .fc-badge { animation: none; } }
+.task-list { display: grid; gap: 8px; }
+.task-card.due-done .tc-due { background: var(--ok-bg); color: var(--ok); }
+.task-card.due-done { opacity: .85; }
+.tc-sub { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.task-head { display: flex; align-items: stretch; gap: 12px; background: var(--surface); border: 2px solid var(--accent); border-radius: 16px; overflow: hidden; margin-bottom: 12px; box-shadow: var(--shadow); }
+.task-head .tc-due { width: 112px; }
+.task-head.due-soon { border-color: var(--orange); } .task-head.due-soon .tc-due { background: var(--orange); color: #fff; }
+.task-head.due-over { border-color: var(--ng); } .task-head.due-over .tc-due { background: var(--ng); color: #fff; }
+.task-head.due-none .tc-due { background: var(--chip); color: var(--muted); }
+.task-head.due-done { border-color: var(--ok); } .task-head.due-done .tc-due { background: var(--ok-bg); color: var(--ok); }
+.th-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; padding: 10px 12px 10px 0; }
+.th-name { font-size: 20px; font-weight: 900; line-height: 1.3; }
+.th-rule { font-size: 13px; color: var(--muted); }
+.th-state { font-size: 14px; font-weight: 800; color: var(--accent); }
+.th-state.ok { color: var(--ok); }
+.kind-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-weight: 800; color: var(--muted); }
+@media (min-width: 1000px) { .home-grid .folder-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) {
+  .folder-card { min-height: 60px; padding: 8px; gap: 6px; }
+  .fc-ico { font-size: 24px; }
+  .fc-name { font-size: 14px; }
+  .fc-sub { font-size: 11px; }
+  .fc-badge { padding: 3px 6px; font-size: 10px; }
+  .fc-badge b { font-size: 16px; }
+  .task-head .tc-due { width: 84px; }
+  .th-name { font-size: 17px; }
+}
+
+/* ===== 課題（先生） ===== */
+.admin-card.main { border: 2px solid var(--accent); background: linear-gradient(135deg, var(--accent-soft), var(--surface)); }
+.tk-newf { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+.tk-newf input { font: inherit; font-size: 14px; padding: 6px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); min-width: 220px; }
+.tk-folder { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 8px 14px 12px; margin: 10px 0; box-shadow: var(--shadow); }
+.tk-folder > summary { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; cursor: pointer; padding: 4px 0; list-style: none; }
+.tk-folder > summary::-webkit-details-marker { display: none; }
+.tkf-name { font-weight: 900; font-size: 17px; }
+.tkf-n { color: var(--muted); font-size: 13px; font-weight: 700; }
+.tkf-btns { margin-left: auto; display: flex; gap: 4px; flex-wrap: wrap; }
+.tk-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 0; border-top: 1px solid var(--line); }
+.tk-main { flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 3px; }
+.tk-name { font-weight: 800; font-size: 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tk-name .kind-chip { margin: 0; }
+.tk-meta { font-size: 13px; color: var(--muted); }
+.tk-prog { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; }
+.tk-prog.wait { color: var(--muted); }
+.tk-bar { width: 120px; height: 8px; border-radius: 99px; background: var(--chip); overflow: hidden; }
+.tk-bar i { display: block; height: 100%; background: var(--ok); }
+.tk-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.btn.danger { color: var(--ng); border-color: color-mix(in srgb, var(--ng) 40%, transparent); }
+.link-btn.danger { color: var(--ng); }
+.req { font-size: 11px; background: var(--ng); color: #fff; border-radius: 6px; padding: 0 5px; margin-left: 4px; }
+.tk-picked { background: var(--surface-2); border: 1px dashed var(--line); border-radius: 12px; padding: 8px 10px; margin-bottom: 8px; font-size: 14px; }
+.tk-picked .chip.on { background: #fff1c2; color: #8a5a00; }
+.kind-opt { display: block; padding: 8px 10px; border: 1px solid var(--line); border-radius: 12px; margin: 6px 0; }
+.kind-opt:has(input:disabled) { opacity: .5; }
+.ok { color: var(--ok); } .ng { color: var(--ng); }
+@media (max-width: 600px) {
+  .tk-newf { width: 100%; } .tk-newf input { min-width: 0; flex: 1; }
+  .tk-main { min-width: 0; flex-basis: 100%; }
+  .tk-row { align-items: stretch; }
+  .tk-meta { word-break: break-all; }
+  .tkf-btns { margin-left: 0; }
+}
+#sgUpto, #sgCls { max-width: min(100%, 60vw); text-overflow: ellipsis; }
+/* 課題の配信先 */
+.tk-cls { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 10px; }
+.cls-pick { position: relative; cursor: pointer; }
+.cls-pick input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.cls-pick span { display: inline-block; min-width: 64px; text-align: center; padding: 8px 14px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); font-weight: 800; }
+.cls-pick input:checked + span { border-color: var(--accent); background: var(--accent); color: var(--accent-ink); }
+.cls-pick input:focus-visible + span { outline: 3px solid color-mix(in srgb, var(--accent) 40%, transparent); }
+.tk-stu { background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; margin-bottom: 10px; }
+.tk-stu-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.tk-stu-head .chip.on { background: #fff1c2; color: #8a5a00; }
+.tk-stu-cls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 6px; font-size: 14px; }
+.tk-stu-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 2px 10px; }
+.stu-pick { margin: 0; font-size: 14px; }
+
 </style>
 </head>
 <body>
@@ -2221,14 +2318,15 @@ const DEFAULT_SETTINGS = {
   stage2: { numQuestions: 10, passRatio: 0.8, requiredPasses: 1 },
   stage3: { numQuestions: 8, passRatio: 0.8, requiredPasses: 1 },
   stage4: { numQuestions: 10, passRatio: 0.8, timeLimitSec: 5, requiredPasses: 1 },
-  assigned: null,          // 先生が選んだ「課題」の項目ID（null = すべて課題）
-  due: {},                 // 課題の締め切り {項目ID: "YYYY-MM-DD"}
-  src: {},                 // 課題の問題 {項目ID: 問題セットID}（なし＝アプリの問題）
+  tasks: null,             // 課題 [{id, name, folder, items, kind, due, classes, src}]（くわしくは settingsForClass の上）
+  folders: null,           // 課題のフォルダ [{id, name}]
+  tasksVer: 0,
+  // ↓ settingsForClass が課題から作る（生徒ごと）：課題に入っている文法・文法ごとのいちばん近い締め切り・問題セット
+  myTasks: null, assigned: null, due: {}, src: {},
   story: { on: true, num: 10, pass: 0.8, peers: true }, // ストーリーモード（とどめの問題数・合格ライン・仲間のアバターを地図に出す）
   storyGoal: null,         // ストーリーモードの課題 {upto: 文法ID, due: "YYYY-MM-DD"}
-  mm: {},                  // 課題（マスターモード）{項目ID: 復習の範囲の最初の項目ID}（ないものは課題（通常））
   masterTask: { num: 20, pass: 0.8 }, // 課題（マスターモード）のまとめ問題
-  classTasks: {},          // クラスごとの課題・締め切り {クラス: {assigned, due}}
+  classTasks: {},          // クラスごとのストーリーモードの課題 {クラス: {storyGoal}}
   sttStage1: "elevenlabs", // 段階1の聞き取り: "elevenlabs"（録音して文字起こし）/ "browser"（ブラウザの音声認識）
   lockProgression: true,
   allowText: true,
@@ -2533,16 +2631,91 @@ function openMistakes(records) {
   });
   return Object.keys(m).map((k) => m[k]).filter((e) => !e.ok).map((e) => ({ qid: e.qid, wrong: e.wrong, a: e.a, ts: e.ts }));
 }
-/* ---------- クラスごとの課題・締め切り ----------
-   settings.assigned（課題の項目）と settings.due（{項目ID: "YYYY-MM-DD"}）が全クラス共通。
-   settings.classTasks[クラス] があれば、そのクラスはそちらを使う。 */
-function settingsForClass(settings, cls) {
+/* ---------- 課題 ----------
+   settings.tasks = [{ id, name, folder（フォルダID）, items:[文法ID], kind:"normal"|"mm", due:"YYYY-MM-DD", classes:[クラス]（空＝全クラス）,
+     students:[メール]（あれば、その生徒だけに配信。なければ classes の生徒全員）, src:{文法ID: 問題セットID} }]
+   settings.folders = [{ id, name }]
+   課題（通常）＝ふくまれる文法をすべてマスター ／ 課題（マスターモード、文法2つ以上）＝すべてマスター＋まとめ問題に合格
+   ストーリーモードの課題は settings.storyGoal（全クラス）と settings.classTasks[クラス].storyGoal */
+function taskForStudent(t, cls, email) {
+  if (Array.isArray(t.students) && t.students.length) return t.students.indexOf(String(email || "").toLowerCase()) >= 0;
+  return !t.classes || !t.classes.length || t.classes.indexOf(cls) >= 0;
+}
+function tasksFor(settings, cls, all, email) {
+  return ((settings || {}).tasks || []).filter((t) => t && t.id && Array.isArray(t.items) && t.items.length && (all || taskForStudent(t, cls, email)));
+}
+function isMasterTask(t) { return !!t && t.kind === "mm" && (t.items || []).length >= 2; }
+function settingsForClass(settings, cls, all, email) {
   const s = Object.assign({}, settings || {});
   const ct = s.classTasks && cls ? s.classTasks[cls] : null;
-  if (ct) { s.assigned = ct.assigned === undefined ? s.assigned : ct.assigned; s.due = ct.due || {}; s.src = ct.src || {}; s.storyGoal = ct.storyGoal || null; s.mm = ct.mm || {}; }
-  s.mm = s.mm || {}; // 課題（マスターモード）：{文法ID: 復習の範囲の最初の文法ID}
-  s.due = s.due || {};
-  s.src = s.src || {}; // 課題の問題：{項目ID: 問題セットID}（なければアプリの問題）
+  if (ct && ct.storyGoal !== undefined) s.storyGoal = ct.storyGoal || null;
+  const T = tasksFor(s, cls, all, email), seen = {};
+  s.myTasks = T; s.due = {}; s.src = {}; s.mm = {};
+  T.forEach((t) => t.items.forEach((id) => {
+    seen[id] = 1;
+    if (t.due && (!s.due[id] || t.due < s.due[id])) s.due[id] = t.due;
+    if (t.src && t.src[id]) s.src[id] = t.src[id];
+  }));
+  s.assigned = Object.keys(seen); // 課題に入っている文法（それ以外は自由練習）
+  return s;
+}
+const tsNum = (t) => { const x = new Date(t).getTime(); return isNaN(x) ? 0 : x; };
+/* 課題（マスターモード）：まとめ問題にはじめて合格した日時 {課題ID: 日時} */
+function taskPassAt(history) {
+  const m = {};
+  (history || []).forEach((r) => {
+    if (r.itemId !== "master" || !r.passed) return;
+    (r.tags || []).forEach((t) => { if (/^t:/.test(t)) { const id = t.slice(2); if (!m[id] || tsNum(r.timestamp) < tsNum(m[id])) m[id] = r.timestamp; } });
+  });
+  return m;
+}
+function taskPassed(history) { return Object.keys(taskPassAt(history)); }
+/* 課題の状態（mAt＝文法をマスターした日時、passAt＝まとめ問題に合格した日時） */
+function taskStatus(t, mAt, passAt, now) {
+  const items = t.items || [], n = items.filter((id) => mAt[id]).length, ready = items.length > 0 && n === items.length;
+  const mm = isMasterTask(t), pass = mm ? (passAt || {})[t.id] || null : null;
+  let doneAt = null;
+  if (ready && (!mm || pass)) {
+    doneAt = items.reduce((a, id) => (tsNum(mAt[id]) > tsNum(a) ? mAt[id] : a), mAt[items[0]]);
+    if (pass && tsNum(pass) > tsNum(doneAt)) doneAt = pass;
+  }
+  return { n, total: items.length, ready, mm, passed: !!pass, done: !!doneAt, doneAt, due: t.due ? dueState(t.due, doneAt, now) : null };
+}
+/* 以前の「文法ごとの課題・締め切り」を、名前つきの課題に変換する（1回だけ） */
+function migrateTasks(raw, classes) {
+  if (!raw || typeof raw !== "object" || raw.tasksVer) return raw;
+  const s = JSON.parse(JSON.stringify(raw)), order = typeof ITEM_IDS !== "undefined" ? ITEM_IDS : [];
+  const hash = (x) => { let h = 7; for (let i = 0; i < x.length; i++) h = (h * 31 + x.charCodeAt(i)) % 2147483647; return h.toString(36); };
+  const tasks = [], ct = s.classTasks || {}, own = Object.keys(ct).filter((c) => ct[c] && ct[c].assigned !== undefined);
+  const scopes = [{ key: "", classes: own.length ? (classes || []).filter((c) => own.indexOf(c) < 0) : [], t: s, skip: own.length && !(classes || []).some((c) => own.indexOf(c) < 0) }]
+    .concat(own.map((c) => ({ key: c, classes: [c], t: ct[c] })));
+  scopes.forEach((sc) => {
+    const A = sc.t.assigned;
+    if (sc.skip || !Array.isArray(A) || !A.length) return;
+    const due = sc.t.due || {}, mm = sc.t.mm || {}, src = sc.t.src || {}, groups = {};
+    const pos = (id) => { const k = order.indexOf(id); return k < 0 ? 9999 : k; };
+    A.slice().sort((x, y) => pos(x) - pos(y)).forEach((id) => {
+      const from = mm[id], i0 = order.indexOf(from), i1 = order.indexOf(id);
+      if (from && i0 >= 0 && i1 > i0) {
+        const items = order.slice(i0, i1 + 1);
+        tasks.push({ id: "t" + hash(sc.key + "|mm|" + id), name: "課題（マスターモード）" + (due[id] ? "〆" + due[id].slice(5).replace("-", "/") : ""), folder: "f_old", items, kind: "mm", due: due[id] || "", classes: sc.classes, src: {} });
+        if (src[id]) tasks[tasks.length - 1].src[id] = src[id];
+        return;
+      }
+      const g = due[id] || "";
+      (groups[g] = groups[g] || []).push(id);
+    });
+    Object.keys(groups).sort().forEach((g) => {
+      const t = { id: "t" + hash(sc.key + "|" + g), name: g ? "課題（締め切り " + (+g.slice(5, 7)) + "/" + (+g.slice(8, 10)) + "）" : "課題", folder: "f_old", items: groups[g], kind: "normal", due: g, classes: sc.classes, src: {} };
+      groups[g].forEach((id) => { if (src[id]) t.src[id] = src[id]; });
+      tasks.push(t);
+    });
+  });
+  s.tasks = tasks;
+  s.folders = tasks.length ? [{ id: "f_old", name: "これまでの課題" }] : [];
+  s.tasksVer = 1;
+  ["assigned", "due", "mm", "src"].forEach((k) => { delete s[k]; });
+  Object.keys(ct).forEach((c) => { s.classTasks[c] = ct[c].storyGoal ? { storyGoal: ct[c].storyGoal } : {}; });
   return s;
 }
 /* 文法をマスターした（段階1〜4をすべてクリアした）日時 */
@@ -2572,22 +2745,6 @@ function mastersDone(history) {
   const s = {};
   (history || []).forEach((r) => { if (r.itemId === "master" && r.passed) (r.tags || []).forEach((t) => { if (/^[mt]:/.test(t)) s[t] = 1; }); });
   return Object.keys(s);
-}
-/* 課題（マスターモード）：まとめ問題に合格した文法ID */
-function taskPassed(history) {
-  const s = {};
-  (history || []).forEach((r) => { if (r.itemId === "master" && r.passed) (r.tags || []).forEach((t) => { if (/^t:/.test(t)) s[t.slice(2)] = 1; }); });
-  return Object.keys(s);
-}
-/* 課題をクリアした日時：課題（通常）＝その文法をマスター、課題（マスターモード）＝マスター＋まとめ問題に合格 */
-function taskDoneAt(history, settings) {
-  const done = masteredAt(history, settings), mm = (settings || {}).mm || {};
-  Object.keys(mm).forEach((id) => {
-    let t = null;
-    (history || []).forEach((r) => { if (r.itemId === "master" && r.passed && (r.tags || []).indexOf("t:" + id) >= 0 && (!t || String(r.timestamp) < t)) t = String(r.timestamp); });
-    if (done[id] && t) { if (t > String(done[id])) done[id] = t; } else delete done[id];
-  });
-  return done;
 }
 /* ストーリーモード：とりもどした王国（文法ID） */
 function storyDone(history) {
@@ -2705,26 +2862,55 @@ function autoStampEvents(history) {
 const fmtDue = (d) => { const p = String(d || "").split("-"); return p.length === 3 ? `${+p[1]}/${+p[2]}` : ""; };
 function dueOf(id, mm) {
   const due = (state.settings.due || {})[id];
-  return isAssigned(id) && due ? dueState(due, (mm || taskDoneAt(state.history, state.settings))[id]) : null;
+  return isAssigned(id) && due ? dueState(due, (mm || masteredAt(state.history, state.settings))[id]) : null;
 }
 function dueChip(d) {
   if (!d) return "";
-  if (d.state === "done") return `<span class="due ok">✓ 期限内にマスター</span>`;
-  if (d.state === "late") return `<span class="due">マスター（締め切り後）</span>`;
+  if (d.state === "done") return `<span class="due ok">✓ 期限内にクリア</span>`;
+  if (d.state === "late") return `<span class="due">クリア（締め切り後）</span>`;
   if (d.state === "over") return `<span class="due ng">締め切り ${fmtDue(d.due)} を過ぎています</span>`;
   return `<span class="due ${d.left <= 2 ? "warn" : ""}">締め切り ${fmtDue(d.due)}（${d.left === 0 ? "今日まで" : "あと" + d.left + "日"}）</span>`;
 }
-// 課題の順番：締め切りが近いもの（まだマスターしていないもの）から
-function assignedOrder() {
-  const mm = taskDoneAt(state.history, state.settings);
-  const key = (it) => { const d = dueOf(it.id, mm); return !d ? 3e15 : (d.state === "open" || d.state === "over") ? new Date(d.due).getTime() : 4e15; };
-  return CONTENT.map((it, i) => [it, i]).filter(([it]) => isAssigned(it.id)).sort((a, b) => key(a[0]) - key(b[0]) || a[1] - b[1]);
+/* ---------- 生徒の課題（名前つき・フォルダ分け） ---------- */
+const myTasks = () => state.settings.myTasks || [];
+const findTask = (id) => myTasks().find((t) => t.id === id) || null;
+// 課題の状態を調べる関数（マスターした日時・まとめ問題の合格はまとめて計算）
+function taskChecker() {
+  const mAt = masteredAt(state.history, state.settings), pass = taskPassAt(state.history);
+  return (t) => taskStatus(t, mAt, pass);
+}
+// 締め切りが近い順（まだの課題 → クリアした課題）
+function sortTasks(list, st) {
+  const key = (t) => { const x = st(t); return x.done ? 5e15 + (t.due ? tsNum(t.due) : 0) : t.due ? tsNum(t.due) : 3e15; };
+  return list.slice().sort((a, b) => key(a) - key(b));
+}
+const taskItems = (t) => CONTENT.filter((it) => t.items.indexOf(it.id) >= 0); // 教材の順番
+// フォルダ：先生が作った順。課題が入っているフォルダだけ（フォルダが消えた課題は「その他の課題」）
+function myFolders() {
+  const fs = (state.rawSettings.folders || []).slice(), T = myTasks();
+  const known = {}; fs.forEach((f) => { known[f.id] = 1; });
+  if (T.some((t) => !known[t.folder])) fs.push({ id: "", name: "その他の課題" });
+  return fs.map((f) => ({ id: f.id, name: f.name, tasks: T.filter((t) => (known[t.folder] ? t.folder : "") === f.id) })).filter((f) => f.tasks.length);
+}
+function folderState(f, st) {
+  const todo = f.tasks.filter((t) => !st(t).done);
+  const dues = todo.filter((t) => t.due).map((t) => t.due).sort();
+  const over = todo.filter((t) => { const d = st(t).due; return d && d.state === "over"; }).length;
+  return { todo: todo.length, total: f.tasks.length, due: dues[0] || "", over };
 }
 function nextStep() {
-  const order = assignedOrder().concat(CONTENT.map((it, i) => [it, i]).filter(([it]) => !isAssigned(it.id)));
-  for (const [it, i] of order) {
-    for (let st = 1; st <= 4; st++) if (!isCleared(it.id, st) && isUnlocked(it.id, st)) return { i, stage: st, it };
-    if (isMmTask(it.id) && clearedCount(it.id) === 4 && !taskPassedNow(it.id)) return { i, it, task: true };
+  const st = taskChecker();
+  for (const t of sortTasks(myTasks(), st)) {
+    const x = st(t);
+    if (x.done) continue;
+    for (const it of taskItems(t)) {
+      for (let k = 1; k <= 4; k++) if (!isCleared(it.id, k) && isUnlocked(it.id, k)) return { i: CONTENT.indexOf(it), stage: k, it };
+    }
+    if (x.mm && x.ready && !x.passed) return { task: t, it: taskItems(t).slice(-1)[0] };
+  }
+  for (const it of CONTENT) {
+    if (isAssigned(it.id)) continue;
+    for (let k = 1; k <= 4; k++) if (!isCleared(it.id, k) && isUnlocked(it.id, k)) return { i: CONTENT.indexOf(it), stage: k, it };
   }
   return null;
 }
@@ -2960,14 +3146,15 @@ const demoRewardsApi = {
 };
 const demoClasses = () => Array.from(new Set(lsGet("eg_roster", []).map((r) => r.cls).filter(Boolean))).sort();
 function demoSummary(email, h, pf, r) {
-  const st = lsGet("eg_settings", null) ? mergeSettings(lsGet("eg_settings", null)) : state.rawSettings;
-  const eff = settingsForClass(st, r.cls || pf.cls);
+  const st = lsGet("eg_settings", null) ? mergeSettings(migrateTasks(lsGet("eg_settings", null), demoClasses())) : state.rawSettings;
+  const eff = settingsForClass(st, r.cls || pf.cls, false, email);
   const rw = computeRewards(h, eff, ITEM_IDS, { omDays: pf.omDays, teacherStamps: email === "お試しユーザー" ? lsGet("eg_tstamps", []).length : 0, spent: pf.spent, owned: pf.owned, hasAvatar: !!pf.avatar });
-  const mm = masteredAt(h, eff), td = taskDoneAt(h, eff), due = {}, days = {};
-  Object.keys(eff.due || {}).forEach((id) => { const d = dueState(eff.due[id], td[id]); if (d) due[id] = d; });
+  const mm = masteredAt(h, eff), due = {}, days = {}, pass = taskPassAt(h), taskStates = {};
+  Object.keys(eff.due || {}).forEach((id) => { const d = dueState(eff.due[id], mm[id]); if (d) due[id] = d; });
+  (eff.myTasks || []).forEach((t) => { taskStates[t.id] = taskStatus(t, mm, pass); });
   h.forEach((x) => { const k = dayKey(x.timestamp); days[k] = (days[k] || 0) + 1; });
   return { profile: { email, cls: r.cls || "", no: r.no || "", name: r.name || "", nickname: pf.nickname, avatar: pf.avatar, reg: !!r.reg }, level: rw.level, xp: rw.xp, points: rw.points, days: rw.days,
-    streak: rw.streak, bestStreak: rw.bestStreak, badges: Array.from(rw.badges), mastered: rw.mastered, progress: computeProgress(h), masteredAt: mm, due, assigned: Array.isArray(eff.assigned) ? eff.assigned : null, mm: eff.mm || {}, tasksPassed: taskPassed(h), story: storyDone(h), storyGoal: eff.storyGoal || null, dayCounts: days, total: h.length };
+    streak: rw.streak, bestStreak: rw.bestStreak, badges: Array.from(rw.badges), mastered: rw.mastered, progress: computeProgress(h), masteredAt: mm, due, assigned: eff.assigned, taskList: eff.myTasks || [], taskStates, story: storyDone(h), storyGoal: eff.storyGoal || null, dayCounts: days, total: h.length };
 }
 const api = MODE === "api" ? remoteApi(async (action, args) => {
   const token = lsGet("eg_token", "");
@@ -3025,7 +3212,7 @@ const api = MODE === "api" ? remoteApi(async (action, args) => {
   async deleteSet(id) {
     const sets = lsGet("eg_sets", {}); delete sets[id]; lsSet("eg_sets", sets);
     const st = lsGet("eg_settings", null);
-    if (st) { const clean = (src) => Object.keys(src || {}).forEach((k) => { if (src[k] === id) delete src[k]; }); clean(st.src); Object.values(st.classTasks || {}).forEach((c) => clean(c.src)); lsSet("eg_settings", st); }
+    if (st) { const clean = (src) => Object.keys(src || {}).forEach((k) => { if (src[k] === id) delete src[k]; }); clean(st.src); Object.values(st.classTasks || {}).forEach((c) => clean(c.src)); (st.tasks || []).forEach((t) => clean(t.src)); lsSet("eg_settings", st); }
     return { sets, settings: st };
   },
   async saveResult(r) {
@@ -3067,7 +3254,7 @@ const api = MODE === "api" ? remoteApi(async (action, args) => {
   async dashboard() {
     const results = lsGet("eg_results", []), pf = demoProfile(), roster = lsGet("eg_roster", []);
     const row = (email, h, p, r) => { const sm = demoSummary(email, h, p, r), due = {}; Object.keys(sm.due).forEach((k) => { due[k] = sm.due[k].state; });
-      return { email, cls: sm.profile.cls, no: sm.profile.no, name: sm.profile.name, nickname: p.nickname, progress: sm.progress, days: sm.days, last: h.length ? h[h.length - 1].timestamp : "", level: sm.level.name, xp: sm.xp, avail: sm.points.avail, due, assigned: sm.assigned }; };
+      return { email, cls: sm.profile.cls, no: sm.profile.no, name: sm.profile.name, nickname: p.nickname, progress: sm.progress, days: sm.days, last: h.length ? h[h.length - 1].timestamp : "", level: sm.level.name, xp: sm.xp, avail: sm.points.avail, due, assigned: sm.assigned, masteredAt: sm.masteredAt, tasks: sm.taskStates, story: sm.story, storyGoal: sm.storyGoal }; };
     const students = (results.length ? [row("お試しユーザー", results, pf, {})] : []).concat(roster.map((r) => row(r.email, [], Object.assign({}, DEFAULT_PROFILE), r)));
     return { students, recent: results.slice(-30).reverse(), classes: demoClasses() };
   }
@@ -3204,7 +3391,11 @@ function speak(text, lang, onDone) {
 /* ---------- アプリの状態 ---------- */
 const state = { email: "", isAdmin: false, settings: mergeSettings(null), rawSettings: mergeSettings(null), progress: {}, history: [], hasEleven: false, profile: Object.assign({}, DEFAULT_PROFILE), tstamps: [], mistakes: [] };
 // 先生の設定（全クラス共通＋クラスごと）から、この生徒のクラスの設定を作る
-function applySettings(raw) { state.rawSettings = mergeSettings(raw); state.settings = mergeSettings(settingsForClass(state.rawSettings, state.profile.cls)); }
+function applySettings(raw) {
+  state.rawSettings = mergeSettings(migrateTasks(raw, state.classes || []));
+  // 先生が「生徒画面」で見るときは、すべての課題を出す
+  state.settings = mergeSettings(settingsForClass(state.rawSettings, state.profile.cls, state.isAdmin, state.email));
+}
 const useEleven = () => state.settings.sttStage1 === "elevenlabs" && state.hasEleven && recorderAvailable;
 let session = null;      // 進行中の練習
 let activeRec = null;    // 動作中の音声認識
@@ -3241,7 +3432,7 @@ function bindBack(fn) {
 /* ===== 管理者画面 ===== */
 function renderAdminHome() {
   const s = state.settings;
-  const assigned = CONTENT.filter((it) => isAssigned(it.id)).map((it) => it.short);
+  const nTasks = (state.rawSettings.tasks || []).length, nFolders = (state.rawSettings.folders || []).length;
   const stt = s.sttStage1 === "elevenlabs" ? (state.hasEleven ? "ElevenLabs で文字起こし" : "ElevenLabs（APIキー未設定のため、いまはブラウザの音声認識）") : "ブラウザの音声認識";
   const studentUrl = MODE === "api" ? LOGIN_URL : "";
   render(`${header("管理者画面")}
@@ -3249,7 +3440,8 @@ function renderAdminHome() {
       ${state.teacher && state.teacher.scope ? `<div class="notice">担当クラス：${state.teacher.scope.map(esc).join("、")}（このクラスの生徒だけが表示されます）</div>` : ""}
       <div class="admin-grid">
         <button class="admin-card" id="aDash"><span class="ac-ico">📊</span><span class="ac-title">学習記録</span><span class="ac-desc">生徒ごとの到達状況と最近の記録</span></button>
-        <button class="admin-card" id="aSet"><span class="ac-ico">⚙️</span><span class="ac-title">管理者設定</span><span class="ac-desc">課題の項目・合格基準・合格回数・聞き取り方法</span></button>
+        <button class="admin-card main" id="aTask"><span class="ac-ico">📌</span><span class="ac-title">課題</span><span class="ac-desc">課題を作る（名前・文法・通常／マスターモード・締め切り）・フォルダ・進み具合</span></button>
+        <button class="admin-card" id="aSet"><span class="ac-ico">⚙️</span><span class="ac-title">管理者設定</span><span class="ac-desc">合格基準・合格回数・ストーリーモード・聞き取り方法</span></button>
         <button class="admin-card" id="aStamp"><span class="ac-ico">💌</span><span class="ac-title">先生スタンプ</span><span class="ac-desc">スタンプを作って生徒に送る・送ったスタンプ</span></button>
         <button class="admin-card" id="aPeople"><span class="ac-ico">👥</span><span class="ac-title">生徒一覧・名簿</span><span class="ac-desc">名簿の登録（貼り付け）・クラス・番号・名前・ニックネーム</span></button>
         <button class="admin-card" id="aMat"><span class="ac-ico">📚</span><span class="ac-title">教材・PDFの問題</span><span class="ac-desc">PDF・Word から問題を作る／使う文法の選択／スプレッドシートで編集</span></button>
@@ -3262,7 +3454,7 @@ function renderAdminHome() {
       <section class="panel">
         <h2>いまの設定</h2>
         <dl class="summary">
-          <dt>課題の項目</dt><dd>${assigned.length === CONTENT.length ? "すべての項目" : (assigned.length ? assigned.map(esc).join("、") : "なし")}</dd>
+          <dt>課題</dt><dd>${nTasks ? `${nTasks}つ（フォルダ ${nFolders}つ）` : "まだありません（「課題」で作ります）"}</dd>
           <dt>クリアに必要な合格回数</dt><dd>${[1, 2, 3, 4].map((k) => `段階${k}：${requiredPasses(k)}回`).join("　")}</dd>
           <dt>合格ライン</dt><dd>${[1, 2, 3, 4].map((k) => `段階${k}：${pct(s["stage" + k].passRatio)}%`).join("　")}</dd>
           <dt>段階1の聞き取り</dt><dd>${esc(stt)}</dd>
@@ -3283,6 +3475,7 @@ function renderAdminHome() {
   $("#aDash").onclick = renderDashboard;
   $("#aMat").onclick = () => renderMaterials();
   $("#aSet").onclick = renderSettings;
+  $("#aTask").onclick = () => renderTaskAdmin();
   $("#aStu").onclick = () => setView(true);
   $("#aStamp").onclick = () => renderTeacherStamps();
   $("#aPeople").onclick = () => renderStudents();
@@ -3332,12 +3525,11 @@ function unlockText(un) {
 const fmtDate = (ts) => { const t = new Date(ts); return isNaN(t) ? "" : `${t.getMonth() + 1}/${t.getDate()}`; };
 const myName = () => state.profile.nickname || (MODE === "demo" ? "お試しユーザー" : state.email.split("@")[0]);
 
-/* ===== ホーム（生徒画面）：入り口が一目で見え、課題がいちばん目立つ ===== */
+/* ===== ホーム（生徒画面）：入り口が一目で見え、課題（フォルダ）がいちばん目立つ ===== */
 const WEEK_JA = ["日", "月", "火", "水", "木", "金", "土"];
 const dueWeek = (d) => { const t = new Date(String(d) + "T00:00:00"); return isNaN(t) ? "" : WEEK_JA[t.getDay()]; };
-let itemBack = null; // 文法の画面から「もどる」で帰る先（ホーム・課題の一覧・自由練習）
-// 課題がクリアしているか（課題（通常）＝マスター、課題（マスターモード）＝マスター＋まとめ問題に合格）
-const taskCleared = (id) => clearedCount(id) === 4 && (!isMmTask(id) || taskPassedNow(id));
+let itemBack = null; // 文法の画面から「もどる」で帰る先（課題・自由練習）
+let curTask = null;  // いま開いている課題（文法の画面の上に出す）
 function itemCardHTML(it, i) {
   const p = itemProg(it.id);
   const done = clearedCount(it.id);
@@ -3346,34 +3538,41 @@ function itemCardHTML(it, i) {
     const partial = !isCleared(it.id, s) && n > 0 ? `<i style="width:${(n / need) * 100}%"></i>` : "";
     return `<span class="dot s${s} ${isCleared(it.id, s) ? "on" : ""}" title="段階${s}：${n}/${need}回合格">${partial}<b>${s}</b></span>`;
   }).join("");
-  const asg = isAssigned(it.id), mmT = asg && isMmTask(it.id), ok = mmT ? done === 4 && taskPassedNow(it.id) : done === 4;
-  return `<button class="item-card ${ok ? "mastered" : ""} ${mmT ? "mm-task" : ""}" data-i="${i}">
+  return `<button class="item-card ${done === 4 ? "mastered" : ""}" data-i="${i}">
     <span class="num">${itemNo(it)}</span>
-    <span class="item-main"><span class="item-title">${esc(it.title)}</span><span class="dots">${dots}${mmT ? `<span class="dot mm ${taskPassedNow(it.id) ? "on" : ""}" title="まとめ問題"><b>ま</b></span>` : ""}</span>${asg ? `<span class="kind-chip ${mmT ? "mm" : ""}">${mmT ? "課題（マスターモード）" : "課題（通常）"}</span>` : ""}${dueChip(dueOf(it.id))}</span>
-    <span class="item-count">${ok ? (mmT ? "クリア" : "マスター") : mmT && done === 4 ? "まとめ問題へ" : done + "/4"}</span>
+    <span class="item-main"><span class="item-title">${esc(it.title)}</span><span class="dots">${dots}</span></span>
+    <span class="item-count">${done === 4 ? "マスター" : done + "/4"}</span>
   </button>`;
 }
-// ホームの課題カード：締め切りを左に大きく出す
-function taskCardHTML(it, i, mm) {
-  const d = dueOf(it.id, mm), done = clearedCount(it.id), mmT = isMmTask(it.id);
-  const cls = !d ? "none" : d.state === "over" ? "over" : d.left <= 2 ? "soon" : "open";
-  const date = d ? `<b>${fmtDue(d.due)}</b><small>（${dueWeek(d.due)}）</small><em>${d.state === "over" ? "期限切れ" : d.left === 0 ? "今日まで！" : `あと${d.left}日`}</em>` : `<small>締め切り</small><b class="nd">なし</b>`;
-  const dots = [1, 2, 3, 4].map((s) => `<span class="dot s${s} ${isCleared(it.id, s) ? "on" : ""}"><b>${s}</b></span>`).join("") + (mmT ? `<span class="dot mm ${taskPassedNow(it.id) ? "on" : ""}"><b>ま</b></span>` : "");
-  const step = mmT && done === 4 ? "まとめ問題に挑戦" : `段階${Math.min(4, done + 1)}から`;
-  return `<button class="task-card due-${cls}" data-i="${i}">
-    <span class="tc-due">${date}</span>
-    <span class="tc-main"><span class="kind-chip ${mmT ? "mm" : ""}">${mmT ? "課題（マスターモード）" : "課題（通常）"}</span><span class="tc-title">${esc(it.title)}</span><span class="dots">${dots}</span></span>
-    <span class="tc-go"><small>${step}</small><span aria-hidden="true">▶</span></span>
+// 締め切りのブロック（左に大きく）
+function dueBlockHTML(due, d) {
+  return d ? `<b>${fmtDue(due)}</b><small>（${dueWeek(due)}）</small><em>${d.state === "done" ? "✓ クリア" : d.state === "late" ? "クリア" : d.state === "over" ? "期限切れ" : d.left === 0 ? "今日まで！" : `あと${d.left}日`}</em>` : `<small>締め切り</small><b class="nd">なし</b>`;
+}
+const dueCls = (d, done) => (done ? "done" : !d ? "none" : d.state === "over" ? "over" : d.left <= 2 ? "soon" : "open");
+const kindChip = (t) => `<span class="kind-chip ${isMasterTask(t) ? "mm" : ""}">${isMasterTask(t) ? "課題（マスターモード）" : "課題（通常）"}</span>`;
+function taskCardHTML(t, x) {
+  const go = x.done ? "クリア" : x.mm && x.ready ? "まとめ問題へ" : `マスター ${x.n}/${x.total}`;
+  return `<button class="task-card due-${dueCls(x.due, x.done)}" data-t="${esc(t.id)}">
+    <span class="tc-due">${dueBlockHTML(t.due, x.due)}</span>
+    <span class="tc-main">${kindChip(t)}<span class="tc-title">${esc(t.name)}</span><span class="tc-sub">${taskItems(t).map((it) => esc(it.short)).join("・")}</span></span>
+    <span class="tc-go"><small>${go}</small><span aria-hidden="true">${x.done ? "✓" : "▶"}</span></span>
+  </button>`;
+}
+function folderCardHTML(f, fs) {
+  const d = fs.due ? dueState(fs.due, null) : null;
+  return `<button class="folder-card ${fs.todo ? "has-task" : "all-done"} ${fs.over ? "has-over" : ""}" data-f="${esc(f.id)}">
+    <span class="fc-ico" aria-hidden="true">${fs.todo ? "📂" : "📁"}</span>
+    <span class="fc-main"><span class="fc-name">${esc(f.name)}</span>
+      <span class="fc-sub">${fs.todo ? (fs.due ? `<span class="fc-due ${fs.over ? "over" : d && d.left <= 2 ? "soon" : ""}">〆 ${fmtDue(fs.due)}（${dueWeek(fs.due)}）${fs.over ? "期限切れあり" : d.left === 0 ? "今日まで！" : `あと${d.left}日`}</span>` : "締め切りなし") : `✓ ${fs.total}つ すべてクリア`}</span></span>
+    ${fs.todo ? `<span class="fc-badge">課題あり<b>${fs.todo}</b></span>` : ""}
   </button>`;
 }
 // 先生の課題「ストーリーモードの〇〇まで」のカード
 function storyTaskCardHTML(st, sg) {
   const g = state.settings.storyGoal, d = g.due ? dueState(g.due, sg.reached ? Date.now() : null) : null;
-  const cls = !d ? "none" : d.state === "over" ? "over" : d.left <= 2 ? "soon" : "open";
-  const date = d ? `<b>${fmtDue(g.due)}</b><small>（${dueWeek(g.due)}）</small><em>${d.state === "over" ? "期限切れ" : d.left === 0 ? "今日まで！" : `あと${d.left}日`}</em>` : `<small>締め切り</small><b class="nd">なし</b>`;
   const K = kingdomOf(st.order[sg.k]);
-  return `<button class="task-card story-task due-${cls}" id="toStoryGoal">
-    <span class="tc-due">${date}</span>
+  return `<button class="task-card story-task due-${dueCls(d, sg.reached)}" id="toStoryGoal">
+    <span class="tc-due">${dueBlockHTML(g.due, d)}</span>
     <span class="tc-main"><span class="kind-chip story">課題（ストーリーモード）</span><span class="tc-title">第${sg.k + 1}の王国「${esc(K.name)}」まで</span><span class="tc-sub">いま とりもどした王国 ${st.restored} / ${sg.k + 1}</span></span>
     <span class="tc-go"><small>冒険へ</small><span aria-hidden="true">▶</span></span>
   </button>`;
@@ -3381,13 +3580,14 @@ function storyTaskCardHTML(st, sg) {
 function renderHome() {
   if (state.isAdmin && !state.viewAsStudent) return renderAdminHome();
   applySkin(state.profile.theme);
-  itemBack = renderHome;
-  const mm = taskDoneAt(state.history, state.settings);
-  const assignedList = assignedOrder();
-  const todo = assignedList.filter(([it]) => !taskCleared(it.id));
+  const st = taskChecker();
+  const folders = myFolders().map((f) => ({ f, fs: folderState(f, st) }));
+  // 課題があるフォルダを先に（締め切りが近い順）、そのあとは先生が作った順
+  const fsorted = folders.slice().sort((a, b) => (b.fs.todo > 0) - (a.fs.todo > 0) || (a.fs.todo ? tsNum(a.fs.due || "2999-12-31") - tsNum(b.fs.due || "2999-12-31") : 0));
+  const left = folders.reduce((n, x) => n + x.fs.todo, 0), total = folders.reduce((n, x) => n + x.fs.total, 0);
+  const over = folders.reduce((n, x) => n + x.fs.over, 0);
+  const SHOWF = window.innerWidth < 600 && window.innerHeight < 860 ? 4 : 6;
   const freeList = CONTENT.filter((it) => !isAssigned(it.id));
-  let over = todo.filter(([it]) => { const d = dueOf(it.id, mm); return d && d.state === "over"; }).length;
-  const SHOW = window.innerWidth < 600 && window.innerHeight < 860 ? 2 : 3; // スマホでは2つ（入り口がスクロールせずに見えるように）
   const rw = rewardState(state.history);
   const nx = nextStep();
   const posNow = positionOf(state.progress);
@@ -3397,13 +3597,8 @@ function renderHome() {
   const story = state.settings.story && state.settings.story.on === false ? null : storyState();
   const sIt = story ? story.order[story.cur] : null, sK = sIt ? kingdomOf(sIt) : null;
   const reviewN = (state.mistakes || []).length ? reviewItems().length : 0;
-  // 課題の並び：文法の課題とストーリーモードの課題を、締め切りが近い順に
-  const sg = story ? storyGoalInfo(story) : null;
-  const dkey = (due) => (due ? new Date(due).getTime() : 3e15);
-  const rows = todo.map(([it, i]) => ({ key: (() => { const d = dueOf(it.id, mm); return d ? dkey(d.due) : 3e15; })(), html: taskCardHTML(it, i, mm) }));
-  if (sg && !sg.reached) rows.push({ key: dkey(state.settings.storyGoal.due), html: storyTaskCardHTML(story, sg), story: 1 });
-  rows.sort((x, y) => x.key - y.key);
-  const total = assignedList.length + (sg ? 1 : 0), left = rows.length;
+  const sg = story ? storyGoalInfo(story) : null, sgOpen = sg && !sg.reached;
+  const sgOver = sgOpen && state.settings.storyGoal.due && dueState(state.settings.storyGoal.due, null).state === "over";
   // 入り口（学習の3つは大きく、ほかはふつうの大きさ）
   const tiles = [
     `<button class="entry learn free" id="toFree"><span class="en-ico">📚</span><span class="en-text"><span class="en-label">自由練習</span><small>好きな文法を練習（${freeList.length || CONTENT.length}）</small></span></button>`,
@@ -3415,15 +3610,17 @@ function renderHome() {
     state.settings.showRanking || state.isAdmin ? `<button class="entry" id="toRank"><span class="en-ico">🏆</span><span class="en-label">ランキング</span>${state.settings.showRanking ? "" : `<span class="q-note">先生だけ</span>`}</button>` : "",
     `<button class="entry" id="toRewards"><span class="en-ico">📮</span><span class="en-label">スタンプ帳</span>${unread ? `<span class="q-note new">NEW</span>` : rw.todayDone ? "" : `<span class="q-note">今日まだ</span>`}</button>`
   ].filter(Boolean);
-  if (sg && !sg.reached && state.settings.storyGoal.due && dueState(state.settings.storyGoal.due, null).state === "over") over++;
-  const taskPanel = `<section class="task-panel ${over ? "has-over" : ""}" aria-labelledby="taskHead">
+  const nLeft = left + (sgOpen ? 1 : 0), nTotal = total + (sg ? 1 : 0), nOver = over + (sgOver ? 1 : 0);
+  const taskPanel = `<section class="task-panel" aria-labelledby="taskHead">
     <div class="tp-head"><h2 id="taskHead">📌 課題</h2>
-      <span class="tp-count">${total ? (left ? `のこり <b>${left}</b> / ${total}` : `${total}つ すべてクリア`) : ""}</span></div>
-    ${over ? `<div class="tp-alert">⏰ 締め切りを過ぎた課題が ${over}つ あります</div>` : ""}
-    <div class="tp-list">${!total ? `<p class="tp-empty">いまは課題がありません。自由練習やストーリーモードに挑戦しよう！</p>`
-      : !left ? `<p class="tp-empty done">🎉 課題はすべてクリア！ よくがんばりました。</p>`
-      : rows.slice(0, SHOW).map((r) => r.html).join("")}</div>
-    ${assignedList.length && (left > SHOW || assignedList.length > rows.slice(0, SHOW).filter((r) => !r.story).length) ? `<button class="tp-all" id="toTasks">課題をすべて見る（${assignedList.length}）▶</button>` : ""}
+      <span class="tp-count">${nTotal ? (nLeft ? `のこり <b>${nLeft}</b> / ${nTotal}` : `${nTotal}つ すべてクリア`) : ""}</span></div>
+    ${nOver ? `<div class="tp-alert">⏰ 締め切りを過ぎた課題が ${nOver}つ あります</div>` : ""}
+    <div class="tp-list">
+      ${sgOpen ? storyTaskCardHTML(story, sg) : ""}
+      ${folders.length ? `<div class="folder-grid">${fsorted.slice(0, SHOWF).map((x) => folderCardHTML(x.f, x.fs)).join("")}</div>` : !sgOpen ? `<p class="tp-empty">いまは課題がありません。自由練習やストーリーモードに挑戦しよう！</p>` : ""}
+      ${nTotal && !nLeft ? `<p class="tp-empty done">🎉 課題はすべてクリア！ よくがんばりました。</p>` : ""}
+    </div>
+    ${folders.length > SHOWF ? `<button class="tp-all" id="toFolders">すべてのフォルダを見る（${folders.length}）▶</button>` : ""}
   </section>`;
   const slots = Array.from({ length: STAMPS_PER_CARD }, (_, k) => `<span class="slot ${k < rw.onCard ? "on" : ""} ${k === rw.onCard - 1 && rw.todayDone ? "today" : ""}">${k < rw.onCard ? "🐾" : k + 1}</span>`).join("");
   render(`${header("英文法トレーニング")}
@@ -3459,8 +3656,8 @@ function renderHome() {
       ${footerNote()}
     </main>`);
   bindBack(null);
-  $$(".task-card").forEach((b) => (b.onclick = () => renderItem(+b.dataset.i)));
-  if ($("#toTasks")) $("#toTasks").onclick = renderTasks;
+  $$(".folder-card").forEach((b) => (b.onclick = () => renderFolder(b.dataset.f)));
+  if ($("#toFolders")) $("#toFolders").onclick = renderFolders;
   $("#toFree").onclick = renderFree;
   if ($("#toStory")) $("#toStory").onclick = () => renderStory();
   if ($("#toStoryGoal")) $("#toStoryGoal").onclick = () => renderStory();
@@ -3472,35 +3669,67 @@ function renderHome() {
   if ($("#toRank")) $("#toRank").onclick = () => renderRanking("week");
   $("#toRewards").onclick = renderRewards;
   $("#toCard").onclick = renderRewards;
-  if ($("#goNext")) $("#goNext").onclick = () => (nx.task ? startMaster(myTask(nx.it.id)) : nx.stage === 1 ? renderStage1(nx.i) : startQuiz(nx.i, nx.stage));
+  if ($("#goNext")) $("#goNext").onclick = () => (nx.task ? renderTaskView(nx.task.id) : nx.stage === 1 ? renderStage1(nx.i) : startQuiz(nx.i, nx.stage));
   if ($("#logout")) $("#logout").onclick = () => { lsSet("eg_token", ""); renderLogin("ログアウトしました。"); };
   // はじめての生徒にはアバターを選んでもらう → 先生からのスタンプが届いていれば見せる
   if (!pf.avatar && !state.isAdmin) avatarPicker();
   else if (unread) showTeacherStamps();
 }
-// 課題の一覧（のこり → クリアした課題）
-function renderTasks() {
-  itemBack = renderTasks;
-  const mm = taskDoneAt(state.history, state.settings);
-  const list = assignedOrder(), todo = list.filter(([it]) => !taskCleared(it.id)), done = list.filter(([it]) => taskCleared(it.id));
-  const st = state.settings.story && state.settings.story.on === false ? null : storyState(), sg = st ? storyGoalInfo(st) : null;
-  const sgHTML = sg && !sg.reached ? `<h2 class="sec">ストーリーモードの課題</h2><div class="items">${storyTaskCardHTML(st, sg)}</div>` : "";
-  render(`${header("課題", true)}
+// すべてのフォルダ
+function renderFolders() {
+  const st = taskChecker(), folders = myFolders();
+  render(`${header("課題のフォルダ", true)}
     <main class="wrap">
-      <p class="lead">締め切りが近い順にならんでいます。課題（マスターモード）は、マスターしたあと「まとめ問題」に合格するとクリアです。</p>
-      ${sgHTML}
-      <h2 class="sec">のこりの課題（${todo.length}）</h2>
-      <div class="items task-list">${todo.length ? todo.map(([it, i]) => taskCardHTML(it, i, mm)).join("") : `<p class="hint">🎉 のこりの課題はありません。</p>`}</div>
-      ${done.length ? `<h2 class="sec">クリアした課題（${done.length}）</h2><div class="items">${done.map(([it, i]) => itemCardHTML(it, i)).join("")}</div>` : ""}
+      <p class="lead">「課題あり」のフォルダに、まだクリアしていない課題が入っています。</p>
+      <div class="folder-grid">${folders.map((f) => folderCardHTML(f, folderState(f, st))).join("") || `<p class="hint">課題はありません。</p>`}</div>
       ${footerNote()}
     </main>`);
   bindBack(renderHome);
-  $$(".item-card, .task-card[data-i]").forEach((b) => (b.onclick = () => renderItem(+b.dataset.i)));
-  if ($("#toStoryGoal")) $("#toStoryGoal").onclick = () => renderStory();
+  $$(".folder-card").forEach((b) => (b.onclick = () => renderFolder(b.dataset.f, renderFolders)));
+}
+// フォルダの中の課題（まだの課題 → クリアした課題）
+function renderFolder(fid, back) {
+  const f = myFolders().find((x) => x.id === fid);
+  if (!f) return renderHome();
+  const st = taskChecker(), list = sortTasks(f.tasks, st);
+  const todo = list.filter((t) => !st(t).done), done = list.filter((t) => st(t).done);
+  render(`${header("📂 " + f.name, true)}
+    <main class="wrap">
+      <h2 class="sec">まだの課題（${todo.length}）</h2>
+      <div class="items task-list">${todo.length ? todo.map((t) => taskCardHTML(t, st(t))).join("") : `<p class="hint">🎉 このフォルダの課題はすべてクリアしました。</p>`}</div>
+      ${done.length ? `<h2 class="sec">クリアした課題（${done.length}）</h2><div class="items task-list">${done.map((t) => taskCardHTML(t, st(t))).join("")}</div>` : ""}
+      ${footerNote()}
+    </main>`);
+  bindBack(back || renderHome);
+  $$(".task-card[data-t]").forEach((b) => (b.onclick = () => renderTaskView(b.dataset.t, () => renderFolder(fid, back))));
+}
+// 1つの課題：ふくまれる文法と、課題（マスターモード）のまとめ問題
+function renderTaskView(tid, back) {
+  const t = findTask(tid);
+  if (!t) return renderHome();
+  if (back) renderTaskView.back = back;
+  const x = taskChecker()(t), list = taskItems(t);
+  itemBack = () => renderTaskView(tid); curTask = t;
+  const m = x.mm ? taskRun(t) : null;
+  render(`${header(t.name, true)}
+    <main class="wrap">
+      <section class="task-head due-${dueCls(x.due, x.done)}">
+        <span class="tc-due">${dueBlockHTML(t.due, x.due)}</span>
+        <span class="th-main">${kindChip(t)}<span class="th-name">${esc(t.name)}</span>
+          <span class="th-rule">${x.mm ? `下の文法を${list.length}つともマスターしたあと、まとめ問題に合格するとクリア` : `下の文法を${list.length > 1 ? list.length + "つとも" : ""}マスター（段階1〜4をクリア）するとクリア`}</span>
+          <span class="th-state ${x.done ? "ok" : ""}">${x.done ? "✓ この課題はクリアしました" : `マスター ${x.n} / ${x.total}${x.mm ? (x.passed ? "・まとめ問題 合格" : "・まとめ問題 まだ") : ""}`}</span></span>
+      </section>
+      <div class="items">${list.map((it) => itemCardHTML(it, CONTENT.indexOf(it))).join("")}</div>
+      ${m ? taskPanelHTML(m, x) : ""}
+      ${footerNote()}
+    </main>`);
+  bindBack(() => { curTask = null; (renderTaskView.back || renderHome)(); });
+  $$(".item-card").forEach((b) => (b.onclick = () => renderItem(+b.dataset.i)));
+  if ($("#goMaster")) $("#goMaster").onclick = () => startMaster(m);
 }
 // 自由練習（課題になっていない文法。中1〜中3）
 function renderFree() {
-  itemBack = renderFree;
+  itemBack = renderFree; curTask = null;
   const free = CONTENT.map((it, i) => [it, i]).filter(([it]) => !isAssigned(it.id));
   const list = free.length ? free : CONTENT.map((it, i) => [it, i]);
   render(`${header("自由練習", true)}
@@ -3510,7 +3739,7 @@ function renderFree() {
         const L = list.filter(([it]) => gradeOf(it) === g);
         if (!L.length) return "";
         const started = L.some(([it]) => itemProg(it.id).attempts.some((n) => n > 0));
-        return `<details class="grade-box free" ${started || g === gradeOf(L[0][0]) && g === 1 ? "open" : ""}><summary>中${g}の文法（${L.length}）</summary>${L.map(([it, i]) => itemCardHTML(it, i)).join("")}</details>`;
+        return `<details class="grade-box free" ${started || g === 1 ? "open" : ""}><summary>中${g}の文法（${L.length}）</summary>${L.map(([it, i]) => itemCardHTML(it, i)).join("")}</details>`;
       }).join("")}</div>
       ${footerNote()}
     </main>`);
@@ -3910,17 +4139,15 @@ function renderItem(i) {
       ${status}
     </button>`;
   }).join("");
-  const set = activeSet(it.id), asg = isAssigned(it.id), mt = asg && isMmTask(it.id) ? myTask(it.id) : null;
+  const set = activeSet(it.id), inTask = curTask && curTask.items.indexOf(it.id) >= 0 ? curTask : null;
   render(`${header(it.title, true)}
     <main class="wrap">
-      ${asg ? `<div class="kind-line"><span class="kind-chip ${mt ? "mm" : ""}">${mt ? "課題（マスターモード）" : "課題（通常）"}</span><span>${mt ? "段階1〜4をクリアしたあと、まとめ問題に合格するとクリア" : "段階1〜4をクリアするとクリア"}</span></div>` : ""}
+      ${inTask ? `<div class="kind-line">📌 課題「${esc(inTask.name)}」${kindChip(inTask)}</div>` : ""}
       ${set ? `<div class="notice">📄 段階2〜4は、先生が用意した問題「${esc(set.name)}」です。</div>` : ""}
       <div class="stages">${stages}</div>
-      ${mt ? taskPanelHTML(mt) : ""}
       ${footerNote()}
     </main>`);
   bindBack(itemBack || renderHome);
-  if ($("#goMaster")) $("#goMaster").onclick = () => startMaster(mt);
   $$(".stage-card").forEach((b) => (b.onclick = () => {
     const s = +b.dataset.s;
     if (s === 1) renderStage1(i); else startQuiz(i, s);
@@ -4395,32 +4622,27 @@ async function renderReviewResult() {
   await saveResult({ itemId: "review", stage: 0, score, total, passed, durationSec: Math.round((Date.now() - session.startedAt) / 1000), details: log });
 }
 
-/* ===== 課題（マスターモード）：その文法をマスター → 復習の範囲をまぜた「まとめ問題」に合格 ===== */
+/* ===== 課題（マスターモード）：課題の文法をすべてマスター → それらをまぜた「まとめ問題」に合格 =====
+   先に出てくる文法は「これまでの既習事項」として、まとめ問題の中で復習になる */
 const MASTER_FORMAT_NOTE = "段階2の問題（穴うめ・並べかえ・書きかえ）と、段階4の問題（制限時間あり）がまざって出ます。";
-const isMmTask = (id) => !!((state.settings.mm || {})[id]);
-const taskPassedNow = (id) => taskPassed(state.history).includes(id);
 const isMastered = (id) => clearedCount(id) === 4;
-function myTask(id) {
-  const it = CONTENT.find((c) => c.id === id);
-  if (!it) return null;
-  const k = CONTENT.indexOf(it), f = CONTENT.findIndex((c) => c.id === (state.settings.mm || {})[id]);
+function taskRun(t) {
   const mt = state.settings.masterTask || {};
-  return { id, it, name: it.title, list: CONTENT.slice(f >= 0 && f <= k ? f : k, k + 1), num: mt.num || 20, pass: mt.pass || 0.8 };
+  return { id: t.id, task: t, name: t.name, list: taskItems(t), num: mt.num || 20, pass: mt.pass || 0.8 };
 }
-function taskPanelHTML(m) {
-  const ready = isMastered(m.id), done = taskPassedNow(m.id);
+function taskPanelHTML(m, x) {
+  const ready = x.ready, done = x.passed;
   const num = Math.min(50, Math.max(5, Math.round(Number(m.num) || 20))), pass = Math.min(1, Math.max(0.1, Number(m.pass) || 0.8));
   const best = state.history.filter((r) => r.itemId === "master" && (r.tags || []).includes("t:" + m.id)).reduce((a, r) => Math.max(a, r.total ? r.score / r.total : 0), 0);
-  const range = m.list.length > 1 ? `「${esc(m.list[0].short)}」から「${esc(m.it.short)}」までの${m.list.length}つの文法` : `「${esc(m.it.short)}」`;
+  const last = m.list[m.list.length - 1], prev = m.list.slice(0, -1);
   return `<section class="panel master-panel ${done ? "done" : ""}">
     <h2>${done ? "🏅 " : "🏁 "}まとめ問題（${num}問）</h2>
-    <p class="hint">${range}から出ます。${MASTER_FORMAT_NOTE}${pct(pass)}% 以上正解で、この課題はクリア。はじめて合格すると、新しいアバターがもらえます。</p>
-    ${m.list.length > 1 ? `<div class="mc-items">${m.list.map((it) => `<span class="chip small">${esc(it.short)}</span>`).join("")}</div>` : ""}
+    <p class="hint">「${esc(last.short)}」を中心に、これまでに習った「${prev.map((it) => esc(it.short)).join("」「")}」もまざって出ます。${MASTER_FORMAT_NOTE}${pct(pass)}% 以上正解で、この課題はクリア。はじめて合格すると、新しいアバターがもらえます。</p>
     ${best ? `<p class="hint">これまでの最高：${pct(best)}%${done ? "（合格）" : ""}</p>` : ""}
-    <button class="btn primary big" id="goMaster" ${ready ? "" : "disabled"}>${ready ? (done ? "もう一度挑戦する" : "まとめ問題に挑戦！") : "🔒 段階1〜4をクリアすると挑戦できます"}</button>
+    <button class="btn primary big" id="goMaster" ${ready ? "" : "disabled"}>${ready ? (done ? "もう一度挑戦する" : "まとめ問題に挑戦！") : `🔒 ${m.list.length}つの文法をすべてマスターすると挑戦できます`}</button>
   </section>`;
 }
-const backToTask = (m) => renderItem(CONTENT.indexOf(m.it));
+const backToTask = (m) => renderTaskView(m.id);
 function startMaster(m) {
   const num = Math.min(50, Math.max(5, Math.round(Number(m.num) || 20)));
   // まとめ問題は、アプリの問題（問題を自動作成）から出す。PDF・Word の問題セットは使わない
@@ -4439,7 +4661,7 @@ function startMaster(m) {
   render(`${header("まとめ問題", true)}
     <main class="wrap">
       <section class="q-card s4 intro">
-        <div class="q-label">🏁 課題（マスターモード）「${esc(m.it.short)}」</div>
+        <div class="q-label">🏁 課題（マスターモード）「${esc(m.name)}」</div>
         <div class="q-main ja">まとめ問題にチャレンジ！</div>
         <ul class="rules">
           <li>全部で <b>${session.qs.length}問</b>。${MASTER_FORMAT_NOTE}</li>
@@ -4457,7 +4679,7 @@ async function renderMasterResult() {
   const { log, master: m } = session;
   const score = log.filter((l) => l.correct).length, total = log.length;
   const pass = Math.min(1, Math.max(0.1, Number(m.pass) || 0.8));
-  const passed = score / total >= pass, first = passed && !taskPassedNow(m.id);
+  const passed = score / total >= pass, first = passed && !taskPassAt(state.history)[m.id];
   render(`${header("まとめ問題　結果", true)}
     <main class="wrap">
       <section class="result-card ${passed ? "ok" : "ng"}">
@@ -4477,40 +4699,27 @@ async function renderMasterResult() {
   await saveResult({ itemId: "master", stage: 0, task: m.id, score, total, passed, tags: passed ? ["t:" + m.id] : [], durationSec: Math.round((Date.now() - session.startedAt) / 1000), details: log });
   if (first && !$(".gift-overlay")) showGifts([{ title: "課題クリア！", text: `課題（マスターモード）「${m.name}」のまとめ問題に合格しました。`, big: "🏅" }]);
 }
-// 先生用：生徒の課題（マスターモード）の状況
+// 先生用：生徒の課題ごとの状況（詳しい記録・レポート）
 function masterTable(sum) {
-  const mm = sum.mm || {}, ids = CONTENT.filter((it) => mm[it.id] && (!Array.isArray(sum.assigned) || sum.assigned.includes(it.id)));
-  if (!ids.length) return "";
-  const passed = sum.tasksPassed || [];
-  const mastered = (id) => { const pc = ((sum.progress || {})[id] || {}).passCount || [0, 0, 0, 0]; return [1, 2, 3, 4].every((k) => pc[k - 1] >= requiredPasses(k)); };
-  return `<table class="prog"><thead><tr><th class="name">課題（マスターモード）</th><th>復習の範囲</th><th>その文法</th><th>まとめ問題</th></tr></thead><tbody>${ids.map((it) => {
-    const f = CONTENT.find((c) => c.id === mm[it.id]);
-    return `<tr><th class="name">${esc(it.title)}</th><td>${f && f.id !== it.id ? `${esc(f.short)} 〜 ${esc(it.short)}` : "この文法だけ"}</td><td>${mastered(it.id) ? "マスター" : "－"}</td><td>${passed.includes(it.id) ? "🏅 合格" : mastered(it.id) ? "挑戦できる" : "－"}</td></tr>`;
+  const list = sum.taskList || [], stt = sum.taskStates || {};
+  if (!list.length) return "";
+  return `<table class="prog"><thead><tr><th class="name">課題</th><th>種類</th><th>文法</th><th>マスター</th><th>まとめ問題</th><th>締め切り</th></tr></thead><tbody>${list.map((t) => {
+    const x = stt[t.id] || { n: 0, total: t.items.length };
+    return `<tr><th class="name">${esc(t.name)}</th><td>${isMasterTask(t) ? "マスターモード" : "通常"}</td><td>${CONTENT.filter((it) => t.items.indexOf(it.id) >= 0).map((it) => esc(it.short)).join("・")}</td><td>${x.n} / ${x.total}</td><td>${isMasterTask(t) ? (x.passed ? "🏅 合格" : x.ready ? "挑戦できる" : "－") : ""}</td><td>${t.due ? dueText(x.due) : x.done ? "✓ クリア" : ""}</td></tr>`;
   }).join("")}</tbody></table>`;
 }
 
 /* ===== 管理者設定 ===== */
 function renderSettings() {
   const s = state.rawSettings;
-  // 課題と締め切り（"" = 全クラス共通、ほかはクラスごと）
-  const tasks = { "": { assigned: s.assigned, due: Object.assign({}, s.due || {}), src: Object.assign({}, s.src || {}), mm: Object.assign({}, s.mm || {}), storyGoal: s.storyGoal || null } };
-  Object.keys(s.classTasks || {}).forEach((c) => { const ct = s.classTasks[c]; tasks[c] = { assigned: ct.assigned, due: Object.assign({}, ct.due || {}), src: Object.assign({}, ct.src || {}), mm: Object.assign({}, ct.mm || {}), storyGoal: ct.storyGoal || null, own: true }; });
-  const copyT = (t, own) => ({ assigned: t.assigned, due: Object.assign({}, t.due), src: Object.assign({}, t.src), mm: Object.assign({}, t.mm || {}), storyGoal: t.storyGoal || null, own });
-  const classes = Array.from(new Set((state.classes || []).concat(Object.keys(s.classTasks || {})))).filter(Boolean).sort();
-  let taskCls = "";
   const num = (id, v, min, max, step, unit) => `<span class="num-in"><input type="number" id="${id}" value="${v}" min="${min}" max="${max}" step="${step || 1}">${unit || ""}</span>`;
   const chk = (id, v, label) => `<label class="check"><input type="checkbox" id="${id}" ${v ? "checked" : ""}> ${label}</label>`;
   render(`${header("管理者設定", true)}
     <main class="wrap">
       <section class="panel form">
-        <h2>課題と締め切り</h2>
-        ${classes.length ? `<div class="row"><span>設定するクラス</span><select id="taskCls"><option value="">全クラス共通</option>${classes.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join("")}</select></div>` : ""}
-        <div id="taskBox"></div>
-        <p class="hint">チェックした項目が生徒の画面の「課題」に、それ以外は「自由練習」に表示されます。課題は2種類から選べます。<br>・<b>課題（通常）</b>：その文法の段階1〜4をすべてクリア（マスター）すればクリア。<br>・<b>課題（マスターモード）</b>：その文法をマスターしたあと、「復習の範囲」の文法がまざった「まとめ問題」に合格するとクリア（まとめ問題はアプリの問題から、段階2と段階4の形で出ます）。合格すると新しいアバターがもらえます。<br>締め切りは空欄でもかまいません。</p>
-        <div class="row"><span>課題（マスターモード）のまとめ問題の数</span>${num("mtNum", (s.masterTask || {}).num || 20, 5, 50, 1, "問")}</div>
-        <div class="row"><span>課題（マスターモード）のまとめ問題の合格ライン</span>${num("mtPass", pct((s.masterTask || {}).pass || 0.8), 10, 100, 5, "%")}</div>
+        <p class="hint">課題（名前・文法・通常／マスターモード・締め切り・フォルダ）は、管理者画面の「📌 課題」で作ります。</p>
         <h2>ストーリーモード</h2>
-        <p class="hint">生徒が自分で進める冒険（王国＝文法の順番）。その王国の文法と、それまでの文法をすべてマスターしたあと、「とどめの一撃」（その文法とそれまでの文法がまざった問題）に合格すると王国がもどり、物語の続きが読めます。課題にするときは、上の「ストーリーモードの課題」で王国と締め切りを選びます。</p>
+        <p class="hint">生徒が自分で進める冒険（王国＝文法の順番）。その王国の文法と、それまでの文法をすべてマスターしたあと、「とどめの一撃」（その文法とそれまでの文法がまざった問題）に合格すると王国がもどり、物語の続きが読めます。課題にするときは、「📌 課題」の画面の「ストーリーモードの課題」で王国と締め切りを選びます。</p>
         ${chk("stOn", (s.story || {}).on !== false, "ストーリーモードを使う")}
         ${chk("stPeers", (s.story || {}).peers !== false, "地図に、同じクラスの仲間のアバター（名前なし）を出す")}
         <div class="row"><span>とどめの一撃の問題数</span>${num("stNum", (s.story || {}).num || 10, 3, 30, 1, "問")}</div>
@@ -4555,82 +4764,16 @@ function renderSettings() {
       </section>
     </main>`);
   bindBack(renderHome);
-  // 課題の表をかく ／ 画面の内容を tasks に読みこむ
-  const readTasks = () => {
-    const t = tasks[taskCls] || (tasks[taskCls] = copyT(tasks[""], false));
-    if (taskCls && $("#ownTask")) t.own = $("#ownTask").checked;
-    if (taskCls && !t.own) return;
-    const on = CONTENT.filter((it) => $("#as_" + it.id).checked).map((it) => it.id);
-    t.assigned = on.length === CONTENT.length ? null : on;
-    t.due = {}; CONTENT.forEach((it) => { const v = $("#du_" + it.id).value; if (v && on.includes(it.id)) t.due[it.id] = v; });
-    t.src = {}; CONTENT.forEach((it) => { const v = ($("#sr_" + it.id) || {}).value; if (v && v !== "new" && on.includes(it.id)) t.src[it.id] = v; });
-    t.mm = {}; CONTENT.forEach((it) => { if (on.includes(it.id) && ($("#kd_" + it.id) || {}).value === "mm") t.mm[it.id] = ($("#mf_" + it.id) || {}).value || it.id; });
-    const up = ($("#sgUpto") || {}).value || "";
-    t.storyGoal = up ? { upto: up, due: ($("#sgDue") || {}).value || "" } : null;
-  };
-  const drawTasks = () => {
-    const own = !taskCls || (tasks[taskCls] && tasks[taskCls].own);
-    const t = own ? tasks[taskCls] : tasks[""];
-    const isA = (id) => !Array.isArray(t.assigned) || t.assigned.includes(id);
-    const setsOf = (id) => Object.values(state.sets || {}).filter((x) => x.itemId === id);
-    const row = (it) => {
-      const a = isA(it.id), cur = (t.src || {})[it.id] || "", mf = a ? (t.mm || {})[it.id] : null, k = CONTENT.indexOf(it);
-      return `<div class="task-row"><label class="check"><input type="checkbox" id="as_${it.id}" ${a ? "checked" : ""} ${own ? "" : "disabled"}> ${itemNo(it)}. ${esc(it.title)}</label>
-        <span class="task-opts"><select id="kd_${it.id}" class="kind-sel" ${own && a ? "" : "disabled"} aria-label="課題の種類"><option value="">課題（通常）</option><option value="mm" ${mf ? "selected" : ""}>課題（マスターモード）</option></select>
-        <select id="mf_${it.id}" class="from-sel" ${own && a && mf ? "" : "disabled"} ${mf ? "" : "hidden"} aria-label="復習の範囲">${CONTENT.slice(0, k + 1).map((c, j) => `<option value="${esc(c.id)}" ${(mf || it.id) === c.id ? "selected" : ""}>${j === k ? "復習なし（この文法だけ）" : `復習の範囲：${gradeOf(c)}-${itemNo(c)} ${esc(c.short)} から`}</option>`).reverse().join("")}</select>
-        <select id="sr_${it.id}" class="src-sel" ${own && a ? "" : "disabled"} aria-label="問題の作り方"><option value="">問題を自動作成</option>${setsOf(it.id).map((x) => `<option value="${esc(x.id)}" ${x.id === cur ? "selected" : ""}>📄 ${esc(x.name)}</option>`).join("")}<option value="new">＋ PDF・Word から作る…</option></select>
-        <label class="due-in">締め切り <input type="date" id="du_${it.id}" value="${esc(a ? (t.due || {})[it.id] || "" : "")}" ${own && a ? "" : "disabled"}></label></span></div>`;
-    };
-    $("#taskBox").innerHTML = (taskCls ? `<label class="check"><input type="checkbox" id="ownTask" ${own ? "checked" : ""}> ${esc(taskCls)} だけの課題・締め切りにする（オフのときは全クラス共通と同じ）</label>` : "") +
-      `<div class="story-goal-row"><span>📖 ストーリーモードの課題</span><select id="sgUpto" ${own ? "" : "disabled"}><option value="">なし</option>${CONTENT.map((it, k) => `<option value="${esc(it.id)}" ${t.storyGoal && t.storyGoal.upto === it.id ? "selected" : ""}>第${k + 1}の王国「${esc(kingdomOf(it).name)}」まで（${esc(it.short)}）</option>`).join("")}</select>
-        <label class="due-in">締め切り <input type="date" id="sgDue" value="${esc((t.storyGoal && t.storyGoal.due) || "")}" ${own ? "" : "disabled"}></label></div>` +
-      `<p class="hint">「問題を自動作成」はアプリに入っている問題、📄 は PDF・Word から作った問題です（段階1のルール説明は、どちらも同じです）。</p>` +
-      `<div class="task-table ${own ? "" : "off"}">${GRADES.map((g) => {
-        const list = CONTENT.filter((it) => gradeOf(it) === g);
-        if (!list.length) return "";
-        const n = list.filter((it) => isA(it.id)).length;
-        return `<details class="grade-box" ${n && n < CONTENT.length ? "open" : g === 1 ? "open" : ""}><summary>中${g}（${list.length}項目・課題 ${n}）</summary>
-          ${own ? `<div class="btn-row small"><button type="button" class="btn small" data-allg="${g}">中${g}をすべて選ぶ</button><button type="button" class="btn small" data-nog="${g}">中${g}をすべて外す</button></div>` : ""}
-          ${list.map(row).join("")}</details>`;
-      }).join("")}</div>`;
-    if ($("#ownTask")) $("#ownTask").onchange = (e) => { tasks[taskCls].own = e.target.checked; drawTasks(); };
-    const sync = (it) => {
-      const c = $("#as_" + it.id), d = $("#du_" + it.id), r = $("#sr_" + it.id), kd = $("#kd_" + it.id), mf = $("#mf_" + it.id);
-      d.disabled = r.disabled = kd.disabled = !c.checked;
-      if (!c.checked) { d.value = ""; r.value = ""; kd.value = ""; }
-      mf.hidden = mf.disabled = kd.value !== "mm";
-    };
-    CONTENT.forEach((it) => {
-      $("#as_" + it.id).onchange = () => sync(it);
-      $("#kd_" + it.id).onchange = () => sync(it);
-      $("#sr_" + it.id).onchange = async (e) => {
-        if (e.target.value !== "new") return;
-        e.target.value = (t.src || {})[it.id] || "";
-        if (!confirm("いまの設定を保存してから、PDF・Word から問題を作る画面に移ります。よろしいですか？")) return;
-        try { const out = collect(); await api.saveSettings(out); applySettings(out); renderImport({ itemId: it.id, back: renderSettings }); }
-        catch (err) { const m = $("#setMsg"); m.textContent = "保存できませんでした：" + err.message; m.className = "msg ng"; }
-      };
-    });
-    $$("[data-allg]").forEach((b) => (b.onclick = () => CONTENT.filter((it) => gradeOf(it) === +b.dataset.allg).forEach((it) => { $("#as_" + it.id).checked = true; sync(it); })));
-    $$("[data-nog]").forEach((b) => (b.onclick = () => CONTENT.filter((it) => gradeOf(it) === +b.dataset.nog).forEach((it) => { $("#as_" + it.id).checked = false; sync(it); })));
-  };
-  drawTasks();
-  if ($("#taskCls")) $("#taskCls").onchange = (e) => { readTasks(); taskCls = e.target.value; if (!tasks[taskCls]) tasks[taskCls] = copyT(tasks[""], false); drawTasks(); };
   const collect = () => {
-    readTasks();
-    const classTasks = {};
-    Object.keys(tasks).filter((c) => c && tasks[c].own).forEach((c) => { classTasks[c] = { assigned: tasks[c].assigned, due: tasks[c].due, src: tasks[c].src || {}, mm: tasks[c].mm || {}, storyGoal: tasks[c].storyGoal || null }; });
     const v = (id) => parseFloat($("#" + id).value);
     const clampR = (x) => Math.min(1, Math.max(0.1, (isNaN(x) ? 80 : x) / 100));
     const clampN = (x) => Math.min(30, Math.max(1, Math.round(isNaN(x) ? 10 : x)));
     const clampP = (x) => Math.min(10, Math.max(1, Math.round(isNaN(x) ? 1 : x)));
-    return {
+    return Object.assign(JSON.parse(JSON.stringify(state.rawSettings)), { // 課題・フォルダなどはそのまま
       stage1: { passRatio: clampR(v("s1p")), silenceSec: Math.min(10, Math.max(1, isNaN(v("s1s")) ? 3 : v("s1s"))), requiredPasses: clampP(v("r1")) },
       stage2: { numQuestions: clampN(v("s2n")), passRatio: clampR(v("s2p")), requiredPasses: clampP(v("r2")) },
       stage3: { numQuestions: clampN(v("s3n")), passRatio: clampR(v("s3p")), requiredPasses: clampP(v("r3")) },
       stage4: { numQuestions: clampN(v("s4n")), passRatio: clampR(v("s4p")), timeLimitSec: Math.min(30, Math.max(1, isNaN(v("s4t")) ? 5 : v("s4t"))), requiredPasses: clampP(v("r4")) },
-      assigned: tasks[""].assigned, due: tasks[""].due, src: tasks[""].src || {}, mm: tasks[""].mm || {}, storyGoal: tasks[""].storyGoal || null, classTasks,
-      masterTask: { num: Math.min(50, Math.max(5, Math.round(parseFloat($("#mtNum").value) || 20))), pass: Math.min(1, Math.max(0.1, (parseFloat($("#mtPass").value) || 80) / 100)) },
       story: { on: $("#stOn").checked, peers: $("#stPeers").checked, num: Math.max(3, Math.min(30, Math.round(parseFloat($("#stNum").value) || 10))), pass: Math.min(1, Math.max(0.1, (parseFloat($("#stPass").value) || 80) / 100)) },
       rosterOnly: $("#rosterOnly").checked,
       sttStage1: $("#eleven").checked ? "elevenlabs" : "browser",
@@ -4643,7 +4786,7 @@ function renderSettings() {
       showRanking: $("#showRank").checked,
       autoStamps: $("#autoSt").checked,
       omikuji: $("#omk").checked
-    };
+    });
   };
   const keepKey = () => {
     if ($("#apikey")) lsSet("eg_claude_key", $("#apikey").value.trim());
@@ -4714,8 +4857,7 @@ function progressTable(sum) {
       return `<td class="${ok ? "clr" : ""}">${ok ? "✓" : pc[k - 1] ? `${pc[k - 1]}/${need}` : at[k - 1] ? pct(best[k - 1]) + "%" : "－"}</td>`;
     }).join("");
     const m = (sum.masteredAt || {})[it.id];
-    const mmT = assigned && (sum.mm || {})[it.id];
-    return `<tr><th class="name">${assigned ? "★" : ""}${esc(it.title)}${mmT ? `<small class="mm-mark ${(sum.tasksPassed || []).includes(it.id) ? "done" : ""}">マスターモード${(sum.tasksPassed || []).includes(it.id) ? "・まとめ✓" : ""}</small>` : ""}</th>${cells}<td>${m ? fmtDate(m) : ""}</td><td>${dueText((sum.due || {})[it.id])}</td></tr>`;
+    return `<tr><th class="name">${assigned ? "★" : ""}${esc(it.title)}</th>${cells}<td>${m ? fmtDate(m) : ""}</td><td>${dueText((sum.due || {})[it.id])}</td></tr>`;
   }).join("");
   return `<table class="prog"><thead><tr><th class="name">文法（★は課題。課題と練習した文法だけ）</th><th>段階1</th><th>段階2</th><th>段階3</th><th>段階4</th><th>マスター</th><th>締め切り</th></tr></thead><tbody>${rows}</tbody></table>
     <p class="hint">✓＝クリア　n/m＝合格回数／クリアに必要な回数　％＝最高の正答率（まだ合格していない段階）</p>`;
@@ -4756,11 +4898,10 @@ async function renderDashboard(cls) {
     const lv = [1, 2, 3, 4].filter((k) => pc[k - 1] >= requiredPasses(k)).length;
     const asg = !Array.isArray(st.assigned) || st.assigned.includes(it.id);
     const ds = (st.due || {})[it.id];
-    const mmT = asg && (st.mm || {})[it.id], tp = mmT && (st.tasksPassed || []).includes(it.id);
-    return `<td class="lv lv${lv} ${asg ? "asg" : ""}">${lv === 4 ? "マスター" : lv ? "段階" + lv : "－"}${mmT ? `<small class="mm-mark ${tp ? "done" : ""}">${tp ? "まとめ✓" : "まとめ"}</small>` : ""}${ds && DUE_LABEL[ds] ? `<small class="due-mark ${ds}">${DUE_LABEL[ds]}</small>` : ""}</td>`;
+    return `<td class="lv lv${lv} ${asg ? "asg" : ""}">${lv === 4 ? "マスター" : lv ? "段階" + lv : "－"}${ds && DUE_LABEL[ds] ? `<small class="due-mark ${ds}">${DUE_LABEL[ds]}</small>` : ""}</td>`;
   }).join("")}${storyCell(st)}<td class="mcol">${positionOf(st.progress).toFixed(1)}</td></tr>`).join("");
   const active = list.filter((st) => st.last && dayKey(st.last) >= week).length;
-  const over = list.filter((st) => Object.values(st.due || {}).includes("over")).length;
+  const over = list.filter((st) => Object.values(st.tasks || {}).some((x) => x.due && x.due.state === "over")).length;
   const recent = (d.recent || []).filter((r) => !cls || r.cls === cls).slice(0, 40).map((r) => {
     const t = new Date(r.timestamp);
     return `<tr><td>${isNaN(t) ? "" : `${t.getMonth() + 1}/${t.getDate()} ${z2(t.getHours())}:${z2(t.getMinutes())}`}</td><td>${esc(personName(r))}</td><td>${esc(itemShort(r.itemId))}</td><td>${stageLabel(r.stage)}</td><td>${r.score}/${r.total}</td><td>${r.passed ? "合格" : ""}</td></tr>`;
@@ -4769,7 +4910,7 @@ async function renderDashboard(cls) {
     <div class="toolbar">${clsSelect("dashCls", classes, cls)}<button class="btn small" id="dashReport">${cls ? esc(cls) + "の" : ""}レポートを印刷</button><button class="btn small" id="dashMiss">まちがいの多い問題</button></div>
     ${distributionHTML(list)}
     <div class="sum-cards"><div><b>${list.length}</b><small>人</small></div><div><b>${active}</b><small>今週練習した人</small></div><div><b class="${over ? "ng" : ""}">${over}</b><small>締め切りを過ぎた課題がある人</small></div></div>
-    <section class="panel"><h2>到達状況</h2><p class="hint">クリアした段階（太字の列はその生徒の課題。「まとめ」は課題（マスターモード）で、まとめ問題に合格すると「まとめ✓」）。名前を押すと、その生徒の詳しい記録が見られます。列の上の「1-3」は「中1の3番目」です。</p>
+    <section class="panel"><h2>到達状況</h2><p class="hint">クリアした段階（太字の列はその生徒の課題に入っている文法。課題ごとの進み具合は「課題」の画面で見られます）。名前を押すと、その生徒の詳しい記録が見られます。列の上の「1-3」は「中1の3番目」です。</p>
       <div class="toolbar"><label>表に出す文法 <select id="dashCols"><option value="auto">課題と、練習した文法</option>${GRADES.map((g) => `<option value="g${g}" ${view === "g" + g ? "selected" : ""}>中${g}の文法</option>`).join("")}<option value="all" ${view === "all" ? "selected" : ""}>すべて</option></select></label></div>
       <div class="table-wrap"><table class="dash"><thead><tr><th></th><th>級・段</th><th>練習<br><small>した日数</small></th><th>最後に<br><small>練習した日</small></th>${head}</tr></thead><tbody>${rows || `<tr><td colspan="${cols.length + 6}">まだ記録がありません</td></tr>`}</tbody></table></div></section>
     <section class="panel"><h2>最近の記録</h2>
@@ -5124,10 +5265,7 @@ function renderLogin(msg) {
 const itemTitleOf = (id) => (ALL_ITEMS.find((x) => x.id === id) || {}).title || id;
 // その問題セットを課題で使っているクラス
 function setUsedBy(id) {
-  const raw = state.rawSettings || {}, out = [];
-  if (Object.values(raw.src || {}).includes(id)) out.push("全クラス共通");
-  Object.keys(raw.classTasks || {}).forEach((c) => { if (Object.values((raw.classTasks[c] || {}).src || {}).includes(id)) out.push(c); });
-  return out;
+  return ((state.rawSettings || {}).tasks || []).filter((t) => Object.values(t.src || {}).includes(id)).map((t) => "課題「" + t.name + "」");
 }
 const itemSelect = (id, cur, all) => `<select id="${id}">${GRADES.map((g) => `<optgroup label="中${g}">${(all ? ALL_ITEMS : CONTENT).filter((it) => gradeOf(it) === g).map((it) => `<option value="${esc(it.id)}" ${it.id === cur ? "selected" : ""}>${esc(it.title)}</option>`).join("")}</optgroup>`).join("")}</select>`;
 async function renderMaterials(msg) {
@@ -5141,7 +5279,7 @@ async function renderMaterials(msg) {
   $("main").innerHTML = `
     ${msg ? `<div class="msg ok">${msg}</div>` : ""}
     <section class="panel"><h2>PDF・Word から作った問題</h2>
-      <p class="hint">問題集の PDF や Word の英文を AI が読み取り、その英文をそのまま使って問題を作ります（穴うめ4択・並べかえ・書きかえ・語形・日本語→英語）。作った問題は「管理者設定」の「課題と締め切り」で、文法ごとに「問題を自動作成」と切りかえて使います。</p>
+      <p class="hint">問題集の PDF や Word の英文を AI が読み取り、その英文をそのまま使って問題を作ります（穴うめ4択・並べかえ・書きかえ・語形・日本語→英語）。作った問題は「📌 課題」で課題を作るとき、文法ごとに「問題を自動作成」と切りかえて使います。</p>
       <div class="btn-row"><button class="btn primary" id="newSet">＋ PDF・Word から問題を作る</button></div>
       ${sets.length ? `<div class="table-wrap"><table class="people sets"><thead><tr><th class="name">名前</th><th>文法</th><th>文</th><th>作った日</th><th>課題で使用</th><th></th></tr></thead><tbody>${sets.map((x) => {
         const used = setUsedBy(x.id);
@@ -5181,7 +5319,7 @@ async function renderMaterials(msg) {
   }));
   $$("[data-sdel]").forEach((b) => (b.onclick = async () => {
     const x = state.sets[b.dataset.sdel], used = setUsedBy(x.id);
-    if (!confirm(`問題セット「${x.name}」を削除します。${used.length ? `\n課題で使っているクラス（${used.join("、")}）は「問題を自動作成」にもどります。` : ""}\n生徒の記録は消えません。よろしいですか？`)) return;
+    if (!confirm(`問題セット「${x.name}」を削除します。${used.length ? `\n使っている課題（${used.join("、")}）は「問題を自動作成」にもどります。` : ""}\n生徒の記録は消えません。よろしいですか？`)) return;
     try {
       const r = await api.deleteSet(x.id);
       if (r.settings) applySettings(r.settings);
@@ -5299,13 +5437,13 @@ function renderImport(opt) {
       const r = await api.importSentences(req);
       if (!r.sentences || !r.sentences.length) return fail(r.message || "英文が見つかりませんでした。");
       r.sentences.forEach((s) => { s.use = Object.assign({}, formats); });
-      renderSetEditor({ draft: { itemId, name: f.name.replace(/\.[^.]+$/, "").slice(0, 60), file: f.name, formats, sentences: r.sentences, message: r.message }, back });
+      renderSetEditor({ draft: { itemId, name: f.name.replace(/\.[^.]+$/, "").slice(0, 60), file: f.name, formats, sentences: r.sentences, message: r.message }, back, onSaved: opt.onSaved });
     } catch (e) { fail("読みこめませんでした：" + e.message); }
   };
 }
 
 /* 読みこんだ問題の確認・修正 */
-function renderSetEditor({ draft, setId, back }) {
+function renderSetEditor({ draft, setId, back, onSaved }) {
   const S = draft.sentences;
   const val = (v) => esc(v == null ? "" : v);
   const card = (s, k) => {
@@ -5385,8 +5523,9 @@ function renderSetEditor({ draft, setId, back }) {
     try {
       const r = await api.saveSet({ id: setId || "", name: $("#seName").value.trim() || "PDFの問題", itemId: $("#seItem").value, file: draft.file || "", formats: draft.formats || null, sentences: out });
       state.sets = r.sets || state.sets; indexQuestions();
+      if (onSaved) return onSaved(r.id, $("#seItem").value);
       const used = setUsedBy(r.id);
-      renderMaterials(`保存しました。${used.length ? "課題で使っているクラスには、すぐに反映されます。" : "「管理者設定」の「課題と締め切り」で、この文法の「問題」の欄から選ぶと、生徒の課題になります。"}`);
+      renderMaterials(`保存しました。${used.length ? "その課題には、すぐに反映されます。" : "「📌 課題」で課題を作るとき、この文法の「問題」の欄から選ぶと、生徒の課題になります。"}`);
     } catch (e) { $("#seSave").disabled = false; m.textContent = "保存できませんでした：" + e.message; m.className = "msg ng"; }
   };
 }
@@ -5700,7 +5839,7 @@ function positionRing(pos, size) {
 function nextGoalHTML() {
   const nx = nextStep();
   if (!nx) return `<div class="next-goal done">🎉 すべての文法をマスターしました！</div>`;
-  if (nx.task) return `<button class="next-goal" id="goNext"><span class="ng-label">次の目標</span><span class="ng-text">課題（マスターモード）「${esc(nx.it.short)}」のまとめ問題に合格</span><span class="ng-go">▶</span></button>`;
+  if (nx.task) return `<button class="next-goal" id="goNext"><span class="ng-label">次の目標</span><span class="ng-text">課題「${esc(nx.task.name)}」のまとめ問題に合格</span><span class="ng-go">▶</span></button>`;
   const gain = Math.round((STAGE_W[nx.stage - 1] / (CONTENT.length * 10)) * 1000) / 10;
   return `<button class="next-goal" id="goNext"><span class="ng-label">次の目標</span><span class="ng-text">「${esc(nx.it.short)}」の段階${nx.stage}をクリア</span><span class="ng-gain">現在地 +${gain}</span><span class="ng-go">▶</span></button>`;
 }
@@ -5918,6 +6057,311 @@ function distributionHTML(list) {
     <div class="dist">${bins.map((n, k) => `<div class="dist-col"><span class="dist-n">${n || ""}</span><i style="height:${(n / max) * 100}%"></i><small>${k * 10}〜</small></div>`).join("")}</div>
     ${idle.length ? `<details class="idle"><summary>2週間以上練習していない生徒（要確認）：${idle.length}人</summary><p class="hint">欠席などの理由もあるので、声かけの参考にしてください（生徒には表示されません）。</p><div class="chips">${idle.map((st) => `<span class="chip small">${esc(personName(st))}${st.cls ? `（${esc(st.cls)}）` : ""}</span>`).join("")}</div></details>` : ""}
   </section>`;
+}
+
+/* ===== 先生：課題（名前・フォルダ・文法・通常／マスターモード・締め切り・クラス）と進み具合 ===== */
+const newId = (p) => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const taskShorts = (t) => CONTENT.filter((it) => t.items.indexOf(it.id) >= 0).map((it) => it.short);
+const taskClassText = (t) => (t.classes && t.classes.length ? t.classes.join("・") : "全クラス") + (Array.isArray(t.students) && t.students.length ? `（個別 ${t.students.length}人）` : "");
+// 設定をコピーして変更 → 保存 → 画面の設定にも反映
+async function saveRaw(mut) {
+  const ns = JSON.parse(JSON.stringify(state.rawSettings));
+  ns.tasks = ns.tasks || []; ns.folders = ns.folders || []; ns.classTasks = ns.classTasks || {}; ns.tasksVer = ns.tasksVer || 1;
+  mut(ns);
+  await api.saveSettings(ns);
+  applySettings(ns);
+  return ns;
+}
+// 生徒ごとの課題の状態（学習記録のデータから）
+function studentTaskState(st, t) {
+  if (st.tasks && st.tasks[t.id]) return st.tasks[t.id];
+  const mAt = st.masteredAt || {};
+  return taskStatus(t, mAt, {});
+}
+const taskTargets = (t, students) => students.filter((st) => taskForStudent(t, st.cls, st.email));
+let taskAdminCache = null; // 学習記録のデータ（進み具合の表示用）
+
+async function renderTaskAdmin(opt) {
+  opt = opt || {};
+  const s = state.rawSettings, tasks = s.tasks || [], folders = (s.folders || []).slice();
+  const known = {}; folders.forEach((f) => { known[f.id] = 1; });
+  if (tasks.some((t) => !known[t.folder])) folders.push({ id: "", name: "フォルダなし" });
+  const classes = Array.from(new Set((state.classes || []).concat(...tasks.map((t) => t.classes || [])).concat(Object.keys(s.classTasks || {})))).filter(Boolean).sort();
+  const filt = opt.cls !== undefined ? opt.cls : lsGet("eg_task_cls", "");
+  const shown = (t) => !filt || !t.classes || !t.classes.length || t.classes.indexOf(filt) >= 0;
+  const prog = (t) => {
+    if (!taskAdminCache) return `<span class="tk-prog wait">…</span>`;
+    const L = taskTargets(t, taskAdminCache).filter((st) => !filt || st.cls === filt);
+    if (!L.length) return `<span class="tk-prog">対象の生徒なし</span>`;
+    const done = L.filter((st) => studentTaskState(st, t).done).length;
+    const over = L.filter((st) => { const x = studentTaskState(st, t); return x.due && x.due.state === "over"; }).length;
+    return `<span class="tk-prog"><span class="tk-bar"><i style="width:${Math.round((done / L.length) * 100)}%"></i></span>クリア <b>${done}</b> / ${L.length}人${over ? `　<span class="ng">期限切れ ${over}人</span>` : ""}</span>`;
+  };
+  const row = (t) => `<div class="tk-row">
+      <div class="tk-main"><div class="tk-name">${esc(t.name)} ${kindChip(t)}</div>
+        <div class="tk-meta">${taskShorts(t).map(esc).join("・")}　｜　${esc(taskClassText(t))}　｜　${t.due ? `締め切り ${fmtDue(t.due)}（${dueWeek(t.due)}）` : "締め切りなし"}</div>
+        ${prog(t)}</div>
+      <div class="tk-btns"><button class="btn small primary" data-tprog="${esc(t.id)}">進み具合</button><button class="btn small" data-tedit="${esc(t.id)}">編集</button><button class="btn small" data-tcopy="${esc(t.id)}">コピー</button><button class="btn small danger" data-tdel="${esc(t.id)}">削除</button></div>
+    </div>`;
+  const sgScopes = [["", "全クラス共通"]].concat(classes.map((c) => [c, c]));
+  const sgOf = (c) => (c ? ((s.classTasks || {})[c] || {}).storyGoal : s.storyGoal) || null;
+  render(`${header("課題", true)}
+    <main class="wrap wide" ${taskAdminCache || opt.noLoad ? "data-ready" : ""}>
+      <div class="toolbar"><button class="btn primary" id="tkNew">＋ 新しい課題を作る</button>
+        <span class="tk-newf"><input type="text" id="newFolder" placeholder="新しいフォルダの名前（例：2学期）" maxlength="30"><button class="btn" id="addFolder">＋ フォルダを作る</button></span>
+        ${classes.length ? `<label>表示するクラス ${clsSelect("tkCls", classes, filt)}</label>` : ""}</div>
+      <div class="msg" id="tkMsg"></div>
+      ${folders.length ? folders.map((f) => {
+        const L = tasks.filter((t) => (known[t.folder] ? t.folder : "") === f.id && shown(t));
+        const all = tasks.filter((t) => (known[t.folder] ? t.folder : "") === f.id).length;
+        return `<details class="tk-folder" open><summary><span class="tkf-name">📁 ${esc(f.name)}</span><span class="tkf-n">${all}つ</span>
+          ${f.id ? `<span class="tkf-btns"><button class="link-btn small" data-frename="${esc(f.id)}">名前を変える</button><button class="link-btn small" data-fup="${esc(f.id)}">▲</button><button class="link-btn small" data-fdown="${esc(f.id)}">▼</button><button class="link-btn small danger" data-fdel="${esc(f.id)}">削除</button></span>` : ""}</summary>
+          ${L.length ? L.map(row).join("") : `<p class="hint">${all ? "このクラスの課題はありません。" : "まだ課題がありません。"}</p>`}
+          ${f.id ? `<button class="btn small" data-newin="${esc(f.id)}">＋ このフォルダに課題を作る</button>` : ""}</details>`;
+      }).join("") : `<section class="panel"><p class="hint">まだフォルダがありません。上の欄にフォルダの名前（例：「1学期」「2学期」「テスト前」）を入れて「＋ フォルダを作る」を押すか、「＋ 新しい課題を作る」から始めてください。</p></section>`}
+      <section class="panel form">
+        <h2>📖 ストーリーモードの課題</h2>
+        <p class="hint">「ストーリーモードの第〇の王国までとりもどす」を課題にします。生徒のホームの「課題」の枠に出ます。</p>
+        <div class="row"><span>クラス</span><select id="sgCls">${sgScopes.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join("")}</select></div>
+        <div class="row"><span>どこまで</span><select id="sgUpto"></select></div>
+        <div class="row"><span>締め切り</span><input type="date" id="sgDue"></div>
+        <div class="btn-row"><button class="btn" id="sgSave">ストーリーモードの課題を保存</button></div>
+        <h2>🏁 課題（マスターモード）のまとめ問題</h2>
+        <div class="row"><span>問題の数</span><span class="num-in"><input type="number" id="mtNum" min="5" max="50" value="${(s.masterTask || {}).num || 20}">問</span></div>
+        <div class="row"><span>合格ライン</span><span class="num-in"><input type="number" id="mtPass" min="10" max="100" step="5" value="${pct((s.masterTask || {}).pass || 0.8)}">%</span></div>
+        <div class="btn-row"><button class="btn" id="mtSave">まとめ問題の設定を保存</button></div>
+        <div class="msg" id="sgMsg"></div>
+      </section>
+      ${footerNote()}
+    </main>`);
+  bindBack(renderAdminHome);
+  const msg = (t, ok) => { const m = $("#tkMsg"); m.textContent = t; m.className = "msg " + (ok === false ? "ng" : ok ? "ok" : ""); };
+  const run = async (f, done) => { try { await f(); renderTaskAdmin({ cls: filt }); if (done) msg(done, true); } catch (e) { msg("保存できませんでした：" + e.message, false); } };
+  if ($("#tkCls")) $("#tkCls").onchange = (e) => { lsSet("eg_task_cls", e.target.value); renderTaskAdmin({ cls: e.target.value }); };
+  $("#tkNew").onclick = () => renderTaskEdit(null);
+  $$("[data-newin]").forEach((b) => (b.onclick = () => renderTaskEdit(null, { folder: b.dataset.newin })));
+  $("#addFolder").onclick = () => {
+    const name = $("#newFolder").value.trim();
+    if (!name) return msg("フォルダの名前を入れてください。", false);
+    run(() => saveRaw((ns) => ns.folders.push({ id: newId("f"), name: name.slice(0, 30) })));
+  };
+  $$("[data-frename]").forEach((b) => (b.onclick = () => {
+    const f = (s.folders || []).find((x) => x.id === b.dataset.frename);
+    const name = (prompt("フォルダの新しい名前", f.name) || "").trim();
+    if (name && name !== f.name) run(() => saveRaw((ns) => { ns.folders.find((x) => x.id === f.id).name = name.slice(0, 30); }));
+  }));
+  const moveF = (id, d) => run(() => saveRaw((ns) => { const k = ns.folders.findIndex((x) => x.id === id), j = k + d; if (k < 0 || j < 0 || j >= ns.folders.length) return; const [x] = ns.folders.splice(k, 1); ns.folders.splice(j, 0, x); }));
+  $$("[data-fup]").forEach((b) => (b.onclick = () => moveF(b.dataset.fup, -1)));
+  $$("[data-fdown]").forEach((b) => (b.onclick = () => moveF(b.dataset.fdown, 1)));
+  $$("[data-fdel]").forEach((b) => (b.onclick = () => {
+    const f = (s.folders || []).find((x) => x.id === b.dataset.fdel);
+    if (tasks.some((t) => t.folder === f.id)) return msg(`フォルダ「${f.name}」には課題が入っています。課題を別のフォルダに移すか削除してから、フォルダを削除してください。`, false);
+    if (confirm(`フォルダ「${f.name}」を削除します。よろしいですか？`)) run(() => saveRaw((ns) => { ns.folders = ns.folders.filter((x) => x.id !== f.id); }), "フォルダを削除しました");
+  }));
+  $$("[data-tprog]").forEach((b) => (b.onclick = () => renderTaskProgress(b.dataset.tprog)));
+  $$("[data-tedit]").forEach((b) => (b.onclick = () => renderTaskEdit(b.dataset.tedit)));
+  $$("[data-tcopy]").forEach((b) => (b.onclick = () => {
+    const t = tasks.find((x) => x.id === b.dataset.tcopy);
+    renderTaskEdit(null, Object.assign(JSON.parse(JSON.stringify(t)), { name: t.name + "（コピー）", due: "" }));
+  }));
+  $$("[data-tdel]").forEach((b) => (b.onclick = () => {
+    const t = tasks.find((x) => x.id === b.dataset.tdel);
+    if (confirm(`課題「${t.name}」を削除します。生徒の練習の記録は消えません。よろしいですか？`)) run(() => saveRaw((ns) => { ns.tasks = ns.tasks.filter((x) => x.id !== t.id); }), "課題を削除しました");
+  }));
+  // ストーリーモードの課題
+  const drawSg = () => {
+    const g = sgOf($("#sgCls").value);
+    $("#sgUpto").innerHTML = `<option value="">なし</option>` + CONTENT.map((it, k) => `<option value="${esc(it.id)}" ${g && g.upto === it.id ? "selected" : ""}>第${k + 1}の王国「${esc(kingdomOf(it).name)}」まで（${esc(it.short)}）</option>`).join("");
+    $("#sgDue").value = (g && g.due) || "";
+  };
+  $("#sgCls").onchange = drawSg; drawSg();
+  const sgMsg = (t, ok) => { const m = $("#sgMsg"); m.textContent = t; m.className = "msg " + (ok ? "ok" : "ng"); };
+  $("#sgSave").onclick = async () => {
+    const c = $("#sgCls").value, up = $("#sgUpto").value, g = up ? { upto: up, due: $("#sgDue").value || "" } : null;
+    try { await saveRaw((ns) => { if (c) { ns.classTasks[c] = Object.assign({}, ns.classTasks[c] || {}, { storyGoal: g }); } else ns.storyGoal = g; }); sgMsg("保存しました", true); }
+    catch (e) { sgMsg("保存できませんでした：" + e.message); }
+  };
+  $("#mtSave").onclick = async () => {
+    const n = Math.min(50, Math.max(5, Math.round(parseFloat($("#mtNum").value) || 20))), p = Math.min(1, Math.max(0.1, (parseFloat($("#mtPass").value) || 80) / 100));
+    try { await saveRaw((ns) => { ns.masterTask = { num: n, pass: p }; }); sgMsg("保存しました", true); }
+    catch (e) { sgMsg("保存できませんでした：" + e.message); }
+  };
+  // 進み具合（クリアした人数）は、学習記録のデータを読んでから表示
+  if (!taskAdminCache && !opt.noLoad) {
+    try { const d = await api.dashboard(); taskAdminCache = d.students || []; state.classes = d.classes || state.classes; if ($("#tkNew")) renderTaskAdmin(Object.assign({}, opt, { noLoad: true })); } catch (e) { msg("進み具合を読みこめませんでした：" + e.message, false); }
+  }
+}
+
+// 課題を作る・直す
+function renderTaskEdit(id, draft) {
+  const s = state.rawSettings, orig = id ? (s.tasks || []).find((t) => t.id === id) : null;
+  const t = JSON.parse(JSON.stringify(orig || Object.assign({ id: "", name: "", folder: "", items: [], kind: "normal", due: "", classes: [], src: {} }, draft || {})));
+  t.src = t.src || {}; t.classes = t.classes || [];
+  const roster = taskAdminCache; // 生徒（学習記録のデータ）。まだ読んでいなければ下で読む
+  const off = new Set(); // チェックを外した生徒
+  if (roster && Array.isArray(t.students) && t.students.length) roster.forEach((st) => { if (t.students.indexOf(st.email) < 0) off.add(st.email); });
+  const folders = s.folders || [];
+  if (!t.folder && folders.length && !(draft && draft.folder !== undefined)) t.folder = folders[folders.length - 1].id;
+  const classes = Array.from(new Set((state.classes || []).concat(...(s.tasks || []).map((x) => x.classes || [])).concat((roster || []).map((st) => st.cls)))).filter(Boolean).sort();
+  const setsOf = (iid) => Object.values(state.sets || {}).filter((x) => x.itemId === iid);
+  render(`${header(id ? "課題を直す" : "新しい課題", true)}
+    <main class="wrap">
+      <section class="panel form task-edit">
+        <div class="row"><span>課題の名前 <b class="req">必須</b></span><input type="text" id="tkName" class="wide" maxlength="40" value="${esc(t.name)}" placeholder="例：be動詞の確認／1学期末テスト範囲"></div>
+        <div class="row"><span>フォルダ</span><span><select id="tkFolder">${folders.map((f) => `<option value="${esc(f.id)}" ${f.id === t.folder ? "selected" : ""}>📁 ${esc(f.name)}</option>`).join("")}<option value="__new" ${!folders.length ? "selected" : ""}>＋ 新しいフォルダ…</option></select>
+          <input type="text" id="tkNewFolder" maxlength="30" placeholder="新しいフォルダの名前" ${folders.length ? "hidden" : ""} value="${folders.length ? "" : "課題"}"></span></div>
+        <h2>配信する相手</h2>
+        <p class="hint">① クラスを選ぶと、そのクラスの生徒全員にチェックが入ります（クラスを選ばないと全クラス）。② 配信しない生徒はチェックを外すと、チェックの入った生徒だけに配信されます。</p>
+        <div class="tk-cls">${classes.length ? classes.map((c) => `<label class="cls-pick"><input type="checkbox" data-tc value="${esc(c)}" ${t.classes.indexOf(c) >= 0 ? "checked" : ""}><span>${esc(c)}</span></label>`).join("") : `<span class="hint">全クラス（名簿にクラスを登録すると選べます）</span>`}</div>
+        <div id="tkStu" class="tk-stu"><span class="hint">生徒の一覧を読みこんでいます…</span></div>
+        <div class="row"><span>締め切り</span><input type="date" id="tkDue" value="${esc(t.due || "")}"></div>
+        <h2>文法を選ぶ</h2>
+        <div id="tkPicked" class="tk-picked"></div>
+        <div class="tk-items">${GRADES.map((g) => {
+          const L = CONTENT.filter((it) => gradeOf(it) === g);
+          const n = L.filter((it) => t.items.indexOf(it.id) >= 0).length;
+          return `<details class="grade-box" ${n || (!t.items.length && g === 1) ? "open" : ""}><summary>中${g}の文法（${L.length}）</summary>${L.map((it) => {
+            const on = t.items.indexOf(it.id) >= 0, sets = setsOf(it.id), cur = t.src[it.id] || "";
+            return `<div class="task-row"><label class="check"><input type="checkbox" data-ti="${esc(it.id)}" ${on ? "checked" : ""}> ${gradeOf(it)}-${itemNo(it)}. ${esc(it.title)}</label>
+              <span class="task-opts"><select class="src-sel" data-ts="${esc(it.id)}" ${on ? "" : "disabled"} aria-label="問題の作り方"><option value="">問題を自動作成</option>${sets.map((x) => `<option value="${esc(x.id)}" ${x.id === cur ? "selected" : ""}>📄 ${esc(x.name)}</option>`).join("")}<option value="new">＋ PDF・Word から作る…</option></select></span></div>`;
+          }).join("")}</details>`;
+        }).join("")}</div>
+        <h2>課題の種類</h2>
+        <label class="check kind-opt"><input type="radio" name="tkKind" id="tkKindN" value="normal" ${t.kind !== "mm" ? "checked" : ""}> <b>課題（通常）</b>　選んだ文法をすべてマスター（段階1〜4をクリア）するとクリア</label>
+        <label class="check kind-opt"><input type="radio" name="tkKind" id="tkKindM" value="mm" ${t.kind === "mm" ? "checked" : ""}> <b>課題（マスターモード）</b>　選んだ文法をすべてマスターしたあと、まとめ問題に合格するとクリア</label>
+        <p class="hint" id="tkKindHint"></p>
+        <div class="btn-row"><button class="btn primary" id="tkSave">保存する</button><button class="btn" id="tkCancel">やめる</button></div>
+        <div class="msg" id="tkMsg"></div>
+      </section>
+    </main>`);
+  const back = () => renderTaskAdmin();
+  bindBack(back);
+  $("#tkCancel").onclick = back;
+  $("#tkFolder").onchange = (e) => { $("#tkNewFolder").hidden = e.target.value !== "__new"; if (e.target.value === "__new") $("#tkNewFolder").focus(); };
+  const picked = () => CONTENT.filter((it) => $(`[data-ti="${it.id}"]`).checked);
+  const sync = () => {
+    const P = picked();
+    $$("[data-ts]").forEach((x) => { const on = $(`[data-ti="${x.dataset.ts}"]`).checked; x.disabled = !on; if (!on) x.value = ""; });
+    $("#tkPicked").innerHTML = P.length ? `<b>選んだ文法（${P.length}つ・教材の順）</b>：${P.map((it, k) => `<span class="chip small ${k === P.length - 1 && P.length > 1 && $("#tkKindM").checked ? "on" : ""}">${gradeOf(it)}-${itemNo(it)} ${esc(it.short)}</span>`).join(" ")}` : `<span class="hint">下の一覧から、課題にする文法を選んでください。</span>`;
+    const mmOk = P.length >= 2;
+    $("#tkKindM").disabled = !mmOk;
+    if (!mmOk && $("#tkKindM").checked) $("#tkKindN").checked = true;
+    $("#tkKindHint").innerHTML = !mmOk ? "課題（マスターモード）は、文法を2つ以上選ぶと選べます（文法が1つの課題はマスターモードにできません）。"
+      : `課題（マスターモード）では、先に出てくる文法（${P.slice(0, -1).map((it) => esc(it.short)).join("・")}）を、これまでの既習事項としてまとめ問題で復習します。まとめ問題には、すべての文法をマスターしてから挑戦できます。`;
+  };
+  // 配信する生徒（選んだクラスの生徒全員にチェック → 外した生徒には配信しない）
+  const selCls = () => $$("[data-tc]").filter((x) => x.checked).map((x) => x.value);
+  const pool = () => { const C = selCls(); return (taskAdminCache || []).filter((st) => !C.length || C.indexOf(st.cls) >= 0); };
+  const drawStu = () => {
+    if (!taskAdminCache) return;
+    const P = pool(), groups = {};
+    P.forEach((st) => { (groups[st.cls || ""] = groups[st.cls || ""] || []).push(st); });
+    const on = P.filter((st) => !off.has(st.email)).length;
+    $("#tkStu").innerHTML = !P.length ? `<span class="hint">この条件の生徒は、まだ名簿にいません（名簿に入った生徒にはあとから配信されます）。</span>`
+      : `<div class="tk-stu-head"><b>配信する生徒 ${on} / ${P.length}人</b>${on < P.length ? `<span class="chip small on">個別に配信</span>` : `<span class="chip small">全員に配信</span>`}</div>` +
+        Object.keys(groups).sort().map((c) => `<div class="tk-stu-grp"><div class="tk-stu-cls"><b>${c ? esc(c) : "クラスなし"}</b>（${groups[c].filter((st) => !off.has(st.email)).length} / ${groups[c].length}人）
+          <button type="button" class="link-btn small" data-son="${esc(c)}">全員にチェック</button><button type="button" class="link-btn small" data-soff="${esc(c)}">全員のチェックを外す</button></div>
+          <div class="tk-stu-list">${groups[c].map((st) => `<label class="check stu-pick"><input type="checkbox" data-st="${esc(st.email)}" ${off.has(st.email) ? "" : "checked"}> ${st.no ? `<small>${esc(st.no)}</small> ` : ""}${esc(personName(st))}</label>`).join("")}</div></div>`).join("");
+    $$("[data-st]").forEach((x) => (x.onchange = () => { if (x.checked) off.delete(x.dataset.st); else off.add(x.dataset.st); drawStu(); }));
+    $$("[data-son]").forEach((b) => (b.onclick = () => { P.filter((st) => (st.cls || "") === b.dataset.son).forEach((st) => off.delete(st.email)); drawStu(); }));
+    $$("[data-soff]").forEach((b) => (b.onclick = () => { P.filter((st) => (st.cls || "") === b.dataset.soff).forEach((st) => off.add(st.email)); drawStu(); }));
+  };
+  // クラスを選びなおしたら、そのクラスの生徒は全員チェックした状態から
+  $$("[data-tc]").forEach((x) => (x.onchange = () => { (taskAdminCache || []).filter((st) => st.cls === x.value).forEach((st) => off.delete(st.email)); drawStu(); }));
+  if (taskAdminCache) drawStu();
+  else api.dashboard().then((d) => {
+    taskAdminCache = d.students || []; state.classes = d.classes || state.classes;
+    if (!$("#tkStu")) return;
+    if (Array.isArray(t.students) && t.students.length) taskAdminCache.forEach((st) => { if (t.students.indexOf(st.email) < 0) off.add(st.email); });
+    // 名簿のクラスが増えていたら、クラスの選択肢も出しなおす
+    const known = $$("[data-tc]").map((x) => x.value), add = Array.from(new Set(taskAdminCache.map((st) => st.cls).filter((c) => c && known.indexOf(c) < 0))).sort();
+    if (add.length) { const box = $(".tk-cls"); if (!known.length) box.innerHTML = ""; box.insertAdjacentHTML("beforeend", add.map((c) => `<label class="cls-pick"><input type="checkbox" data-tc value="${esc(c)}"><span>${esc(c)}</span></label>`).join("")); $$("[data-tc]").forEach((x) => (x.onchange = () => { taskAdminCache.filter((st) => st.cls === x.value).forEach((st) => off.delete(st.email)); drawStu(); })); }
+    drawStu();
+  }).catch((e) => { if ($("#tkStu")) $("#tkStu").innerHTML = `<span class="hint">生徒の一覧を読みこめませんでした（${esc(e.message)}）。クラス単位で配信されます。</span>`; });
+  $$("[data-ti]").forEach((x) => (x.onchange = sync));
+  $$("[name=tkKind]").forEach((x) => (x.onchange = sync));
+  sync();
+  const read = () => {
+    const P = picked();
+    const out = { id: t.id || newId("t"), name: $("#tkName").value.trim().slice(0, 40), folder: $("#tkFolder").value, items: P.map((it) => it.id).concat(t.items.filter((x) => !CONTENT.some((c) => c.id === x))),
+      kind: $("#tkKindM").checked && P.length >= 2 ? "mm" : "normal", due: $("#tkDue").value || "", classes: selCls(), src: {} };
+    if (taskAdminCache) { const L = pool(), on = L.filter((st) => !off.has(st.email)); if (on.length < L.length) out.students = on.map((st) => st.email); }
+    else if (Array.isArray(t.students) && t.students.length) out.students = t.students.slice(); // 一覧を読めなかったときは、前の配信先のまま
+    P.forEach((it) => { const v = $(`[data-ts="${it.id}"]`).value; if (v && v !== "new") out.src[it.id] = v; });
+    return out;
+  };
+  const msg = (x, ok) => { const m = $("#tkMsg"); m.textContent = x; m.className = "msg " + (ok ? "ok" : "ng"); };
+  const save = async () => {
+    const x = read();
+    if (!x.name) { msg("課題の名前を入れてください。"); $("#tkName").focus(); return null; }
+    if (!x.items.length) { msg("文法を1つ以上選んでください。"); return null; }
+    if (x.students && !x.students.length) { msg("配信する生徒が1人もいません。生徒にチェックを入れてください。"); return null; }
+    const nf = x.folder === "__new" ? ($("#tkNewFolder").value.trim() || "課題").slice(0, 30) : null;
+    await saveRaw((ns) => {
+      if (nf) { const f = { id: newId("f"), name: nf }; ns.folders.push(f); x.folder = f.id; }
+      const k = ns.tasks.findIndex((y) => y.id === x.id);
+      if (k >= 0) ns.tasks[k] = x; else ns.tasks.push(x);
+    });
+    t.id = x.id; t.folder = x.folder;
+    return x;
+  };
+  $("#tkSave").onclick = async () => {
+    try { const x = await save(); if (x) { taskAdminCache = null; renderTaskAdmin(); } }
+    catch (e) { msg("保存できませんでした：" + e.message); }
+  };
+  $$("[data-ts]").forEach((sel) => (sel.onchange = async (e) => {
+    if (e.target.value !== "new") return;
+    e.target.value = t.src[sel.dataset.ts] || "";
+    if (!confirm("この課題をいったん保存してから、PDF・Word から問題を作る画面に移ります。よろしいですか？")) return;
+    try {
+      const x = await save();
+      if (x) renderImport({ itemId: sel.dataset.ts, back: () => renderTaskEdit(x.id), onSaved: async (setId, iid) => {
+        // 作った問題を、この課題のその文法の問題にする
+        try { await saveRaw((ns) => { const y = ns.tasks.find((z) => z.id === x.id); if (y && y.items.indexOf(iid) >= 0) { y.src = y.src || {}; y.src[iid] = setId; } }); } catch (e2) {}
+        renderTaskEdit(x.id);
+      } });
+    }
+    catch (err) { msg("保存できませんでした：" + err.message); }
+  }));
+}
+
+// 1つの課題の進み具合（生徒ごと）
+async function renderTaskProgress(id, cls) {
+  const t = (state.rawSettings.tasks || []).find((x) => x.id === id);
+  if (!t) return renderTaskAdmin();
+  loadingMain("課題の進み具合", () => renderTaskAdmin());
+  let d;
+  try { d = await api.dashboard(); } catch (e) { return failMain(e); }
+  taskAdminCache = d.students || []; state.classes = d.classes || state.classes;
+  const all = taskTargets(t, d.students || []);
+  const classes = Array.from(new Set(all.map((st) => st.cls).filter(Boolean))).sort();
+  if (cls && classes.indexOf(cls) < 0) cls = "";
+  const list = all.filter((st) => !cls || st.cls === cls);
+  const items = CONTENT.filter((it) => t.items.indexOf(it.id) >= 0), mm = isMasterTask(t);
+  const X = list.map((st) => ({ st, x: studentTaskState(st, t) }));
+  const done = X.filter((r) => r.x.done).length, over = X.filter((r) => r.x.due && r.x.due.state === "over").length;
+  const lvOf = (st, iid) => { const pc = (st.progress[iid] && st.progress[iid].passCount) || [0, 0, 0, 0]; return [1, 2, 3, 4].filter((k) => pc[k - 1] >= requiredPasses(k)).length; };
+  const stateText = (x) => x.done ? `<span class="ok">✓ クリア${x.doneAt ? `（${fmtDate(x.doneAt)}）` : ""}</span>${x.due && x.due.state === "late" ? `<small class="due-mark late">期限後</small>` : ""}`
+    : x.due && x.due.state === "over" ? `<span class="ng">期限切れ</span>` : x.mm && x.ready ? "まとめ問題まで" : "とりくみ中";
+  render(`${header("課題の進み具合", true)}
+    <main class="wrap wide">
+      <section class="panel">
+        <h2>${esc(t.name)} ${kindChip(t)}</h2>
+        <p class="hint">${items.map((it) => esc(it.short)).join("・")}　｜　${esc(taskClassText(t))}　｜　${t.due ? `締め切り ${fmtDue(t.due)}（${dueWeek(t.due)}）` : "締め切りなし"}</p>
+        <div class="toolbar">${classes.length > 1 ? clsSelect("tpCls", classes, cls) : ""}<button class="btn small" id="tpEdit">課題を直す</button></div>
+        <div class="sum-cards"><div><b>${list.length}</b><small>対象の生徒</small></div><div><b class="ok">${done}</b><small>クリア</small></div><div><b>${list.length - done}</b><small>まだ</small></div><div><b class="${over ? "ng" : ""}">${over}</b><small>期限切れ</small></div></div>
+        <div class="table-wrap"><table class="dash"><thead><tr><th></th>${items.map((it) => `<th title="${esc(it.title)}">${gradeOf(it)}-${itemNo(it)}<br><small>${esc(it.short)}</small></th>`).join("")}${mm ? `<th class="mcol">まとめ<br><small>問題</small></th>` : ""}<th>状況</th></tr></thead>
+          <tbody>${X.map(({ st, x }) => `<tr><th class="name"><button class="link" data-detail="${esc(st.email)}">${st.no ? `<small>${esc(st.no)}</small> ` : ""}${esc(personName(st))}</button>${!cls && st.cls ? `<small class="cls-tag">${esc(st.cls)}</small>` : ""}</th>
+            ${items.map((it) => { const lv = lvOf(st, it.id); return `<td class="lv lv${lv}">${lv === 4 ? "マスター" : lv ? "段階" + lv : "－"}</td>`; }).join("")}
+            ${mm ? `<td class="mcol ${x.passed ? "lv lv4" : ""}">${x.passed ? "合格" : x.ready ? "挑戦できる" : "－"}</td>` : ""}<td>${stateText(x)}</td></tr>`).join("") || `<tr><td colspan="${items.length + 3}">対象の生徒がいません</td></tr>`}</tbody></table></div>
+        <p class="hint">名前を押すと、その生徒の詳しい記録が見られます。</p>
+      </section>
+      ${footerNote()}
+    </main>`);
+  bindBack(() => renderTaskAdmin());
+  if ($("#tpCls")) $("#tpCls").onchange = (e) => renderTaskProgress(id, e.target.value);
+  $("#tpEdit").onclick = () => renderTaskEdit(id);
+  $$("[data-detail]").forEach((b) => (b.onclick = () => renderStudentDetail(b.dataset.detail, () => renderTaskProgress(id, cls))));
 }
 
 </script>
