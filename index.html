@@ -382,6 +382,9 @@ th.name { text-align: left; }
 .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
 .shop-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 6px; border-radius: 16px; background: color-mix(in srgb, var(--gold) 8%, var(--surface)); border: 1px solid color-mix(in srgb, var(--gold) 35%, transparent); }
 .shop-item.have { opacity: .65; }
+.rare-box h2 small { color: #b8860b; }
+.shop-item.rare-wait { cursor: default; }
+.rare-q { width: 80px; height: 80px; border-radius: 50%; display: grid; place-items: center; font-size: 40px; font-weight: 900; color: #fff; background: linear-gradient(135deg, #f59f00, #e64980 55%, #7048e8); box-shadow: inset 0 0 0 4px rgba(255,255,255,.55); }
 
 /* 画像・お絵かきのアバター */
 .pic-make-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 8px 0 12px; }
@@ -2750,25 +2753,25 @@ const AVATAR_SET = (function () {
     { id: "dragon", k: "b", name: "ドラゴン", un: "lv:7" }, { id: "unicorn", k: "b", name: "ユニコーン", un: "lv:8" },
     { id: "koala", k: "b", name: "コアラ", un: "card:10" }, { id: "sheep", k: "b", name: "ひつじ", un: "card:20" },
     { id: "frog", k: "b", name: "かえる", un: "badge:streak7" }, { id: "fox", k: "b", name: "きつね", un: "badge:perfect" },
-    { id: "seal", k: "b", name: "アザラシ", un: "shop:100" }, { id: "redpanda", k: "b", name: "レッサーパンダ", un: "shop:150" },
+    { id: "seal", k: "b", name: "アザラシ", un: "shop:200" }, { id: "redpanda", k: "b", name: "レッサーパンダ", un: "shop:300" },
     { id: "h_ribbon", k: "h", name: "リボン", un: "start" }, { id: "h_cap", k: "h", name: "キャップ", un: "start" },
     { id: "h_flower", k: "h", name: "花かんむり", un: "badge:first" }, { id: "h_star", k: "h", name: "星のヘアピン", un: "lv:3" },
-    { id: "h_party", k: "h", name: "パーティー帽子", un: "card:10" }, { id: "h_phones", k: "h", name: "ヘッドホン", un: "shop:80" },
-    { id: "h_beret", k: "h", name: "ベレー帽", un: "shop:100" }, { id: "h_chef", k: "h", name: "コック帽", un: "shop:120" },
+    { id: "h_party", k: "h", name: "パーティー帽子", un: "card:10" }, { id: "h_phones", k: "h", name: "ヘッドホン", un: "shop:160" },
+    { id: "h_beret", k: "h", name: "ベレー帽", un: "shop:200" }, { id: "h_chef", k: "h", name: "コック帽", un: "shop:240" },
     { id: "h_wizard", k: "h", name: "魔法使いの帽子", un: "lv:5" }, { id: "h_grad", k: "h", name: "卒業帽子", un: "badge:master1" },
     { id: "h_halo", k: "h", name: "天使のわっか", un: "badge:perfect10" }, { id: "h_crown", k: "h", name: "ライブ王者の王冠", un: "live:1" },
     { id: "f_glasses", k: "f", name: "まるメガネ", un: "start" }, { id: "f_hearts", k: "f", name: "ハートのほっぺ", un: "badge:streak3" },
-    { id: "f_star", k: "f", name: "星のメガネ", un: "lv:4" }, { id: "f_sun", k: "f", name: "サングラス", un: "shop:60" },
-    { id: "f_mustache", k: "f", name: "ちょびひげ", un: "shop:50" }, { id: "f_monocle", k: "f", name: "片メガネ", un: "lv:7" },
+    { id: "f_star", k: "f", name: "星のメガネ", un: "lv:4" }, { id: "f_sun", k: "f", name: "サングラス", un: "shop:120" },
+    { id: "f_mustache", k: "f", name: "ちょびひげ", un: "shop:100" }, { id: "f_monocle", k: "f", name: "片メガネ", un: "lv:7" },
     { id: "w_bowtie", k: "w", name: "蝶ネクタイ", un: "start" }, { id: "w_tie", k: "w", name: "ネクタイ", un: "lv:1" },
     { id: "w_book", k: "w", name: "英語の本", un: "badge:pass10" }, { id: "w_mic", k: "w", name: "マイク", un: "badge:explain" },
-    { id: "w_scarf", k: "w", name: "マフラー", un: "card:20" }, { id: "w_balloon", k: "w", name: "ふうせん", un: "shop:90" },
-    { id: "w_wand", k: "w", name: "星のステッキ", un: "shop:150" }, { id: "w_cape", k: "w", name: "ヒーローマント", un: "lv:9" },
+    { id: "w_scarf", k: "w", name: "マフラー", un: "card:20" }, { id: "w_balloon", k: "w", name: "ふうせん", un: "shop:180" },
+    { id: "w_wand", k: "w", name: "星のステッキ", un: "shop:300" }, { id: "w_cape", k: "w", name: "ヒーローマント", un: "lv:9" },
     { id: "w_medal", k: "w", name: "金メダル", un: "badge:streak30" }, { id: "w_trophy", k: "w", name: "ライブのトロフィー", un: "live:3" },
     { id: "bg_sky", k: "bg", name: "青空", un: "start" }, { id: "bg_pink", k: "bg", name: "ピンク", un: "start" },
     { id: "bg_mint", k: "bg", name: "ミント", un: "start" }, { id: "bg_lemon", k: "bg", name: "レモン", un: "start" },
     { id: "bg_class", k: "bg", name: "教室", un: "lv:1" }, { id: "bg_rainbow", k: "bg", name: "にじ", un: "badge:pass50" },
-    { id: "bg_sakura", k: "bg", name: "さくら", un: "card:30" }, { id: "bg_sea", k: "bg", name: "海", un: "shop:120" },
+    { id: "bg_sakura", k: "bg", name: "さくら", un: "card:30" }, { id: "bg_sea", k: "bg", name: "海", un: "shop:240" },
     { id: "bg_space", k: "bg", name: "宇宙", un: "lv:6" }, { id: "bg_stage", k: "bg", name: "ライブのステージ", un: "live:10" },
     { id: "bg_gold", k: "bg", name: "チャンピオンの金色", un: "live:1" },
     // マスターモードに成功した回数でもらえる
@@ -2776,38 +2779,38 @@ const AVATAR_SET = (function () {
     { id: "bg_master", k: "bg", name: "マスターの間", un: "master:3" }, { id: "owl", k: "b", name: "はかせフクロウ", un: "master:4" },
     { id: "w_scroll", k: "w", name: "免許皆伝の巻物", un: "master:5" },
     // ---- お店（2026-10 追加） ----
-    { id: "h_frog", k: "h", name: "カエルのかぶりもの", un: "shop:300" }, { id: "h_bone", k: "h", name: "原始人のほねかざり", un: "shop:150" },
-    { id: "h_samurai", k: "h", name: "ちょんまげ", un: "shop:200" }, { id: "h_viking", k: "h", name: "バイキングのかぶと", un: "shop:250" },
-    { id: "h_pirate", k: "h", name: "海賊の帽子", un: "shop:220" }, { id: "h_catears", k: "h", name: "ねこみみ", un: "shop:100" },
-    { id: "h_bunny", k: "h", name: "うさみみ", un: "shop:100" }, { id: "h_devil", k: "h", name: "小悪魔のつの", un: "shop:150" },
-    { id: "h_tophat", k: "h", name: "シルクハット", un: "shop:180" }, { id: "h_cowboy", k: "h", name: "カウボーイハット", un: "shop:180" },
-    { id: "h_straw", k: "h", name: "むぎわら帽子", un: "shop:120" }, { id: "h_santa", k: "h", name: "サンタの帽子", un: "shop:150" },
-    { id: "h_knit", k: "h", name: "ニット帽", un: "shop:80" }, { id: "h_helmet", k: "h", name: "工事のヘルメット", un: "shop:120" },
-    { id: "h_afro", k: "h", name: "アフロ", un: "shop:200" }, { id: "h_banana", k: "h", name: "バナナのかぶりもの", un: "shop:260" },
-    { id: "h_sushi", k: "h", name: "まぐろのおすし", un: "shop:280" }, { id: "h_onigiri", k: "h", name: "おにぎりのかぶりもの", un: "shop:240" },
-    { id: "h_shark", k: "h", name: "サメのかぶりもの", un: "shop:300" }, { id: "h_tiara", k: "h", name: "ティアラ", un: "shop:220" },
-    { id: "h_propeller", k: "h", name: "プロペラ帽子", un: "shop:160" }, { id: "h_hachimaki", k: "h", name: "必勝はちまき", un: "shop:60" },
-    { id: "h_antenna", k: "h", name: "宇宙人のアンテナ", un: "shop:140" }, { id: "h_ninja", k: "h", name: "忍者のずきん", un: "shop:200" },
-    { id: "f_nosegl", k: "f", name: "鼻めがね", un: "shop:120" }, { id: "f_heartsun", k: "f", name: "ハートのサングラス", un: "shop:120" },
-    { id: "f_heromask", k: "f", name: "ヒーローのマスク", un: "shop:150" }, { id: "f_beard", k: "f", name: "仙人のひげ", un: "shop:180" },
-    { id: "f_bandage", k: "f", name: "ばんそうこう", un: "shop:50" }, { id: "f_eyepatch", k: "f", name: "海賊の眼帯", un: "shop:120" },
-    { id: "f_clown", k: "f", name: "ピエロの赤い鼻", un: "shop:80" }, { id: "f_kabuki", k: "f", name: "歌舞伎のくまどり", un: "shop:200" },
-    { id: "f_goggles", k: "f", name: "水泳ゴーグル", un: "shop:90" }, { id: "f_starsticker", k: "f", name: "星のシール", un: "shop:70" },
-    { id: "f_vr", k: "f", name: "VRゴーグル", un: "shop:220" }, { id: "f_tears", k: "f", name: "感動のなみだ", un: "shop:60" },
-    { id: "w_caveman", k: "w", name: "原始人スタイル", un: "shop:300" }, { id: "w_happi", k: "w", name: "お祭りのはっぴ", un: "shop:180" },
-    { id: "w_guitar", k: "w", name: "ギター", un: "shop:220" }, { id: "w_sword", k: "w", name: "勇者の剣", un: "shop:250" },
-    { id: "w_icecream", k: "w", name: "ソフトクリーム", un: "shop:80" }, { id: "w_umbrella", k: "w", name: "かさ", un: "shop:90" },
-    { id: "w_megaphone", k: "w", name: "応援メガホン", un: "shop:100" }, { id: "w_fish", k: "w", name: "つった魚", un: "shop:120" },
-    { id: "w_tennis", k: "w", name: "テニスラケット", un: "shop:120" }, { id: "w_soccer", k: "w", name: "サッカーボール", un: "shop:100" },
-    { id: "w_pencil", k: "w", name: "巨大えんぴつ", un: "shop:90" }, { id: "w_bouquet", k: "w", name: "花束", un: "shop:150" },
-    { id: "w_lifering", k: "w", name: "うきわ", un: "shop:140" }, { id: "w_suit", k: "w", name: "スーツ", un: "shop:200" },
-    { id: "w_pearls", k: "w", name: "真珠のネックレス", un: "shop:160" }, { id: "w_lantern", k: "w", name: "ちょうちん", un: "shop:140" },
-    { id: "w_magnifier", k: "w", name: "虫めがね", un: "shop:110" }, { id: "w_dumbbell", k: "w", name: "ダンベル", un: "shop:130" },
-    { id: "bg_jungle", k: "bg", name: "ジャングル", un: "shop:150" }, { id: "bg_cave", k: "bg", name: "原始時代のどうくつ", un: "shop:200" },
-    { id: "bg_volcano", k: "bg", name: "火山", un: "shop:220" }, { id: "bg_snow", k: "bg", name: "雪げしき", un: "shop:150" },
-    { id: "bg_city", k: "bg", name: "夜の街", un: "shop:180" }, { id: "bg_sunset", k: "bg", name: "夕やけの海", un: "shop:160" },
-    { id: "bg_aurora", k: "bg", name: "オーロラ", un: "shop:250" }, { id: "bg_desert", k: "bg", name: "さばく", un: "shop:150" },
-    { id: "bg_shrine", k: "bg", name: "鳥居", un: "shop:200" }, { id: "bg_candy", k: "bg", name: "おかしの国", un: "shop:220" }
+    { id: "h_frog", k: "h", name: "カエルのかぶりもの", un: "shop:600" }, { id: "h_bone", k: "h", name: "原始人のほねかざり", un: "shop:300" },
+    { id: "h_samurai", k: "h", name: "ちょんまげ", un: "shop:400" }, { id: "h_viking", k: "h", name: "バイキングのかぶと", un: "shop:500" },
+    { id: "h_pirate", k: "h", name: "海賊の帽子", un: "shop:440" }, { id: "h_catears", k: "h", name: "ねこみみ", un: "shop:200" },
+    { id: "h_bunny", k: "h", name: "うさみみ", un: "shop:200" }, { id: "h_devil", k: "h", name: "小悪魔のつの", un: "shop:300" },
+    { id: "h_tophat", k: "h", name: "シルクハット", un: "shop:360" }, { id: "h_cowboy", k: "h", name: "カウボーイハット", un: "shop:360" },
+    { id: "h_straw", k: "h", name: "むぎわら帽子", un: "shop:240" }, { id: "h_santa", k: "h", name: "サンタの帽子", un: "shop:300" },
+    { id: "h_knit", k: "h", name: "ニット帽", un: "shop:160" }, { id: "h_helmet", k: "h", name: "工事のヘルメット", un: "shop:240" },
+    { id: "h_afro", k: "h", name: "アフロ", un: "shop:400" }, { id: "h_banana", k: "h", name: "バナナのかぶりもの", un: "shop:520" },
+    { id: "h_sushi", k: "h", name: "まぐろのおすし", un: "shop:560" }, { id: "h_onigiri", k: "h", name: "おにぎりのかぶりもの", un: "shop:480" },
+    { id: "h_shark", k: "h", name: "サメのかぶりもの", un: "shop:600" }, { id: "h_tiara", k: "h", name: "ティアラ", un: "shop:440" },
+    { id: "h_propeller", k: "h", name: "プロペラ帽子", un: "shop:320" }, { id: "h_hachimaki", k: "h", name: "必勝はちまき", un: "shop:120" },
+    { id: "h_antenna", k: "h", name: "宇宙人のアンテナ", un: "shop:280" }, { id: "h_ninja", k: "h", name: "忍者のずきん", un: "shop:400" },
+    { id: "f_nosegl", k: "f", name: "鼻めがね", un: "shop:240" }, { id: "f_heartsun", k: "f", name: "ハートのサングラス", un: "shop:240" },
+    { id: "f_heromask", k: "f", name: "ヒーローのマスク", un: "shop:300" }, { id: "f_beard", k: "f", name: "仙人のひげ", un: "shop:360" },
+    { id: "f_bandage", k: "f", name: "ばんそうこう", un: "shop:100" }, { id: "f_eyepatch", k: "f", name: "海賊の眼帯", un: "shop:240" },
+    { id: "f_clown", k: "f", name: "ピエロの赤い鼻", un: "shop:160" }, { id: "f_kabuki", k: "f", name: "歌舞伎のくまどり", un: "shop:400" },
+    { id: "f_goggles", k: "f", name: "水泳ゴーグル", un: "shop:180" }, { id: "f_starsticker", k: "f", name: "星のシール", un: "shop:140" },
+    { id: "f_vr", k: "f", name: "VRゴーグル", un: "shop:440" }, { id: "f_tears", k: "f", name: "感動のなみだ", un: "shop:120" },
+    { id: "w_caveman", k: "w", name: "原始人スタイル", un: "shop:600" }, { id: "w_happi", k: "w", name: "お祭りのはっぴ", un: "shop:360" },
+    { id: "w_guitar", k: "w", name: "ギター", un: "shop:440" }, { id: "w_sword", k: "w", name: "勇者の剣", un: "shop:500" },
+    { id: "w_icecream", k: "w", name: "ソフトクリーム", un: "shop:160" }, { id: "w_umbrella", k: "w", name: "かさ", un: "shop:180" },
+    { id: "w_megaphone", k: "w", name: "応援メガホン", un: "shop:200" }, { id: "w_fish", k: "w", name: "つった魚", un: "shop:240" },
+    { id: "w_tennis", k: "w", name: "テニスラケット", un: "shop:240" }, { id: "w_soccer", k: "w", name: "サッカーボール", un: "shop:200" },
+    { id: "w_pencil", k: "w", name: "巨大えんぴつ", un: "shop:180" }, { id: "w_bouquet", k: "w", name: "花束", un: "shop:300" },
+    { id: "w_lifering", k: "w", name: "うきわ", un: "shop:280" }, { id: "w_suit", k: "w", name: "スーツ", un: "shop:400" },
+    { id: "w_pearls", k: "w", name: "真珠のネックレス", un: "shop:320" }, { id: "w_lantern", k: "w", name: "ちょうちん", un: "shop:280" },
+    { id: "w_magnifier", k: "w", name: "虫めがね", un: "shop:220" }, { id: "w_dumbbell", k: "w", name: "ダンベル", un: "shop:260" },
+    { id: "bg_jungle", k: "bg", name: "ジャングル", un: "shop:300" }, { id: "bg_cave", k: "bg", name: "原始時代のどうくつ", un: "shop:400" },
+    { id: "bg_volcano", k: "bg", name: "火山", un: "shop:440" }, { id: "bg_snow", k: "bg", name: "雪げしき", un: "shop:300" },
+    { id: "bg_city", k: "bg", name: "夜の街", un: "shop:360" }, { id: "bg_sunset", k: "bg", name: "夕やけの海", un: "shop:320" },
+    { id: "bg_aurora", k: "bg", name: "オーロラ", un: "shop:500" }, { id: "bg_desert", k: "bg", name: "さばく", un: "shop:300" },
+    { id: "bg_shrine", k: "bg", name: "鳥居", un: "shop:400" }, { id: "bg_candy", k: "bg", name: "おかしの国", un: "shop:440" }
   ];
   const byId = {}; L.forEach((d) => { byId[d.id] = d; });
   const MAKER = {
@@ -2831,10 +2834,10 @@ const THEMES = [
   { id: "umi", name: "うみ", un: "start", c: "#1f6f8b" }, { id: "sakura", name: "さくら", un: "start", c: "#c4527a" },
   { id: "mint", name: "ミント", un: "start", c: "#228a7e" }, { id: "sunset", name: "ゆうやけ", un: "lv:2", c: "#d0632e" },
   { id: "lavender", name: "ラベンダー", un: "lv:4", c: "#7058bd" }, { id: "forest", name: "もり", un: "card:10", c: "#3f7d3a" },
-  { id: "candy", name: "キャンディ", un: "shop:80", c: "#d6477f" }, { id: "ocean", name: "しんかい", un: "shop:100", c: "#1d4a9e" },
-  { id: "gold", name: "ゴールド", un: "badge:master1", c: "#a8770a" }, { id: "night", name: "よぞら", un: "shop:150", c: "#33367a" },
-  { id: "matcha", name: "まっちゃ", un: "shop:120", c: "#5c7f2a" }, { id: "choco", name: "チョコ", un: "shop:120", c: "#6b4226" },
-  { id: "ruby", name: "ルビー", un: "shop:150", c: "#b0153d" }, { id: "neon", name: "ネオン", un: "shop:200", c: "#9c36b5" }
+  { id: "candy", name: "キャンディ", un: "shop:160", c: "#d6477f" }, { id: "ocean", name: "しんかい", un: "shop:200", c: "#1d4a9e" },
+  { id: "gold", name: "ゴールド", un: "badge:master1", c: "#a8770a" }, { id: "night", name: "よぞら", un: "shop:300", c: "#33367a" },
+  { id: "matcha", name: "まっちゃ", un: "shop:240", c: "#5c7f2a" }, { id: "choco", name: "チョコ", un: "shop:240", c: "#6b4226" },
+  { id: "ruby", name: "ルビー", un: "shop:300", c: "#b0153d" }, { id: "neon", name: "ネオン", un: "shop:400", c: "#9c36b5" }
 ];
 // 絵の部品（art.js）に、はだの色などを伝える
 if (typeof window !== "undefined") window.AvatarSet = AVATAR_SET;
@@ -4477,6 +4480,9 @@ function renderShop() {
           <p class="hint">${esc(POINT_RULES)}</p><div class="msg" id="shopMsg"></div></section>
         <div class="seg shop-tabs">${[["all", "すべて"]].concat(kinds, [["theme", "テーマ色"]]).map(([k, label]) => `<button data-st="${k}" class="${tab === k ? "on" : ""}">${label}</button>`).join("")}</div>
         <label class="check shop-only"><input type="checkbox" id="onlyCan" ${onlyCan ? "checked" : ""}> 今のポイントで交換できるものだけ</label>
+        ${tab === "all" && !onlyCan ? `<section class="panel rare-box"><h2>✨ レア商品 <small>近日登場</small></h2>
+          <div class="shop-grid">${Array.from({ length: 6 }, () => `<div class="shop-item rare-wait"><span class="rare-q" aria-hidden="true">？</span><span class="nm">？？？</span><span class="tag">準備中</span></div>`).join("")}</div>
+          <p class="hint">どんな商品が出るかはお楽しみ！ポイントをためて待っていよう。</p></section>` : ""}
         ${kinds.filter(([k]) => tab === "all" || tab === k).map(([k, label]) => { const list = sortG(goods.filter((x) => x.k === k)); return list.length ? `<section class="panel"><h2>${label} <small>${list.length}</small></h2>
           <div class="shop-grid">${list.map((it) => { const pv = it.k === "b" || av.b === "pic" ? { b: it.k === "b" ? it.id : "cat", bg: av.bg || "bg_sky" } : Object.assign({}, av); pv[it.k] = it.id; if (it.k === "b") { delete pv.mk; delete pv.sk; } return item(it, avatarHTML(pv, 80)); }).join("")}</div></section>` : ""; }).join("")}
         ${(tab === "all" || tab === "theme") && themes.length ? `<section class="panel"><h2>テーマ色</h2>
