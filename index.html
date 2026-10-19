@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>英文法トレーニング</title>
+<title>話す英文法（ハナブン）</title>
 <style>
 :root {
   --bg: #f4f6fa; --surface: #ffffff; --surface-2: #f7f9fc; --ink: #1d2433; --muted: #5f687c; --line: #e2e6ee;
@@ -2273,7 +2273,7 @@ CONTENT.push(...[{"id":"tp1","grade":1,"title":"三人称単数現在形（肯�
 </script>
 <script>
 /* =====================================================================
-   英文法トレーニング  アプリ本体
+   話す英文法（ハナブン）  アプリ本体
    ・Apps Script から配信されたとき … 「本番モード」（記録はスプレッドシート）
    ・ファイルを直接開いたとき       … 「お試しモード」（記録はこの端末のブラウザ）
    ===================================================================== */
@@ -3414,7 +3414,7 @@ function header(title, backFn) {
   const sw = state.isAdmin ? `<span class="view-switch" role="group" aria-label="画面の切りかえ">
       <button class="${state.viewAsStudent ? "" : "on"}" data-view="admin">管理者画面</button><button class="${state.viewAsStudent ? "on" : ""}" data-view="student">生徒画面</button></span>` : "";
   return `${state.isAdmin && state.viewAsStudent ? `<div class="preview-bar">生徒の画面を表示しています（先生だけに見える表示です）</div>` : ""}<header class="bar">
-    ${backFn ? `<button class="icon-btn" id="backBtn" aria-label="もどる">‹</button>` : `<span class="logo">G</span>`}
+    ${backFn ? `<button class="icon-btn" id="backBtn" aria-label="もどる">‹</button>` : `<span class="logo">ハ</span>`}
     <h1>${esc(title)}</h1>
     ${sw}
     <span class="who">${MODE === "demo" ? '<span class="badge">お試し</span>' : esc(state.email.split("@")[0])}</span>
@@ -3623,7 +3623,7 @@ function renderHome() {
     ${folders.length > SHOWF ? `<button class="tp-all" id="toFolders">すべてのフォルダを見る（${folders.length}）▶</button>` : ""}
   </section>`;
   const slots = Array.from({ length: STAMPS_PER_CARD }, (_, k) => `<span class="slot ${k < rw.onCard ? "on" : ""} ${k === rw.onCard - 1 && rw.todayDone ? "today" : ""}">${k < rw.onCard ? "🐾" : k + 1}</span>`).join("");
-  render(`${header("英文法トレーニング")}
+  render(`${header("話す英文法（ハナブン）")}
     <main class="wrap home">
       ${speechAvailable ? "" : `<div class="notice small">この端末では音声認識が使えません。キーボードのマイクや文字入力で答えてください。</div>`}
       <section class="me-bar">
@@ -5106,7 +5106,7 @@ async function renderReports(opt, back) {
   const page = (r) => {
     const p = r.profile;
     return `<article class="report-page">
-      <header class="rp-head"><div><div class="rp-title">英文法トレーニング　学習レポート</div><div class="rp-sub">${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日 現在</div></div>
+      <header class="rp-head"><div><div class="rp-title">話す英文法（ハナブン）　学習レポート</div><div class="rp-sub">${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日 現在</div></div>
         <div class="rp-who">${p.cls ? `<span>${esc(p.cls)}</span>` : ""}${p.no ? `<span>${esc(p.no)}番</span>` : ""}<b>${esc(personName(p))}</b></div></header>
       <div class="rp-sum"><div><small>級・段</small><b>${esc(r.level.name)}</b></div><div><small>けいけん値</small><b>${r.xp}</b></div><div><small>練習した日</small><b>${r.days}日</b></div>
         <div><small>最高の連続</small><b>${r.bestStreak}日</b></div><div><small>マスターした文法</small><b>${r.mastered} / ${CONTENT.length}</b></div><div><small>バッジ</small><b>${r.badges.length}</b></div></div>
@@ -5132,7 +5132,7 @@ async function renderTeachers() {
   try { d = await api.teachers(); } catch (e) { return failMain(e); }
   const draw = (data, note) => {
     const classes = data.classes || [];
-    const invite = `【英文法トレーニング】先生用の画面にご招待します。\n学校の Google アカウントで次のURLを開き、「英文法トレーニングをはじめる」を押してください。管理者画面が開きます。\n${MODE === "api" ? LOGIN_URL : "（公開用のURL）"}`;
+    const invite = `【話す英文法（ハナブン）】先生用の画面にご招待します。\n学校の Google アカウントで次のURLを開き、「話す英文法（ハナブン）をはじめる」を押してください。管理者画面が開きます。\n${MODE === "api" ? LOGIN_URL : "（公開用のURL）"}`;
     $("main").innerHTML = `
       <section class="panel"><h2>先生の一覧</h2>
         <p class="hint">ここにいる先生は、ログインすると管理者画面になります。担当クラスがある先生は、そのクラスの生徒だけが表示されます（空欄の先生は全クラス）。</p>
@@ -5248,14 +5248,14 @@ async function renderTeacherStamps() {
 
 /* ---------- ログイン（本番のとき） ---------- */
 function renderLogin(msg) {
-  render(`<header class="bar"><span class="logo">G</span><h1>英文法トレーニング</h1></header>
+  render(`<header class="bar"><span class="logo">ハ</span><h1>話す英文法（ハナブン）</h1></header>
     <main class="wrap">
       <section class="panel login">
         <h2>ログイン</h2>
         ${msg ? `<p class="msg ng">${esc(msg)}</p>` : ""}
         <p>学校の Google アカウントでログインしてください。</p>
         <a class="btn primary big" href="${esc(LOGIN_URL)}">学校のアカウントでログイン</a>
-        <p class="hint">ボタンを押すと Google のページが開きます。「英文法トレーニングをはじめる」を押すと、この画面にもどってきます。</p>
+        <p class="hint">ボタンを押すと Google のページが開きます。「話す英文法（ハナブン）をはじめる」を押すと、この画面にもどってきます。</p>
       </section>
     </main>`);
 }
@@ -5569,7 +5569,7 @@ async function init() {
   } catch (e) {
     if (e instanceof AuthError) return renderLogin(e.message);
     if (/名簿に登録されていない/.test(e.message)) {
-      app().innerHTML = `<header class="bar"><span class="logo">G</span><h1>英文法トレーニング</h1></header><main class="wrap"><section class="panel login">
+      app().innerHTML = `<header class="bar"><span class="logo">ハ</span><h1>話す英文法（ハナブン）</h1></header><main class="wrap"><section class="panel login">
         <h2>まだ使えません</h2><p class="msg ng">${esc(e.message)}</p><p>先生が名簿に登録すると使えるようになります。別のアカウントでログインしている場合は、ログインし直してください。</p>
         <button class="btn primary big" id="relogin">ログインし直す</button></section></main>`;
       $("#relogin").onclick = () => { lsSet("eg_token", ""); renderLogin(""); };
