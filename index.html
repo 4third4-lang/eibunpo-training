@@ -619,6 +619,50 @@ table.sets td, table.sets th { vertical-align: top; }
 
 /* ===== マスターモード ===== */
 .mc-items { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0; }
+
+/* 課題（範囲の総復習）：ダンジョン */
+.kind-chip.rg { background: #2b2f4a; color: #ffe8a3; }
+.range-panel { border: 2px solid #2b2f4a; background: linear-gradient(160deg, var(--surface), color-mix(in srgb, #2b2f4a 8%, var(--surface))); }
+.range-panel.done { border-color: var(--gold); background: linear-gradient(135deg, var(--surface), #fff4cc); }
+.range-panel h2 { margin-top: 0; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.range-panel h2 small { font-size: 13px; color: var(--muted); font-weight: 700; }
+.dungeon { display: grid; gap: 10px; margin: 10px 0 14px; }
+.dg-room { border-radius: 14px; padding: 8px 10px 10px; background: #1f2238; color: #f1f3f5; box-shadow: inset 0 0 0 2px #3b3f63; }
+.dg-room.clear { background: #2b3a2e; box-shadow: inset 0 0 0 2px #5c940d; }
+.dg-room-name { font-size: 13px; font-weight: 800; display: flex; gap: 6px; align-items: baseline; margin-bottom: 6px; }
+.dg-room-name small { margin-left: auto; color: #ced4da; font-weight: 700; }
+.dg-mons { display: flex; gap: 8px; flex-wrap: wrap; }
+.dg-mons.wrap-row { justify-content: center; }
+.dg-mon { width: 104px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px; padding: 6px 4px; border-radius: 12px; background: rgba(255,255,255,.06); }
+.rg-today .dg-mon { background: var(--surface-2); color: var(--ink); }
+.dg-mon .dg-name { font-size: 11px; font-weight: 700; line-height: 1.3; }
+.dg-mon .dg-st { font-size: 11px; font-weight: 800; color: #ffd43b; }
+.rg-today .dg-mon .dg-st { color: var(--accent); }
+.dg-mon.s-weak .dg-st { color: #ff8787; }
+.dg-mon.s-done .dg-st { color: #8ce99a; }
+.rg-today .dg-mon.s-done .dg-st { color: #2b8a3e; }
+.dg-mon.stuck { opacity: .55; }
+.dg-hp { font-size: 12px; color: #ff6b6b; letter-spacing: 1px; line-height: 1; }
+.dg-q { display: grid; place-items: center; border-radius: 50%; background: #3b3f63; color: #adb5bd; font-size: 28px; font-weight: 900; }
+.rg-today .dg-q { background: var(--line); color: var(--muted); }
+.rg-tag { display: inline-flex; align-items: center; gap: 6px; }
+.rg-tag b { color: var(--accent); }
+.rg-rule { margin: 10px 0; text-align: left; background: var(--surface-2); border-radius: 12px; padding: 8px 12px; }
+.rg-rule summary { font-weight: 800; cursor: pointer; }
+.rg-note { margin: 8px 0; padding: 8px 12px; border-radius: 10px; background: #e7f5ff; color: #1864ab; font-weight: 700; text-align: left; }
+.rg-note.stop { background: #fff0f0; color: #c92a2a; }
+.rg-items { margin: 12px 0; }
+.rg-items summary { font-weight: 800; cursor: pointer; padding: 6px 0; }
+.rg-vplist { margin: 6px 0 0; padding-left: 1.2em; }
+.rg-table td, .rg-table th { text-align: center; min-width: 26px; }
+.rg-table td.rg-weak { background: #ffe3e3; color: #c92a2a; font-weight: 800; }
+.rg-table td.rg-stuck { background: #ffc9c9; }
+.rg-legend { margin: 8px 0 14px; font-size: 13px; }
+.rg-legend div { margin: 4px 0; }
+.rg-calls { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+.rg-calls li { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.rg-call .chip.rg-stuck { background: #ffc9c9; color: #a61e1e; }
+@media (max-width: 480px) { .dg-mon { width: 92px; } }
 .master-panel { border: 2px dashed var(--gold); }
 .master-panel.done { border: 2px solid var(--gold); background: linear-gradient(135deg, var(--surface), #fff4cc); }
 .master-panel h2 { margin-top: 0; }
@@ -2577,7 +2621,8 @@ const DEFAULT_SETTINGS = {
   omikuji: true,           // おみくじを使えるようにする
   picAvatar: true,         // 画像・お絵かきのアバターを使えるようにする
   picApproval: true,       // 画像・お絵かきのアバターは、先生が承認してからほかの人に見せる
-  rosterOnly: false        // 名簿に登録した生徒だけ使える
+  rosterOnly: false,       // 名簿に登録した生徒だけ使える
+  rangeTask: { need: 2, gap: 3, minutes: 15, maxQ: 15 } // 課題（範囲の総復習）：別の日に need 回正解・最初の正解から gap 日あけても正解／1回の時間（分）と問題数
 };
 function mergeSettings(s) {
   const d = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
@@ -2923,6 +2968,7 @@ function openMistakes(records) {
      students:[メール]（あれば、その生徒だけに配信。なければ classes の生徒全員）, src:{文法ID: 問題セットID} }]
    settings.folders = [{ id, name }]
    課題（通常）＝ふくまれる文法をすべてマスター ／ 課題（マスターモード、文法2つ以上）＝すべてマスター＋まとめ問題に合格
+   課題（範囲の総復習、kind:"range"）＝文法ごとの観点を、日をあけてすべて確かめる（rangeStatus）
    ストーリーモードの課題は settings.storyGoal（全クラス）と settings.classTasks[クラス].storyGoal */
 function taskForStudent(t, cls, email) {
   if (Array.isArray(t.students) && t.students.length) return t.students.indexOf(String(email || "").toLowerCase()) >= 0;
@@ -2938,7 +2984,7 @@ function settingsForClass(settings, cls, all, email) {
   if (ct && ct.storyGoal !== undefined) s.storyGoal = ct.storyGoal || null;
   const T = tasksFor(s, cls, all, email), seen = {};
   s.myTasks = T; s.due = {}; s.src = {}; s.mm = {};
-  T.forEach((t) => t.items.forEach((id) => {
+  T.filter((t) => !isRangeTask(t)).forEach((t) => t.items.forEach((id) => { // 範囲の総復習は「課題の文法」に数えない（自由練習・締め切りの表示はそのまま）
     seen[id] = 1;
     if (t.due && (!s.due[id] || t.due < s.due[id])) s.due[id] = t.due;
     if (t.src && t.src[id]) s.src[id] = t.src[id];
@@ -2958,7 +3004,15 @@ function taskPassAt(history) {
 }
 function taskPassed(history) { return Object.keys(taskPassAt(history)); }
 /* 課題の状態（mAt＝文法をマスターした日時、passAt＝まとめ問題に合格した日時） */
-function taskStatus(t, mAt, passAt, now) {
+function taskStatus(t, mAt, passAt, now, history, settings) {
+  if (isRangeTask(t)) {
+    // 範囲の総復習：n／total＝確認済みの観点の数、done＝全部の観点がそろった（そのあとまちがえてもクリアは消さない）
+    const rs = rangeStatus(t, history, rangeConf(settings), now);
+    return { n: rs.confirmed, total: rs.total, ready: true, mm: false, range: true, passed: !!rs.everAt, done: !!rs.everAt, doneAt: rs.everAt,
+      weak: rs.vps.filter((v) => v.st === "weak").length, stuck: rs.vps.filter((v) => v.stuck).length,
+      vps: rs.vps.map((v) => ({ i: v.iid, k: v.k, s: v.st, l: v.left, x: v.stuck ? 1 : 0 })),
+      due: t.due ? dueState(t.due, rs.everAt, now) : null };
+  }
   const items = t.items || [], n = items.filter((id) => mAt[id]).length, ready = items.length > 0 && n === items.length;
   const mm = isMasterTask(t), pass = mm ? (passAt || {})[t.id] || null : null;
   let doneAt = null;
@@ -3038,6 +3092,152 @@ function storyDone(history) {
   const s = {};
   (history || []).forEach((r) => { if (r.itemId === "story" && r.passed) (r.tags || []).forEach((t) => { if (/^s:/.test(t)) s[t.slice(2)] = 1; }); });
   return Object.keys(s);
+}
+/* ===== 課題（範囲の総復習）：文法ごとの「観点」を、日をあけて確かめていく =====
+   観点＝1つの文法の中で、別々に確かめたいポイント（例：be動詞なら am・is・are の使い分け）。
+   どの問題がどの観点かは、問題の正解の英文で決める（下の正規表現。「*」の観点は、どれにも当たらない問題の入れ先）。
+   記録：総復習の1回分を itemId "range"・段階0 で保存し、tags に「r:課題ID」と、答えた問題ごとの「v:文法ID.観点番号＋しるし」。
+         しるし　+ 正解 ／ - まちがい ／ ! その日はここまで（同じ観点で3回まちがえた）
+   確認済み＝別の日に need 回以上正解し、最初の正解から gap 日以上あけても正解していて、いちばん新しい答えが正解 */
+const VIEWPOINTS = {
+  be1: [["主語が I のときは am", "\\bi am\\b|\\bi'm\\b"], ["I・you 以外の単数は is", "\\bis\\b|\\b(he|she|it|that)'s\\b"], ["you・複数は are", "\\bare\\b|'re\\b"]],
+  be2: [["否定文（be動詞のあとに not）", "\\bnot\\b|n't\\b"], ["疑問文（be動詞を主語の前に）", "^(is|are|am)\\b"], ["答え方（Yes / No と be動詞）", "^(yes|no),|\\?\\s*(yes|no),"]],
+  wh1: [["What＋疑問文の語順", "^what (is|are|do|does)\\b"], ["*What＋名詞（何の〜）と答え方", "^what (?!is\\b|are\\b|do\\b|does\\b)\\w+|^(?!what\\b)|\\?\\s+\\w"]],
+  wh2: [["who（だれ）", "^who\\b"], ["whose（だれの）", "^whose\\b"], ["「〜のもの」で答える", "\\b(mine|yours|his|hers|ours|theirs|\\w+'s)\\.?$"]],
+  pl1: [["*複数形の s・es", "\\b(two|three|four|five|many|some)\\s+\\w+s\\b"], ["-ies・不規則な複数形、数えられない名詞", "\\w+ies\\b|\\b(children|men|women|feet|teeth|water|milk)\\b"]],
+  ar1: [["*a と an の使い分け", "\\ban?\\b"], ["the の使い方", "\\bthe\\b"]],
+  gv1: [["*主語＋一般動詞＋目的語（be動詞とまぜない）", "."]],
+  gv2: [["否定文（do not / don't）", "\\bdo not\\b|\\bdon't\\b"], ["疑問文（Do で始める）", "^do\\b"], ["答え方（Yes, I do. / No, I don't.）", "^(yes|no),|\\?\\s*(yes|no),"]],
+  tp1: [["*動詞に s をつける", "\\b(he|she|it|ken|tom|emi|my \\w+|the \\w+)\\s+\\w+[^aeiou\\W]s\\b|\\w+(ks|ys|ts|ns|ps|ls|ms|ds|rs|ves|kes|tes)\\b"], ["形が変わる動詞（watches・studies・has）", "\\w*(ches|shes|xes|sses)\\b|\\b(goes|does|has)\\b|\\w+ies\\b"]],
+  tp2: [["否定文（does not / doesn't）", "\\bdoes not\\b|\\bdoesn't\\b"], ["疑問文（Does で始める）", "^does\\b"], ["答え方（Yes, he does. など）", "^(yes|no),|\\?\\s*(yes|no),"]],
+  pr1: [["*「〜の」の形（my, his, our など）", "\\b(my|your|his|her|its|our|their)\\s+\\w+"], ["「〜を・〜に」の形（me, him, them など）", "\\b(me|him|her|us|them)\\b(?!\\s+\\w+)|\\b(me|him|us|them)\\b"], ["「〜のもの」の形（mine, hers など）", "\\b(mine|yours|hers|ours|theirs)\\b"], ["「〜は」の形（I, he, she など）", "^(i|he|she|we|they)\\b"]],
+  cn1: [["*can＋動詞の原形", "\\bcan\\s+\\w+"]],
+  cn2: [["否定文（cannot / can't）", "\\bcannot\\b|\\bcan't\\b"], ["疑問文（Can を主語の前に）", "^can (?!i\\b|you help|you open)\\w+"], ["答え方（Yes, I can. など）", "^(yes|no),|\\?\\s*(yes|no),"], ["Can you〜?（依頼）／ Can I〜?（許可）", "^can (i\\b|you help|you open)"]],
+  im1: [["*動詞の原形で始める命令文", "^(please\\s+)?(?!don't|be\\b|let's)\\w+|,\\s*please\\.$"], ["Be で始める命令文", "^be\\b|don't be\\b"], ["Don't＋動詞（〜してはいけない）", "^don't\\b"], ["Let's＋動詞（〜しよう）", "^let's\\b"]],
+  pg1: [["*be動詞＋-ing（今〜している）", "\\b(am|is|are|'m|'s|'re)\\s+\\w+ing\\b"], ["-ing の形に注意（making・running など）", "\\b(making|writing|running|swimming|having|coming|taking|sitting|getting|dancing|using|riding|driving|leaving|smiling|shopping|stopping|cutting|putting|living|moving|closing|giving|hitting|beginning)\\b"]],
+  pg2: [["否定文（be動詞のあとに not）", "\\bnot\\b|n't\\b"], ["疑問文（be動詞を主語の前に）", "^(is|are|am)\\b"], ["What〜doing? と答え方", "^what\\b|^(yes|no),|\\?\\s*(yes|no),"]],
+  wh4: [["which（どちら・どれ）", "^which\\b"], ["how（どのように・どんな様子）", "^how\\b"]],
+  wh3: [["*where（どこ）と場所の答え", "^where\\b|\\b(near|under)\\b"], ["when（いつ）と時の答え", "^when\\b|\\bafter dinner\\b"]],
+  hm1: [["*How many＋名詞の複数形", "^how many\\b"], ["How much（値段）", "^how much\\b"], ["How old（年齢）", "^how old\\b"]],
+  ps1: [["*規則動詞の過去形（-ed）", "\\w+ed\\b"], ["形に注意（used・studied など）", "\\b(used|lived|liked|danced|arrived|closed|moved|loved|studied|cried|tried|carried|stopped|planned)\\b"]],
+  ps2: [["*不規則動詞の過去形（went・saw など）", "."]],
+  ps3: [["否定文（did not / didn't）", "\\bdid not\\b|\\bdidn't\\b"], ["疑問文（Did で始める・動詞は原形）", "^did\\b"], ["答え方・疑問詞＋did", "^(yes|no),|\\?\\s*(yes|no),|^(what|where|when|who|how)\\b"]],
+  bp1: [["*was と were の使い分け", "\\b(was|were)\\b"], ["否定文・疑問文（was / were）", "\\bnot\\b|n't\\b|^(was|were)\\b"]],
+  pp1: [["*was / were＋-ing（そのとき〜していた）", "\\b(was|were)\\s+(not\\s+)?\\w+ing\\b"], ["疑問文・What〜doing?・否定文", "^(was|were|what)\\b|\\bnot\\b|^(yes|no),|\\?\\s*(yes|no),"]],
+  tm1: [["*時刻（What time / at＋時刻）", "\\btime\\b|\\bat (six|seven|eight|nine|ten|eleven|twelve|\\d)|seven thirty|\\bit is ten\\b"], ["曜日・日付（What day / What's the date）", "\\bday\\b|\\bdate\\b|\\b(sunday|monday|tuesday|wednesday|thursday|friday|saturday)\\b|\\b(january|february|march|april|may|june|july|august|september|october|november|december)\\b"]],
+  fu2: [["*will＋動詞の原形", "\\bwill\\b|'ll\\b"], ["否定文・疑問文（won't / Will〜?）", "\\bwill not\\b|\\bwon't\\b|^will\\b|^(yes|no),"]],
+  fu1: [["*be going to＋動詞の原形", "\\bgoing to\\b"], ["否定文・疑問文・What〜going to?", "\\bnot\\b|^(are|is|am|what)\\b|^(yes|no),"]],
+  md1: [["must（〜しなければならない）", "\\bmust\\b(?! not)"], ["have to / has to / had to", "(?<!n't )\\b(have|has|had) to\\b"], ["must not（禁止）と don't have to（不要）", "\\bmust not\\b|n't have to\\b|\\bdon't have to\\b"]],
+  md2: [["should（〜すべき）", "\\bshould\\b"], ["may（してもよい・かもしれない）", "\\bmay\\b"]],
+  md3: [["*依頼（Will you〜? / Could you〜?）", "^(will|could|can|would) you\\b"], ["許可（May I〜?）", "^may i\\b"], ["申し出・誘い（Shall I〜? / Shall we〜?）", "^shall\\b|^yes, please"]],
+  th1: [["*There is / are / was / were の使い分け", "\\bthere (is|are|was|were)\\b"], ["疑問文（Is there〜? / How many〜are there?）", "^(is|are|how many)\\b|^(yes|no),|\\?\\s*(yes|no),"]],
+  in1: [["*want to / like to など〈動詞＋to〉", "\\b(want|wants|like|likes|tried|started|need|hope)\\s+to\\b"], ["主語・補語の to（My dream is to〜）", "\\bis to\\b"]],
+  in2: [["*目的を表す to（〜するために）", "\\bto\\s+\\w+"], ["感情の原因を表す to（glad to〜 など）", "\\b(glad|happy|sad|surprised|sorry|excited)\\s+to\\b"]],
+  in3: [["*〈名詞＋to＋動詞の原形〉（〜するための）", "."]],
+  it1: [["*It is＋形容詞＋to〜", "^it (is|was|'s)\\b|^is it\\b"], ["for＋人（me, him など）", "\\bfor (me|him|her|you|us|them)\\b"]],
+  wt1: [["how to（〜のしかた）", "\\bhow to\\b"], ["what / where / when / which＋to", "\\b(what|where|when|which)\\s+(\\w+\\s+)?to\\b"]],
+  ot1: [["want＋人＋to（〜してほしい）", "\\bwants?\\s+\\w+\\s+to\\b"], ["tell＋人＋to（〜するように言う）", "\\b(told|tell|tells)\\b"], ["ask＋人＋to（〜するように頼む）", "\\b(asked|ask|asks)\\b"]],
+  gr1: [["*動名詞が目的語（enjoy / finish＋-ing など）", "\\b(like|likes|enjoy|enjoyed|finished|finish|stopped|started)\\s+\\w+ing\\b"], ["動名詞が主語・補語（Reading books is〜）", "^\\w+ing\\b|\\bis \\w+ing\\b"], ["前置詞＋-ing（good at / for / about）", "\\b(at|for|about|of|in|without)\\s+\\w+ing\\b"]],
+  gr2: [["不定詞だけをとる動詞（want / hope / decide＋to）", "\\b(want|wants|hope|decided|decide)\\s+to\\b"], ["*動名詞だけをとる動詞・前置詞のあと（enjoy / finish / stop）", "\\b(enjoyed|enjoy|finished|finish|stop|stopped)\\s+\\w+ing\\b|^stop \\w+ing|\\bin \\w+ing\\b"]],
+  cj1: [["when（〜するとき）", "\\bwhen\\b"], ["if（もし〜なら）", "\\bif\\b"], ["because（〜なので）", "\\bbecause\\b"]],
+  cj2: [["*think / know / hope＋that〜", "\\b(think|know|hope|thought|knew)\\b"], ["be sure that〜 / be glad that〜", "\\b(sure|glad)\\b"]],
+  lk1: [["*look / sound / feel＋形容詞（look like〜も）", "\\b(look|looks|looked|sound|sounds|feel|feels)\\b"], ["become / get＋形容詞・名詞（〜になる）", "\\b(became|become|getting|get|gets)\\b"]],
+  sv1: [["*〈動詞＋人＋もの〉（give・show・tell など）", "."]],
+  sv2: [["call / name A B（A を B と呼ぶ・名づける）", "\\b(call|calls|named|name|called)\\b"], ["make / keep A＋形容詞（A を〜にする）", "\\b(made|makes|make|keep)\\b"]],
+  cp3: [["*as＋原級＋as（同じくらい）", "\\bas\\b"], ["not as〜as（…ほど〜ではない）", "\\bnot as\\b|\\bcannot \\w+ as\\b"]],
+  cp1: [["*比較級（-er）＋than", "\\w+er than\\b"], ["形が変わる比較級（bigger・easier・better）", "\\b(bigger|easier|better|hotter|larger|heavier|busier|happier|earlier)\\b"]],
+  cp2: [["*the＋最上級（-est）", "\\bthe \\w+est\\b"], ["形が変わる最上級（best・biggest・easiest）", "\\b(best|biggest|easiest|hottest|largest|busiest|happiest)\\b"], ["「〜の中で」の in と of", "\\bof (the|all)\\b|\\bin (his|her|our|the|japan|this|my|their)\\b"]],
+  cp4: [["*more〜than / the most〜", "\\bmore\\b|\\bmost\\b"], ["like〜better than / like〜the best", "\\bbetter\\b|\\bthe best\\b"]],
+  pv1: [["*be動詞＋過去分詞（〜される）", "\\b(is|are|am)\\s+\\w+"], ["by〜（〜によって）", "\\bby\\b"], ["形が変わる過去分詞（spoken・made・read など）", "\\b(spoken|made|read|seen|written|taken|built|sung|known|given|broken|eaten|done)\\b"]],
+  pv2: [["*過去の受け身（was / were＋過去分詞）", "\\b(was|were)\\b"], ["否定文・疑問文（When was〜? も）", "\\bnot\\b|^(was|were|is|are|when|where)\\b|^(yes|no),"]],
+  pf1: [["*have / has＋過去分詞（〜したことがある）", "\\b(have|has)\\b"], ["ever・never・回数（once・twice・〜times）", "\\b(ever|never|once|twice|times)\\b"], ["have been to〜（〜に行ったことがある）", "\\bbeen (to|abroad)\\b"]],
+  pf3: [["*just・already（〜したところだ・もう〜した）", "\\b(just|already)\\b"], ["yet（疑問文の「もう」・否定文の「まだ」）", "\\byet\\b"]],
+  pf2: [["*for と since（〜の間・〜から）", "\\b(for|since)\\b"], ["How long have〜?（どのくらいの間）", "^how long\\b"]],
+  pfp: [["*have been＋-ing（ずっと〜し続けている）", "\\bbeen \\w+ing\\b"], ["How long have you been〜ing?", "^how long\\b"]],
+  tt1: [["*too〜to（〜すぎて…できない）", "\\btoo\\b"], ["〜enough to（…するのに十分〜）", "\\benough\\b"]],
+  st1: [["*so〜that＋主語＋動詞（とても〜なので…）", "\\bso\\b"], ["so〜that＋can't（とても〜なので…できない）", "\\b(can't|cannot|couldn't|could not)\\b"]],
+  pt1: [["*〈名詞＋-ing〜〉（〜している…）", "."]],
+  pt2: [["*〈名詞＋過去分詞〜〉（〜された…）", "\\b\\w+ (made|written|spoken|called|taken|built|loved|read)\\b"], ["過去分詞1語は名詞の前（the broken window）", "\\b(broken|boiled|used)\\s+\\w+\\b"]],
+  rl1: [["*〈人＋who＋動詞〜〉", "."]],
+  rl2: [["*〈もの・動物＋which＋動詞〜〉", "\\bwhich\\b"], ["that（人・もの・動物のどれでも）", "\\bthat\\b"]],
+  rl3: [["which / that を使う（目的格）", "\\b(which|that)\\b"], ["*関係代名詞を省略した形（the book I read）", "^(?!.*\\b(which|that)\\b)"]],
+  iq1: [["*〈疑問詞＋主語＋動詞〉の語順（do / does を使わない）", "."]],
+  sj1: [["*I wish＋過去形（were・had など）", "\\b(were|had|knew)\\b"], ["I wish I could〜（〜できたらいいのに）", "\\bcould\\b"]],
+  sj2: [["*If＋過去形〜, would＋動詞の原形", "\\bwould\\b"], ["If〜, could＋動詞の原形", "\\bcould\\b"], ["if の中の be動詞は were", "\\bwere\\b"]],
+  ot2: [["let＋人＋動詞の原形（〜させてあげる）", "\\blet\\b"], ["help＋人＋動詞の原形（〜するのを手伝う）", "\\bhelp(ed|s)?\\b"], ["make＋人＋動詞の原形（〜させる）", "\\b(made|make|makes)\\b"]],
+  ex1: [["How＋形容詞・副詞！", "^how\\b"], ["What＋a / an＋形容詞＋名詞！", "^what\\b"]]
+};
+const RANGE_DEFAULT = { need: 2, gap: 3, minutes: 15, maxQ: 15 };
+function isRangeTask(t) { return !!t && t.kind === "range"; }
+function rangeConf(settings) {
+  const r = (settings || {}).rangeTask || {}, num = (v, lo, hi, d) => { const n = Math.round(Number(v)); return n >= lo && n <= hi ? n : d; };
+  return { need: num(r.need, 1, 5, RANGE_DEFAULT.need), gap: num(r.gap, 0, 30, RANGE_DEFAULT.gap), minutes: num(r.minutes, 5, 40, RANGE_DEFAULT.minutes), maxQ: num(r.maxQ, 5, 40, RANGE_DEFAULT.maxQ) };
+}
+// その文法の観点 [{ name, re, dflt }]（観点が決まっていない文法は「この文法」1つ）
+function vpDefs(itemId) {
+  const L = VIEWPOINTS[itemId];
+  if (!L || !L.length) return [{ name: "この文法", re: ".", dflt: true }];
+  const d = Math.max(0, L.findIndex((v) => v[0].charAt(0) === "*"));
+  return L.map((v, k) => ({ name: v[0].replace(/^\*/, ""), re: v[1], dflt: k === d }));
+}
+// 正解の英文 → その問題の観点の番号（いくつか当たることもある）
+function vpOfText(itemId, text) {
+  const D = vpDefs(itemId), s = String(text || "").toLowerCase().trim(), hit = [];
+  D.forEach((v, k) => { try { if (new RegExp(v.re).test(s)) hit.push(k); } catch (e) {} });
+  if (!hit.length) hit.push(Math.max(0, D.findIndex((v) => v.dflt)));
+  return hit;
+}
+// 記録 → 観点ごとの出来事（古い順） {"be1.0": [{ ts, day, m }]}
+function rangeEvents(history) {
+  const ev = {};
+  (history || []).filter((r) => r.itemId === "range").sort((a, b) => tsNum(a.timestamp) - tsNum(b.timestamp)).forEach((r) => {
+    const day = dayKey(r.timestamp);
+    (r.tags || []).forEach((t) => {
+      const m = /^v:([A-Za-z0-9]+\.\d+)([+\-!])$/.exec(String(t));
+      if (m) (ev[m[1]] = ev[m[1]] || []).push({ ts: r.timestamp, day: day, m: m[2] });
+    });
+  });
+  return ev;
+}
+// 1つの観点の状態　st：new 未確認 ／ weak 苦手（いちばん新しい答えがまちがい）／ prog 確認中 ／ done 確認済み
+//   left：あと何回（何日）正解すればよいか、useful：今日正解すると確認が進むか、stuck：「今日はここまで」のあと、まだ正解していない
+function vpStateOf(evs, conf, today) {
+  const L = evs || [], okDays = [], seen = {};
+  let last = "", lastBang = -1, lastOk = -1, stuckToday = false;
+  L.forEach((e, n) => {
+    if (e.m === "+") { lastOk = n; if (!seen[e.day]) { seen[e.day] = 1; okDays.push(e.day); } }
+    if (e.m === "!") { lastBang = n; if (e.day === today) stuckToday = true; } else last = e.m;
+  });
+  const okN = okDays.length, first = okN ? dayNum(okDays[0]) : 0, span = okN ? dayNum(okDays[okN - 1]) - first : 0;
+  const met = okN >= conf.need && span >= conf.gap;
+  const st = !L.length ? "new" : last === "-" ? "weak" : met ? "done" : "prog";
+  const gapLeft = okN && span < conf.gap ? 1 : 0;
+  const left = st === "done" ? 0 : Math.max(conf.need - okN, gapLeft, st === "weak" ? 1 : 0);
+  const okToday = !!seen[today], waitTo = okN && dayNum(today) - first < conf.gap && okN + 1 >= conf.need ? dayKeyOfNum(first + conf.gap) : "";
+  return { st: st, left: left, okDays: okN, stuck: lastBang > lastOk, stuckToday: stuckToday, useful: st === "weak" || st === "new" || (st === "prog" && !okToday && !waitTo), waitTo: st === "prog" ? waitTo : "" };
+}
+const dayKeyOfNum = (n) => dayKey(n * 86400000 + 12 * 3600000);
+/* 範囲の総復習の状態：観点ごとの状態と、はじめて全部の観点が確認済みになった日時（everAt。そのあとまちがえても課題のクリアは消さない） */
+function rangeStatus(t, history, conf, now) {
+  const today = dayKey(now || Date.now()), ev = rangeEvents(history), vps = [], keys = [];
+  (t.items || []).forEach((iid) => vpDefs(iid).forEach((v, k) => {
+    const key = iid + "." + k;
+    keys.push(key);
+    vps.push(Object.assign({ iid: iid, k: k, name: v.name }, vpStateOf(ev[key], conf, today)));
+  }));
+  // 日時の順に出来事をたどって、全部が確認済みになった最初の日時を探す
+  let everAt = null;
+  const all = [];
+  keys.forEach((key) => (ev[key] || []).forEach((e, n) => all.push({ key: key, n: n, ts: e.ts })));
+  all.sort((a, b) => tsNum(a.ts) - tsNum(b.ts) || a.n - b.n);
+  const doneNow = {};
+  let doneN = 0;
+  for (let j = 0; j < all.length && keys.length; j++) {
+    const a = all[j], d = vpStateOf(ev[a.key].slice(0, a.n + 1), conf, dayKey(a.ts)).st === "done";
+    if (d !== !!doneNow[a.key]) { doneNow[a.key] = d; doneN += d ? 1 : -1; }
+    if (doneN === keys.length) { everAt = a.ts; break; }
+  }
+  return { vps: vps, confirmed: vps.filter((v) => v.st === "done").length, total: vps.length, everAt: everAt };
 }
 /* PDF・Word の問題セット：文のリスト → 段階2〜4の問題（サーバーとお試しモードで共通）
    問題ID は「項目ID-段階-セットID＋種類＋文の番号」（記録・復習・まちがい集計に使う） */
@@ -3164,7 +3364,7 @@ const findTask = (id) => myTasks().find((t) => t.id === id) || null;
 // 課題の状態を調べる関数（マスターした日時・まとめ問題の合格はまとめて計算）
 function taskChecker() {
   const mAt = masteredAt(state.history, state.settings), pass = taskPassAt(state.history);
-  return (t) => taskStatus(t, mAt, pass);
+  return (t) => taskStatus(t, mAt, pass, undefined, state.history, state.settings);
 }
 // 締め切りが近い順（まだの課題 → クリアした課題）
 function sortTasks(list, st) {
@@ -3190,6 +3390,7 @@ function nextStep() {
   for (const t of sortTasks(myTasks(), st)) {
     const x = st(t);
     if (x.done) continue;
+    if (x.range) { if (rangeOf(t).vps.some((v) => v.useful && !v.stuckToday)) return { task: t, range: true, it: taskItems(t)[0] }; continue; }
     for (const it of taskItems(t)) {
       for (let k = 1; k <= 4; k++) if (!isCleared(it.id, k) && isUnlocked(it.id, k)) return { i: CONTENT.indexOf(it), stage: k, it };
     }
@@ -3356,7 +3557,8 @@ function buildTranslateRequest(q, grammar, text) {
   return {
     kind: "translate",
     system: SYSTEM_TRANSLATE,
-    user: `日本語: ${q.ja}\n練習している文法: ${grammar}\n正解例: ${q.answers.join(" / ")}\n\n生徒の答え（書き起こし）:\n"""${text}"""`
+    user: `日本語: ${q.ja}\n練習している文法: ${grammar}\n正解例: ${q.answers.join(" / ")}\n\n生徒の答え（書き起こし）:\n"""${text}"""` +
+      (q._strict ? "\n\n（総復習の確認です。冠詞 a/an/the・三単現の s・名詞の複数形・動詞の時制や形などの小さな誤りも、すべて correct=false にしてください）" : "")
   };
 }
 
@@ -3516,7 +3718,7 @@ function demoSummary(email, h, pf, r) {
   const rw = computeRewards(h, eff, ITEM_IDS, { omDays: pf.omDays, teacherStamps: email === "お試しユーザー" ? lsGet("eg_tstamps", []).length : 0, spent: pf.spent, owned: pf.owned, hasAvatar: !!pf.avatar });
   const mm = masteredAt(h, eff), due = {}, days = {}, pass = taskPassAt(h), taskStates = {};
   Object.keys(eff.due || {}).forEach((id) => { const d = dueState(eff.due[id], mm[id]); if (d) due[id] = d; });
-  (eff.myTasks || []).forEach((t) => { taskStates[t.id] = taskStatus(t, mm, pass); });
+  (eff.myTasks || []).forEach((t) => { taskStates[t.id] = taskStatus(t, mm, pass, undefined, h, eff); });
   h.forEach((x) => { const k = dayKey(x.timestamp); days[k] = (days[k] || 0) + 1; });
   return { profile: { email, cls: r.cls || "", no: r.no || "", name: r.name || "", nickname: pf.nickname, avatar: pf.avatar, reg: !!r.reg }, level: rw.level, xp: rw.xp, points: rw.points, days: rw.days,
     streak: rw.streak, bestStreak: rw.bestStreak, badges: Array.from(rw.badges), mastered: rw.mastered, progress: computeProgress(h), masteredAt: mm, due, assigned: eff.assigned, taskList: eff.myTasks || [], taskStates, story: storyDone(h), storyGoal: eff.storyGoal || null, dayCounts: days, total: h.length };
@@ -3972,9 +4174,9 @@ function dueBlockHTML(due, d) {
   return d ? `<b>${fmtDue(due)}</b><small>（${dueWeek(due)}）</small><em>${d.state === "done" ? "✓ クリア" : d.state === "late" ? "クリア" : d.state === "over" ? "期限切れ" : d.left === 0 ? "今日まで！" : `あと${d.left}日`}</em>` : `<small>締め切り</small><b class="nd">なし</b>`;
 }
 const dueCls = (d, done) => (done ? "done" : !d ? "none" : d.state === "over" ? "over" : d.left <= 2 ? "soon" : "open");
-const kindChip = (t) => `<span class="kind-chip ${isMasterTask(t) ? "mm" : ""}">${isMasterTask(t) ? "課題（マスターモード）" : "課題（通常）"}</span>`;
+const kindChip = (t) => isRangeTask(t) ? `<span class="kind-chip rg">課題（範囲の総復習）</span>` : `<span class="kind-chip ${isMasterTask(t) ? "mm" : ""}">${isMasterTask(t) ? "課題（マスターモード）" : "課題（通常）"}</span>`;
 function taskCardHTML(t, x) {
-  const go = x.done ? "クリア" : x.mm && x.ready ? "まとめ問題へ" : `マスター ${x.n}/${x.total}`;
+  const go = x.range ? (x.done ? "制覇" : `たおした ${x.n}/${x.total}`) : x.done ? "クリア" : x.mm && x.ready ? "まとめ問題へ" : `マスター ${x.n}/${x.total}`;
   return `<button class="task-card due-${dueCls(x.due, x.done)}" data-t="${esc(t.id)}">
     <span class="tc-due">${dueBlockHTML(t.due, x.due)}</span>
     <span class="tc-main">${kindChip(t)}<span class="tc-title">${esc(t.name)}</span><span class="tc-sub">${taskItems(t).map((it) => esc(it.short)).join("・")}</span></span>
@@ -4001,6 +4203,7 @@ function storyTaskCardHTML(st, sg) {
   </button>`;
 }
 function renderHome() {
+  if (lsGet("eg_range_draft", null) && !(session && session.range)) flushRangeDraft().then(() => { if ($(".home")) renderHome(); });
   if (state.isAdmin && !state.viewAsStudent) return renderAdminHome();
   applySkin(state.profile.theme);
   const st = taskChecker();
@@ -4136,6 +4339,24 @@ function renderTaskView(tid, back) {
   const x = taskChecker()(t), list = taskItems(t);
   itemBack = () => renderTaskView(tid); curTask = t;
   const m = x.mm ? taskRun(t) : null;
+  if (x.range) {
+    render(`${header(t.name, true)}
+    <main class="wrap">
+      <section class="task-head due-${dueCls(x.due, x.done)}">
+        <span class="tc-due">${dueBlockHTML(t.due, x.due)}</span>
+        <span class="th-main">${kindChip(t)}<span class="th-name">${esc(t.name)}</span>
+          <span class="th-rule">下の${list.length}つの文法の「観点」（確かめるポイント）を、日をあけてすべて確かめるとクリア</span>
+          <span class="th-state ${x.done ? "ok" : ""}">${x.done ? "✓ この課題はクリアしました（ダンジョン制覇）" : `たおしたモンスター ${x.n} / ${x.total}`}</span></span>
+      </section>
+      ${rangePanelHTML(t, x)}
+      <details class="rg-items"><summary>文法ごとの練習（段階1〜4）</summary><div class="items">${list.map((it) => itemCardHTML(it, CONTENT.indexOf(it))).join("")}</div></details>
+      ${footerNote()}
+    </main>`);
+    bindBack(() => { curTask = null; (renderTaskView.back || renderHome)(); });
+    $$(".item-card").forEach((b) => (b.onclick = () => renderItem(+b.dataset.i)));
+    $("#goRange").onclick = () => startRange(t);
+    return;
+  }
   render(`${header(t.name, true)}
     <main class="wrap">
       <section class="task-head due-${dueCls(x.due, x.done)}">
@@ -5011,8 +5232,8 @@ function startQuiz(i, stage) {
 
 function quizHeader() {
   const { stage, qs, index, i } = session;
-  return `${header(session.story ? "とどめの一撃" : session.master ? "まとめ問題" : session.review ? "復習" : `段階${stage}　${CONTENT[i].short}`, true)}
-    <div class="progress"><div class="progress-bar s${session.review || session.master || session.story ? 3 : stage}" style="width:${(index / qs.length) * 100}%"></div></div>
+  return `${header(session.range ? "総復習ダンジョン" : session.story ? "とどめの一撃" : session.master ? "まとめ問題" : session.review ? "復習" : `段階${stage}　${CONTENT[i].short}`, true)}
+    <div class="progress"><div class="progress-bar s${session.review || session.master || session.story || session.range ? 3 : stage}" style="width:${(index / qs.length) * 100}%"></div></div>
     <div class="progress-text">${index + 1} / ${qs.length}</div>${session.story ? storyBattleBar() : ""}`;
 }
 
@@ -5063,12 +5284,12 @@ function renderQuestion() {
   const stage = q._st || session.stage; // 復習では問題ごとに段階がちがう
   render(`${quizHeader()}
     <main class="wrap">
-      ${session.review || session.master || session.story ? `<div class="review-tag">${esc(q._from || "")}</div>` : ""}
+      ${session.range ? `<div class="review-tag">${rangeTagHTML(q)}</div>` : session.review || session.master || session.story ? `<div class="review-tag">${esc(q._from || "")}</div>` : ""}
       ${questionCard(q, stage)}
       ${answerBlock({ lang: "en-US", placeholder: stage === 4 ? "聞き取り中に英語で言おう" : "マイクをタップして英語で言おう", multiline: false })}
       <div id="result"></div>
     </main>`);
-  bindBack(() => (session.story ? renderStory() : session.master ? backToTask(session.master) : session.review ? renderReview() : renderItem(session.i)));
+  bindBack(() => (session.range ? quitRange() : session.story ? renderStory() : session.master ? backToTask(session.master) : session.review ? renderReview() : renderItem(session.i)));
 
   let shownAt = 0, latency = null;
   const limit = state.settings.stage4.timeLimitSec;
@@ -5129,6 +5350,7 @@ async function judgeQuestion(q, ans, via, latency, ctl) {
   const late = stage === 4 && (latency == null || latency > state.settings.stage4.timeLimitSec);
   const finalCorrect = correct && !late;
   session.log.push({ qid: q.qid, st: stage, q: qText(q), a: ans.text, correct: finalCorrect, contentCorrect: correct, latency: latency == null ? null : Math.round(latency * 10) / 10, via, by });
+  const extra = session.range ? rangeAfter(q, finalCorrect) : ""; // 総復習：記録のしるし・まちがえたときの練習と再確認
 
   const isLast = session.index + 1 >= session.qs.length;
   res.innerHTML = `<div class="panel">
@@ -5136,6 +5358,7 @@ async function judgeQuestion(q, ans, via, latency, ctl) {
       ${stage === 4 && latency != null ? `<small>話し始め ${latency.toFixed(1)}秒</small>` : ""}</div>
     <div class="model-line"><span>正しい英文</span><div class="model-row"><b>${esc(model)}</b><button class="listen" id="listen" aria-label="お手本を聞く">🔊 お手本</button></div></div>
     ${feedback && !(finalCorrect && feedback === "正解です！") ? `<div class="feedback">${esc(feedback)}</div>` : ""}
+    ${extra}
     <button class="btn primary big" id="next">${isLast ? "結果を見る" : "次へ"}</button>
   </div>`;
   $("#next").onclick = () => { session.index++; if (isLast) renderQuizResult(); else renderQuestion(); };
@@ -5144,6 +5367,7 @@ async function judgeQuestion(q, ans, via, latency, ctl) {
 }
 
 async function renderQuizResult() {
+  if (session.range) return renderRangeResult();
   if (session.review) return renderReviewResult();
   if (session.master) return renderMasterResult();
   if (session.story) return renderStoryResult();
@@ -5319,8 +5543,201 @@ function masterTable(sum) {
   if (!list.length) return "";
   return `<table class="prog"><thead><tr><th class="name">課題</th><th>種類</th><th>文法</th><th>マスター</th><th>まとめ問題</th><th>締め切り</th></tr></thead><tbody>${list.map((t) => {
     const x = stt[t.id] || { n: 0, total: t.items.length };
-    return `<tr><th class="name">${esc(t.name)}</th><td>${isMasterTask(t) ? "マスターモード" : "通常"}</td><td>${CONTENT.filter((it) => t.items.indexOf(it.id) >= 0).map((it) => esc(it.short)).join("・")}</td><td>${x.n} / ${x.total}</td><td>${isMasterTask(t) ? (x.passed ? "🏅 合格" : x.ready ? "挑戦できる" : "－") : ""}</td><td>${t.due ? dueText(x.due) : x.done ? "✓ クリア" : ""}</td></tr>`;
+    return `<tr><th class="name">${esc(t.name)}</th><td>${isRangeTask(t) ? "範囲の総復習" : isMasterTask(t) ? "マスターモード" : "通常"}</td><td>${CONTENT.filter((it) => t.items.indexOf(it.id) >= 0).map((it) => esc(it.short)).join("・")}</td><td>${x.n} / ${x.total}${isRangeTask(t) ? "（観点）" : ""}</td><td>${isRangeTask(t) ? (x.done ? "🏆 制覇" : "") : isMasterTask(t) ? (x.passed ? "🏅 合格" : x.ready ? "挑戦できる" : "－") : ""}</td><td>${t.due ? dueText(x.due) : x.done ? "✓ クリア" : ""}</td></tr>`;
   }).join("")}</tbody></table>`;
+}
+
+/* ===== 課題（範囲の総復習）：生徒の画面 =====
+   観点ごとに「別の日に2回正解・3日あけても正解」を確かめていく。弱点（苦手・未確認）から優先して出し、
+   まちがえたら、その場でルールを見て → 同じ観点の別の問題ですぐ練習 → 回の最後にもう一度確認。
+   同じ観点で3回まちがえたら、その観点は今日はここまで（先生の画面に「声をかけたい生徒」として出る）。
+   ダンジョン：観点が1体ずつのモンスター。確認済みになるとたおれる。全部たおすと「ダンジョン制覇」＝課題クリア */
+const RANGE_KINDS = ["slime", "bat", "plant", "fish", "golem", "ghost", "dragon"];
+const vpKind = (iid, k) => { const h = strHash(iid + "." + k); return RANGE_KINDS[h % 7] + "-" + ((h >> 4) % 7); };
+const vpName = (iid, k) => (vpDefs(iid)[k] || {}).name || "この文法";
+const rangeConfNow = () => rangeConf(state.settings);
+const rangeOf = (t, hist) => rangeStatus(t, hist || state.history, rangeConfNow());
+function rangeRuleText(c) {
+  return `それぞれの観点で、別の日に${c.need}回正しく答え、${c.gap ? `最初の正解から${c.gap}日以上あけても正しく答えられたら` : "そのあとも正しく答えられたら"}、その観点のモンスターをたおせます。全部たおすとダンジョン制覇（課題クリア）。`;
+}
+const vpStateLabel = (v) => v.stuckToday ? "今日はここまで" : v.st === "done" ? "たおした！" : v.st === "new" ? "まだ出会っていない" : v.st === "weak" ? "苦手（まちがえた）"
+  : v.waitTo ? `${fmtDue(v.waitTo)}以降に再確認` : `あと${v.left}回`;
+function vpMonsterHTML(v, size) {
+  const sz = size || 58, kind = vpKind(v.iid, v.k);
+  const art = v.st === "done" ? monsterSVG(kind, sz, { down: true }) : v.st === "new" ? `<span class="dg-q" style="width:${sz}px;height:${sz}px">？</span>` : monsterSVG(kind, sz);
+  const hp = v.st === "done" || v.st === "new" ? "" : `<span class="dg-hp">${"♥".repeat(Math.min(5, v.left))}</span>`;
+  return `<div class="dg-mon s-${v.st} ${v.stuckToday ? "stuck" : ""}" title="${esc(v.name)}">${art}${hp}<span class="dg-name">${esc(v.name)}</span><span class="dg-st">${esc(vpStateLabel(v))}</span></div>`;
+}
+// ダンジョンの地図（文法ごとの部屋に、観点のモンスター）
+function dungeonHTML(t, rs) {
+  const by = {}; rs.vps.forEach((v) => { (by[v.iid] = by[v.iid] || []).push(v); });
+  const items = taskItems(t).filter((it) => by[it.id]);
+  return `<div class="dungeon">${items.map((it) => {
+    const L = by[it.id], d = L.filter((v) => v.st === "done").length;
+    return `<div class="dg-room ${d === L.length ? "clear" : ""}"><div class="dg-room-name"><b>${gradeOf(it)}-${itemNo(it)}</b> ${esc(it.short)}<small>${d} / ${L.length}</small></div>
+      <div class="dg-mons">${L.map((v) => vpMonsterHTML(v)).join("")}</div></div>`;
+  }).join("")}</div>`;
+}
+function rangePanelHTML(t, x) {
+  const rs = rangeOf(t), c = rangeConfNow();
+  const todo = rs.vps.filter((v) => v.useful && !v.stuckToday).length;
+  return `<section class="panel range-panel ${x.done ? "done" : ""}">
+    <h2>${x.done ? "🏆 ダンジョン制覇！" : "🗝️ 総復習ダンジョン"} <small>たおしたモンスター ${rs.confirmed} / ${rs.total}</small></h2>
+    <p class="hint">${rangeRuleText(c)}</p>
+    ${dungeonHTML(t, rs)}
+    <button class="btn primary big" id="goRange">${todo ? `ダンジョンに入る（${c.minutes}分・最大${c.maxQ}問）` : rs.confirmed === rs.total ? "もう一度たしかめる" : "今日の分は終わり！ もう少し練習する"}</button>
+    ${!todo && rs.confirmed < rs.total ? `<p class="hint center">いまは、日をあけて再確認を待っているモンスターだけです。${rs.vps.filter((v) => v.waitTo).map((v) => v.waitTo).sort()[0] ? `次は ${fmtDue(rs.vps.filter((v) => v.waitTo).map((v) => v.waitTo).sort()[0])} から挑戦できます。` : ""}</p>` : ""}
+  </section>`;
+}
+// 観点の問題（段階2〜4。段階4の問題も、総復習では時間制限なし＝正確さだけを見る）
+function rangePool(iid, k) {
+  const it = CONTENT.find((c) => c.id === iid);
+  if (!it) return [];
+  const out = [];
+  [2, 3, 4].forEach((s) => ((it["stage" + s] || {}).questions || []).forEach((q) => {
+    let text = "";
+    try { text = s === 2 ? stage2Model(q) : (q.answers || [""])[0]; } catch (e) { return; }
+    if (vpOfText(iid, text).indexOf(k) < 0) return;
+    out.push(Object.assign({ grammar: it.title, _st: s === 2 ? 2 : 3, _src: s, _from: it.short, _iid: iid, _vk: k, _strict: true }, q));
+  }));
+  return out;
+}
+// 問題を選ぶ：この回で使っていない・最近出ていない問題から（low：段階2の問題を先に）
+function rangePick(pool, used, low) {
+  const seen = lsGet("eg_rseen", {}), today = dayKey(Date.now());
+  const score = (q) => (used[q.qid] ? 1e6 : 0) + (seen[q.qid] === today ? 1000 : seen[q.qid] ? 100 : 0) + (low ? (q._src === 2 ? 0 : 10) : (q._src === 2 ? 10 : 0)) + Math.random();
+  const q = pool.slice().sort((a, b) => score(a) - score(b))[0];
+  if (!q || used[q.qid]) return null;
+  used[q.qid] = 1;
+  return Object.assign({}, q);
+}
+function startRange(t) {
+  const c = rangeConfNow(), rs = rangeOf(t), used = {};
+  const misItems = new Set((state.mistakes || []).map((m) => String(m.qid || "").split("-")[0]));
+  const pri = (v) => v.stuckToday ? 99 : v.st === "weak" ? 1 : v.st === "new" ? 2 : v.st === "prog" ? (v.useful ? 3 : 5) : 6;
+  const cand = rs.vps.map((v) => ({ v, p: pri(v) - (misItems.has(v.iid) ? 0.5 : 0) + Math.random() * 0.3, pool: rangePool(v.iid, v.k) }))
+    .filter((x) => x.p < 99 && x.pool.length).sort((a, b) => a.p - b.p);
+  const plan = [];
+  // 1巡目：苦手・未確認・今日確かめると進む観点から1問ずつ → 確認済み・日をあけて待っている観点は2問まで（ためし）
+  // → 2巡目からは苦手な観点だけをもう1問（同じ日の正解は1回と数えるので、ほかの観点はくり返さない）
+  cand.filter((x) => x.p < 5).forEach((x) => { if (plan.length < c.maxQ) { const q = rangePick(x.pool, used, false); if (q) plan.push(q); } });
+  cand.filter((x) => x.p >= 5).slice(0, 2).forEach((x) => { if (plan.length < c.maxQ) { const q = rangePick(x.pool, used, false); if (q) plan.push(q); } });
+  for (let r = 1; r < 3 && plan.length < c.maxQ; r++) {
+    cand.filter((x) => x.v.st === "weak").forEach((x) => { if (plan.length < c.maxQ) { const q = rangePick(x.pool, used, true); if (q) plan.push(q); } });
+  }
+  if (!plan.length) return renderTaskView(t.id);
+  // 同じ文法が続かないようにならべる（どの文法を使うかを毎回考える）
+  const qs = [], rest = plan.slice();
+  while (rest.length) { const prev = qs.length ? qs[qs.length - 1]._iid : ""; const j = rest.findIndex((q) => q._iid !== prev); qs.push(rest.splice(j < 0 ? 0 : j, 1)[0]); }
+  session = { i: 0, stage: 3, qs, index: 0, log: [], startedAt: Date.now(),
+    range: { t, c, used, wrong: {}, rechecks: {}, ev: [], before: rs, endAt: Date.now() + c.minutes * 60000 } };
+  render(`${header("総復習ダンジョン", true)}
+    <main class="wrap">
+      <section class="q-card s3 intro">
+        <div class="q-label">🗝️ 課題（範囲の総復習）「${esc(t.name)}」</div>
+        <div class="q-main ja">ダンジョンに入ろう！</div>
+        <ul class="rules">
+          <li>弱点のモンスターから順に出てきます（いまの予定 <b>${qs.length}問</b>・最大${c.minutes}分）。</li>
+          <li>時間制限はありません。<b>正しく言えるか</b>だけを見ます。冠詞・三単現の s などの小さなまちがいも × になります。</li>
+          <li>まちがえたら、ルールを確かめて、すぐに同じポイントの問題で練習。最後にもう一度確かめます。</li>
+        </ul>
+      </section>
+      <button class="btn primary big" id="go">スタート</button>
+      ${footerNote()}
+    </main>`);
+  bindBack(() => renderTaskView(t.id));
+  $("#go").onclick = renderQuestion;
+}
+const rangeKey = (q) => q._iid + "." + q._vk;
+function rangeTagHTML(q) {
+  return `<span class="rg-tag">${monsterSVG(vpKind(q._iid, q._vk), 30)}<span>${esc(q._from || "")}｜${esc(vpName(q._iid, q._vk))}${q._practice ? "<b>・練習</b>" : q._recheck ? "<b>・もう一度確認</b>" : ""}</span></span>`;
+}
+// その文法のルール（段階1の文。穴埋めは答えを入れて）
+function rangeRuleHTML(iid) {
+  const it = CONTENT.find((c) => c.id === iid);
+  if (!it || !it.stage1) return "";
+  const f = s1Fill(it.stage1);
+  return `<details class="rg-rule" open><summary>📘 ルールを確かめよう（${esc(it.title)}）</summary>${f ? s1FillHTML(f, "answer") : `<ul>${(it.stage1.points || []).map((p) => `<li>${esc(p.text)}</li>`).join("")}</ul>`}</details>`;
+}
+// 1問答えたあと：記録のしるしを残し、まちがえたら練習と再確認を足す（返り値：結果の下に出すHTML）
+function rangeAfter(q, ok) {
+  const R = session.range, key = rangeKey(q), seen = lsGet("eg_rseen", {});
+  seen[q.qid] = dayKey(Date.now()); lsSet("eg_rseen", seen);
+  let html = "";
+  if (!q._practice) R.ev.push({ key, m: ok ? "+" : "-" }); // 練習（すぐの再挑戦）は記録のしるしに数えない
+  if (!ok) {
+    R.wrong[key] = (R.wrong[key] || 0) + 1; // 練習のまちがいもふくめて数える
+    if (R.wrong[key] >= 3) {
+      R.ev.push({ key, m: "!" });
+      for (let j = session.qs.length - 1; j > session.index; j--) if (rangeKey(session.qs[j]) === key) session.qs.splice(j, 1);
+      html = `<div class="rg-note stop">🛑 「${esc(vpName(q._iid, q._vk))}」は、今日はここまでにしよう。ルールを見直して、先生に聞いたり、次の日にもう一度チャレンジしたりしよう。</div>` + rangeRuleHTML(q._iid);
+    } else {
+      const pool = rangePool(q._iid, q._vk);
+      const pr = session.qs.length < R.c.maxQ * 2 ? rangePick(pool, R.used, q._src >= 3) : null;
+      if (pr) session.qs.splice(session.index + 1, 0, Object.assign(pr, { _practice: true }));
+      if (!R.rechecks[key]) { const rq = rangePick(pool, R.used, false); if (rq) { R.rechecks[key] = 1; session.qs.push(Object.assign(rq, { _recheck: true })); } }
+      html = rangeRuleHTML(q._iid) + (pr ? `<div class="rg-note">💪 次は、同じポイントの問題で練習します。</div>` : "");
+    }
+  }
+  // 時間が来たら、残りは「もう一度確認」の問題だけにする
+  if (Date.now() > R.endAt) session.qs = session.qs.slice(0, session.index + 1).concat(session.qs.slice(session.index + 1).filter((x) => x._recheck));
+  lsSet("eg_range_draft", { tid: R.t.id, ev: R.ev, at: Date.now(), startedAt: session.startedAt, score: R.ev.filter((e) => e.m === "+").length, total: R.ev.filter((e) => e.m !== "!").length });
+  return html;
+}
+function rangeRecord(tid, ev, startedAt, log) {
+  const total = ev.filter((e) => e.m !== "!").length, score = ev.filter((e) => e.m === "+").length;
+  return { itemId: "range", stage: 0, task: tid, score, total, passed: false, tags: ev.map((e) => "v:" + e.key + e.m).slice(0, 120),
+    durationSec: Math.round((Date.now() - startedAt) / 1000), details: log || [] };
+}
+// 途中でやめたとき・アプリを閉じたときの分も記録する（次に開いたとき）
+async function flushRangeDraft() {
+  const d = lsGet("eg_range_draft", null);
+  if (!d || !d.tid || !Array.isArray(d.ev) || !d.ev.some((e) => e.m !== "!")) { lsSet("eg_range_draft", null); return; }
+  lsSet("eg_range_draft", null);
+  try {
+    const r = rangeRecord(d.tid, d.ev, d.startedAt || d.at, []);
+    await api.saveResult(r);
+    state.history = state.history.concat([{ timestamp: new Date(d.at || Date.now()).toISOString(), itemId: "range", stage: 0, score: r.score, total: r.total, passed: false, tags: ["r:" + d.tid].concat(r.tags) }]);
+  } catch (e) {}
+}
+function quitRange() {
+  const R = session && session.range;
+  if (!R) return renderHome();
+  const t = R.t;
+  if (R.ev.some((e) => e.m !== "!")) flushRangeDraft().then(() => renderTaskView(t.id)); else { lsSet("eg_range_draft", null); renderTaskView(t.id); }
+}
+async function renderRangeResult() {
+  const { log, range: R } = session, t = R.t;
+  lsSet("eg_range_draft", null);
+  const rec = rangeRecord(t.id, R.ev, session.startedAt, log);
+  const ts = new Date().toISOString();
+  const after = rangeOf(t, state.history.concat([{ timestamp: ts, itemId: "range", stage: 0, tags: ["r:" + t.id].concat(rec.tags) }]));
+  const bef = {}; R.before.vps.forEach((v) => { bef[v.iid + "." + v.k] = v; });
+  const touched = Array.from(new Set(R.ev.map((e) => e.key)));
+  const changed = touched.map((key) => after.vps.find((v) => v.iid + "." + v.k === key)).filter(Boolean);
+  const down = changed.filter((v) => v.st === "done" && bef[v.iid + "." + v.k].st !== "done");
+  const firstClear = !R.before.everAt && after.everAt;
+  render(`${header("総復習ダンジョン　結果", true)}
+    <main class="wrap">
+      <section class="result-card ${firstClear ? "ok" : ""}">
+        <div class="big-score">${rec.score}<span>/${rec.total}</span></div>
+        <div class="verdict ${firstClear ? "ok" : ""}">${firstClear ? "🏆 ダンジョン制覇！課題クリア" : down.length ? `モンスターを ${down.length}体 たおした！` : "おつかれさま！"}</div>
+        <div class="sub">たおしたモンスター ${after.confirmed} / ${after.total}</div>
+      </section>
+      <section class="panel rg-today"><h2>今日たたかったモンスター</h2>
+        <div class="dg-mons wrap-row">${changed.map((v) => vpMonsterHTML(v, 52)).join("") || `<p class="hint">なし</p>`}</div>
+        <p class="hint">${rangeRuleText(R.c)}</p></section>
+      <ol class="log">${log.map((l, n) => { const q = session.qs[n] || {}; return `<li class="${l.correct ? "ok" : "ng"}"><span class="mark">${l.correct ? "○" : "×"}</span>
+        <span><span class="lq">${esc(l.q)}${q._practice ? "（練習）" : ""}</span><span class="la">${esc(l.a)}</span></span></li>`; }).join("")}</ol>
+      <div class="save" id="saveState">記録しています…</div>
+      <div class="btn-row"><button class="btn primary" id="toTask">ダンジョンの地図へ</button></div>
+      ${footerNote()}
+    </main>`);
+  bindBack(() => renderTaskView(t.id));
+  $("#toTask").onclick = () => renderTaskView(t.id);
+  if (firstClear) showGifts([{ title: "ダンジョン制覇！", text: `課題（範囲の総復習）「${t.name}」の観点をすべて確かめました。`, big: "🏆" }]);
+  if (rec.total) await saveResult(Object.assign({}, rec, { tags: ["r:" + t.id].concat(rec.tags) }));
+  else { const el = $("#saveState"); if (el) el.textContent = ""; }
 }
 
 /* ===== 管理者設定 ===== */
@@ -6458,7 +6875,7 @@ function positionRing(pos, size) {
 function nextGoalHTML() {
   const nx = nextStep();
   if (!nx) return `<div class="next-goal done">🎉 すべての文法をマスターしました！</div>`;
-  if (nx.task) return `<button class="next-goal" id="goNext"><span class="ng-label">次の目標</span><span class="ng-text">課題「${esc(nx.task.name)}」のまとめ問題に合格</span><span class="ng-go">▶</span></button>`;
+  if (nx.task) return `<button class="next-goal" id="goNext"><span class="ng-label">次の目標</span><span class="ng-text">課題「${esc(nx.task.name)}」${nx.range ? "の総復習ダンジョンを進める" : "のまとめ問題に合格"}</span><span class="ng-go">▶</span></button>`;
   const gain = Math.round((STAGE_W[nx.stage - 1] / (CONTENT.length * 10)) * 1000) / 10;
   return `<button class="next-goal" id="goNext"><span class="ng-label">次の目標</span><span class="ng-text">「${esc(nx.it.short)}」の段階${nx.stage}をクリア</span><span class="ng-gain">現在地 +${gain}</span><span class="ng-go">▶</span></button>`;
 }
@@ -6749,6 +7166,12 @@ async function renderTaskAdmin(opt) {
         <div class="row"><span>問題の数</span><span class="num-in"><input type="number" id="mtNum" min="5" max="50" value="${(s.masterTask || {}).num || 20}">問</span></div>
         <div class="row"><span>合格ライン</span><span class="num-in"><input type="number" id="mtPass" min="10" max="100" step="5" value="${pct((s.masterTask || {}).pass || 0.8)}">%</span></div>
         <div class="btn-row"><button class="btn" id="mtSave">まとめ問題の設定を保存</button></div>
+        <h2>🗝️ 課題（範囲の総復習）の確かめ方</h2>
+        <div class="row"><span>別の日に正解する回数</span><span class="num-in"><input type="number" id="rgNeed" min="1" max="5" value="${rangeConf(s).need}">回</span></div>
+        <div class="row"><span>最初の正解から、あける日数</span><span class="num-in"><input type="number" id="rgGap" min="0" max="30" value="${rangeConf(s).gap}">日以上</span></div>
+        <div class="row"><span>1回の時間</span><span class="num-in"><input type="number" id="rgMin" min="5" max="40" value="${rangeConf(s).minutes}">分まで</span></div>
+        <div class="row"><span>1回の問題数</span><span class="num-in"><input type="number" id="rgMax" min="5" max="40" value="${rangeConf(s).maxQ}">問まで</span></div>
+        <div class="btn-row"><button class="btn" id="rgSave">総復習の設定を保存</button></div>
         <div class="msg" id="sgMsg"></div>
       </section>
       ${footerNote()}
@@ -6805,6 +7228,11 @@ async function renderTaskAdmin(opt) {
     try { await saveRaw((ns) => { ns.masterTask = { num: n, pass: p }; }); sgMsg("保存しました", true); }
     catch (e) { sgMsg("保存できませんでした：" + e.message); }
   };
+  $("#rgSave").onclick = async () => {
+    const v = (id) => parseFloat($(id).value);
+    try { await saveRaw((ns) => { ns.rangeTask = rangeConf({ rangeTask: { need: v("#rgNeed"), gap: v("#rgGap"), minutes: v("#rgMin"), maxQ: v("#rgMax") } }); }); sgMsg("保存しました", true); }
+    catch (e) { sgMsg("保存できませんでした：" + e.message); }
+  };
   // 進み具合（クリアした人数）は、学習記録のデータを読んでから表示
   if (!taskAdminCache && !opt.noLoad) {
     try { const d = await api.dashboard(); taskAdminCache = d.students || []; state.classes = d.classes || state.classes; if ($("#tkNew")) renderTaskAdmin(Object.assign({}, opt, { noLoad: true })); } catch (e) { msg("進み具合を読みこめませんでした：" + e.message, false); }
@@ -6815,6 +7243,7 @@ async function renderTaskAdmin(opt) {
 function renderTaskEdit(id, draft) {
   const s = state.rawSettings, orig = id ? (s.tasks || []).find((t) => t.id === id) : null;
   const t = JSON.parse(JSON.stringify(orig || Object.assign({ id: "", name: "", folder: "", items: [], kind: "normal", due: "", classes: [], src: {} }, draft || {})));
+  const rc = rangeConf(state.rawSettings);
   t.src = t.src || {}; t.classes = t.classes || [];
   const roster = taskAdminCache; // 生徒（学習記録のデータ）。まだ読んでいなければ下で読む
   const off = new Set(); // チェックを外した生徒
@@ -6848,6 +7277,7 @@ function renderTaskEdit(id, draft) {
         <h2>課題の種類</h2>
         <label class="check kind-opt"><input type="radio" name="tkKind" id="tkKindN" value="normal" ${t.kind !== "mm" ? "checked" : ""}> <b>課題（通常）</b>　選んだ文法をすべてマスター（段階1〜4をクリア）するとクリア</label>
         <label class="check kind-opt"><input type="radio" name="tkKind" id="tkKindM" value="mm" ${t.kind === "mm" ? "checked" : ""}> <b>課題（マスターモード）</b>　選んだ文法をすべてマスターしたあと、まとめ問題に合格するとクリア</label>
+        <label class="check kind-opt"><input type="radio" name="tkKind" id="tkKindR" value="range" ${t.kind === "range" ? "checked" : ""}> <b>課題（範囲の総復習）</b>　選んだ文法の「観点」（確かめるポイント）を、日をあけてすべて確かめるとクリア（ダンジョン形式）</label>
         <p class="hint" id="tkKindHint"></p>
         <div class="btn-row"><button class="btn primary" id="tkSave">保存する</button><button class="btn" id="tkCancel">やめる</button></div>
         <div class="msg" id="tkMsg"></div>
@@ -6865,7 +7295,8 @@ function renderTaskEdit(id, draft) {
     const mmOk = P.length >= 2;
     $("#tkKindM").disabled = !mmOk;
     if (!mmOk && $("#tkKindM").checked) $("#tkKindN").checked = true;
-    $("#tkKindHint").innerHTML = !mmOk ? "課題（マスターモード）は、文法を2つ以上選ぶと選べます（文法が1つの課題はマスターモードにできません）。"
+    $("#tkKindHint").innerHTML = $("#tkKindR").checked ? (P.length ? `課題（範囲の総復習）では、次の観点を1つずつ確かめます（全部で${P.reduce((a, it) => a + vpDefs(it.id).length, 0)}こ）。それぞれ、別の日に${rc.need}回正解し、最初の正解から${rc.gap}日以上あけても正解すれば確認済みです。弱点から優先して出題し、まちがえたら練習と再確認をします。<ul class="rg-vplist">${P.map((it) => `<li><b>${esc(it.short)}</b>：${vpDefs(it.id).map((v) => esc(v.name)).join("／")}</li>`).join("")}</ul>` : "下の一覧から文法を選ぶと、確かめる観点が表示されます。")
+      : !mmOk ? "課題（マスターモード）は、文法を2つ以上選ぶと選べます（文法が1つの課題はマスターモードにできません）。"
       : `課題（マスターモード）では、先に出てくる文法（${P.slice(0, -1).map((it) => esc(it.short)).join("・")}）を、これまでの既習事項としてまとめ問題で復習します。まとめ問題には、すべての文法をマスターしてから挑戦できます。`;
   };
   // 配信する生徒（選んだクラスの生徒全員にチェック → 外した生徒には配信しない）
@@ -6903,7 +7334,7 @@ function renderTaskEdit(id, draft) {
   const read = () => {
     const P = picked();
     const out = { id: t.id || newId("t"), name: $("#tkName").value.trim().slice(0, 40), folder: $("#tkFolder").value, items: P.map((it) => it.id).concat(t.items.filter((x) => !CONTENT.some((c) => c.id === x))),
-      kind: $("#tkKindM").checked && P.length >= 2 ? "mm" : "normal", due: $("#tkDue").value || "", classes: selCls(), src: {} };
+      kind: $("#tkKindR").checked ? "range" : $("#tkKindM").checked && P.length >= 2 ? "mm" : "normal", due: $("#tkDue").value || "", classes: selCls(), src: {} };
     if (taskAdminCache) { const L = pool(), on = L.filter((st) => !off.has(st.email)); if (on.length < L.length) out.students = on.map((st) => st.email); }
     else if (Array.isArray(t.students) && t.students.length) out.students = t.students.slice(); // 一覧を読めなかったときは、前の配信先のまま
     P.forEach((it) => { const v = $(`[data-ts="${it.id}"]`).value; if (v && v !== "new") out.src[it.id] = v; });
@@ -6944,6 +7375,29 @@ function renderTaskEdit(id, draft) {
   }));
 }
 
+// 課題（範囲の総復習）の進み具合：生徒 × 観点の一覧と、声をかけたい生徒
+function rangeProgressHTML(t, X, cls) {
+  const items = CONTENT.filter((it) => t.items.indexOf(it.id) >= 0);
+  const cols = []; items.forEach((it) => vpDefs(it.id).forEach((v, k) => cols.push({ it, k, name: v.name })));
+  const mark = { done: ["○", "lv lv4"], prog: ["△", "lv lv2"], weak: ["×", "lv rg-weak"], new: ["－", ""] };
+  const vpOf = (x, iid, k) => ((x && x.vps) || []).find((v) => v.i === iid && v.k === k) || { s: "new", l: 0 };
+  const call = X.filter(({ x }) => x && (x.stuck || (x.weak || 0) >= 2)).map(({ st, x }) => {
+    const L = (x.vps || []).filter((v) => v.x || v.s === "weak");
+    return `<li><button class="link" data-detail="${esc(st.email)}">${st.no ? `<small>${esc(st.no)}</small> ` : ""}${esc(personName(st))}</button>${!cls && st.cls ? `<small class="cls-tag">${esc(st.cls)}</small>` : ""}
+      <span class="rg-call">${L.map((v) => { const it = CONTENT.find((c) => c.id === v.i); return `<span class="chip small ${v.x ? "rg-stuck" : ""}">${v.x ? "🛑 " : "× "}${it ? esc(it.short) : esc(v.i)}：${esc(vpName(v.i, v.k))}</span>`; }).join(" ")}</span></li>`;
+  });
+  return `<div class="table-wrap"><table class="dash rg-table"><thead>
+      <tr><th></th>${items.map((it) => `<th colspan="${vpDefs(it.id).length}" title="${esc(it.title)}">${gradeOf(it)}-${itemNo(it)} ${esc(it.short)}</th>`).join("")}<th>観点</th><th>状況</th></tr>
+      <tr><th></th>${cols.map((c) => `<th title="${esc(c.name)}"><small>${c.k + 1}</small></th>`).join("")}<th></th><th></th></tr></thead>
+    <tbody>${X.map(({ st, x }) => `<tr><th class="name"><button class="link" data-detail="${esc(st.email)}">${st.no ? `<small>${esc(st.no)}</small> ` : ""}${esc(personName(st))}</button>${!cls && st.cls ? `<small class="cls-tag">${esc(st.cls)}</small>` : ""}</th>
+      ${cols.map((c) => { const v = vpOf(x, c.it.id, c.k), m = mark[v.s] || mark.new; return `<td class="${m[1]} ${v.x ? "rg-stuck" : ""}" title="${esc(c.it.short + "：" + c.name)}">${v.x ? "🛑" : m[0]}</td>`; }).join("")}
+      <td>${x ? `${x.n} / ${x.total}` : ""}</td><td>${x && x.done ? `<span class="ok">🏆 制覇${x.doneAt ? `（${fmtDate(x.doneAt)}）` : ""}</span>` : x && x.due && x.due.state === "over" ? `<span class="ng">期限切れ</span>` : "とりくみ中"}</td></tr>`).join("") || `<tr><td colspan="${cols.length + 3}">対象の生徒がいません</td></tr>`}</tbody></table></div>
+    <p class="hint">○ 確認済み（別の日に正解し、日をあけても正解）　△ 確認中　× 苦手（いちばん新しい答えがまちがい）　🛑 同じ観点で3回まちがえて、その日を終えた（まだ正解していない）　－ まだ出ていない</p>
+    <details class="rg-legend"><summary>観点の一覧</summary>${items.map((it) => `<div><b>${gradeOf(it)}-${itemNo(it)} ${esc(it.short)}</b>：${vpDefs(it.id).map((v, k) => `${k + 1}. ${esc(v.name)}`).join("　")}</div>`).join("")}</details>
+    <h2>🙋 声をかけたい生徒</h2>
+    ${call.length ? `<ul class="rg-calls">${call.join("")}</ul>` : `<p class="hint">いまはいません（同じ観点で3回まちがえた生徒、苦手な観点が2つ以上ある生徒が出ます）。</p>`}`;
+}
+
 // 1つの課題の進み具合（生徒ごと）
 async function renderTaskProgress(id, cls) {
   const t = (state.rawSettings.tasks || []).find((x) => x.id === id);
@@ -6968,11 +7422,11 @@ async function renderTaskProgress(id, cls) {
         <h2>${esc(t.name)} ${kindChip(t)}</h2>
         <p class="hint">${items.map((it) => esc(it.short)).join("・")}　｜　${esc(taskClassText(t))}　｜　${t.due ? `締め切り ${fmtDue(t.due)}（${dueWeek(t.due)}）` : "締め切りなし"}</p>
         <div class="toolbar">${classes.length > 1 ? clsSelect("tpCls", classes, cls) : ""}<button class="btn small" id="tpEdit">課題を直す</button></div>
-        <div class="sum-cards"><div><b>${list.length}</b><small>対象の生徒</small></div><div><b class="ok">${done}</b><small>クリア</small></div><div><b>${list.length - done}</b><small>まだ</small></div><div><b class="${over ? "ng" : ""}">${over}</b><small>期限切れ</small></div></div>
-        <div class="table-wrap"><table class="dash"><thead><tr><th></th>${items.map((it) => `<th title="${esc(it.title)}">${gradeOf(it)}-${itemNo(it)}<br><small>${esc(it.short)}</small></th>`).join("")}${mm ? `<th class="mcol">まとめ<br><small>問題</small></th>` : ""}<th>状況</th></tr></thead>
+        <div class="sum-cards"><div><b>${list.length}</b><small>対象の生徒</small></div><div><b class="ok">${done}</b><small>${isRangeTask(t) ? "制覇" : "クリア"}</small></div><div><b>${list.length - done}</b><small>まだ</small></div><div><b class="${over ? "ng" : ""}">${over}</b><small>期限切れ</small></div></div>
+        ${isRangeTask(t) ? rangeProgressHTML(t, X, cls) : `<div class="table-wrap"><table class="dash"><thead><tr><th></th>${items.map((it) => `<th title="${esc(it.title)}">${gradeOf(it)}-${itemNo(it)}<br><small>${esc(it.short)}</small></th>`).join("")}${mm ? `<th class="mcol">まとめ<br><small>問題</small></th>` : ""}<th>状況</th></tr></thead>
           <tbody>${X.map(({ st, x }) => `<tr><th class="name"><button class="link" data-detail="${esc(st.email)}">${st.no ? `<small>${esc(st.no)}</small> ` : ""}${esc(personName(st))}</button>${!cls && st.cls ? `<small class="cls-tag">${esc(st.cls)}</small>` : ""}</th>
             ${items.map((it) => { const lv = lvOf(st, it.id); return `<td class="lv lv${lv}">${lv === 4 ? "マスター" : lv ? "段階" + lv : "－"}</td>`; }).join("")}
-            ${mm ? `<td class="mcol ${x.passed ? "lv lv4" : ""}">${x.passed ? "合格" : x.ready ? "挑戦できる" : "－"}</td>` : ""}<td>${stateText(x)}</td></tr>`).join("") || `<tr><td colspan="${items.length + 3}">対象の生徒がいません</td></tr>`}</tbody></table></div>
+            ${mm ? `<td class="mcol ${x.passed ? "lv lv4" : ""}">${x.passed ? "合格" : x.ready ? "挑戦できる" : "－"}</td>` : ""}<td>${stateText(x)}</td></tr>`).join("") || `<tr><td colspan="${items.length + 3}">対象の生徒がいません</td></tr>`}</tbody></table></div>`}
         <p class="hint">名前を押すと、その生徒の詳しい記録が見られます。</p>
       </section>
       ${footerNote()}
