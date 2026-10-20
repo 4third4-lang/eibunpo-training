@@ -663,6 +663,23 @@ table.sets td, table.sets th { vertical-align: top; }
 .rg-calls li { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
 .rg-call .chip.rg-stuck { background: #ffc9c9; color: #a61e1e; }
 @media (max-width: 480px) { .dg-mon { width: 92px; } }
+/* ラスボス */
+.boss-room { display: flex; gap: 12px; align-items: center; margin: 10px 0 14px; padding: 10px 12px; border-radius: 16px; background: linear-gradient(135deg, #1a1b2e, #3b1f4a); color: #f8f9fa; box-shadow: inset 0 0 0 2px #c92a2a; }
+.boss-room.locked { background: #1f2238; box-shadow: inset 0 0 0 2px #3b3f63; }
+.boss-room.locked .boss-svg { filter: brightness(0) drop-shadow(0 0 6px #7950f2); opacity: .8; }
+.boss-room.down { background: linear-gradient(135deg, #2b3a2e, #5c4a12); box-shadow: inset 0 0 0 2px #fab005; }
+.boss-room .boss-svg { flex: none; }
+.boss-txt { display: flex; flex-direction: column; gap: 6px; text-align: left; min-width: 0; }
+.boss-txt b { font-size: 16px; }
+.boss-txt .hint { color: #dee2e6; margin: 0; }
+.boss-txt .hint b { font-size: inherit; color: #ffd43b; }
+.boss-wait { margin: 0; font-weight: 800; color: #ffd43b; }
+.btn.boss-btn { background: linear-gradient(135deg, #c92a2a, #7048e8); color: #fff; border: none; font-weight: 900; box-shadow: 0 3px 0 #5f1a1a; }
+.boss-intro .boss-big, .boss-result .boss-big { display: flex; justify-content: center; }
+.boss-tag .boss-hp { color: #e03131; letter-spacing: 1px; }
+.boss-ans { color: #2b8a3e; font-weight: 700; }
+.boss-ok { color: #e67700; font-weight: 800; }
+@media (max-width: 480px) { .boss-room { flex-direction: column; text-align: center; } .boss-txt { text-align: center; align-items: center; } }
 .master-panel { border: 2px dashed var(--gold); }
 .master-panel.done { border: 2px solid var(--gold); background: linear-gradient(135deg, var(--surface), #fff4cc); }
 .master-panel h2 { margin-top: 0; }
@@ -1451,6 +1468,40 @@ table.dash th.mcol, table.dash td.mcol { border-left: 2px solid var(--gold); }
       '<rect x="-22" y="8" width="44" height="7" rx="2" fill="#fab005" stroke="#c99200" stroke-width="2"/>' +
       '<circle cx="0" cy="-18" r="3.4" fill="#ff6b6b"/><circle cx="-26" cy="-12" r="2.8" fill="#4dabf7"/><circle cx="26" cy="-12" r="2.8" fill="#4dabf7"/><circle cx="0" cy="11.5" r="2.4" fill="#e64980"/></g>';
   }
+  // =================== ラスボス撃破（範囲の総復習のごほうび。いちばん立派なスタンプ） ===================
+  function bossStamp(d, size) {
+    var clip = nid('bc'), gid = nid('bg'), mid = nid('bm'), mc = nid('bk'), t = String(d.t || ''), t2 = String(d.t2 || ''), c1 = d.c1 || '#e03131', c2 = d.c2 || '#a61e1e';
+    var defs = '<clipPath id="' + clip + '"><circle cx="60" cy="58" r="52"/></clipPath><clipPath id="' + mc + '"><circle cx="60" cy="58" r="33"/></clipPath>' +
+      '<linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3bf"/><stop offset=".45" stop-color="#ffd43b"/><stop offset="1" stop-color="#e0a800"/></linearGradient>' +
+      '<radialGradient id="' + mid + '" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="' + tint(c1, 0.35) + '"/><stop offset=".6" stop-color="' + c1 + '"/><stop offset="1" stop-color="' + c2 + '"/></radialGradient>';
+    var gems = '', cols = ['#4dabf7', '#51cf66', '#ff6b6b', '#cc5de8'], i;
+    for (i = 0; i < 12; i++) {
+      var a = i * 30 * Math.PI / 180, x = 60 + 36 * Math.cos(a), y = 58 + 36 * Math.sin(a);
+      gems += '<rect x="' + (x - 3.2).toFixed(1) + '" y="' + (y - 3.2).toFixed(1) + '" width="6.4" height="6.4" fill="' + cols[i % 4] + '" stroke="#fff" stroke-width="1.2" transform="rotate(45 ' + x.toFixed(1) + ' ' + y.toFixed(1) + ')"/>';
+    }
+    var swords = '<g stroke-linecap="round">' +
+      '<path d="M44 42 L74 72" stroke="#868e96" stroke-width="6"/><path d="M44 42 L74 72" stroke="#f1f3f5" stroke-width="3.4"/><path d="M41 39 L46 41 L44 46Z" fill="#f1f3f5"/>' +
+      '<path d="M76 42 L46 72" stroke="#868e96" stroke-width="6"/><path d="M76 42 L46 72" stroke="#f1f3f5" stroke-width="3.4"/><path d="M79 39 L74 41 L76 46Z" fill="#f1f3f5"/>' +
+      '<path d="M67 77 L79 65 M53 77 L41 65" stroke="#e0a800" stroke-width="4.5"/>' +
+      '<path d="M75 75 L81 81 M45 75 L39 81" stroke="#8a4b14" stroke-width="5"/><circle cx="83" cy="83" r="3.6" fill="#ffd43b" stroke="#b07d00"/><circle cx="37" cy="83" r="3.6" fill="#ffd43b" stroke="#b07d00"/></g>';
+    var body = '<path d="' + starPath(60, 58, 60, 50, 30, -90) + '" fill="url(#' + gid + ')" stroke="#b07d00" stroke-width="1.8"/>' +
+      '<g clip-path="url(#' + clip + ')"><circle cx="60" cy="58" r="52" fill="' + c2 + '"/><g>' + (function () {
+        var o = '', k; for (k = 0; k < 20; k++) { var a1 = k * 18 * Math.PI / 180, a2 = (k * 18 + 9) * Math.PI / 180;
+          o += '<path d="M60 58 L' + (60 + 80 * Math.cos(a1)).toFixed(1) + ' ' + (58 + 80 * Math.sin(a1)).toFixed(1) + ' L' + (60 + 80 * Math.cos(a2)).toFixed(1) + ' ' + (58 + 80 * Math.sin(a2)).toFixed(1) + 'Z" fill="' + c1 + '" opacity=".75"/>'; }
+        return o; })() + '<animateTransform attributeName="transform" type="rotate" from="0 60 58" to="360 60 58" dur="16s" repeatCount="indefinite"/></g></g>' +
+      '<g transform="translate(0,-4)">' + laurel('#2b8a3e', '#69db7c') + '</g>' +
+      '<circle cx="60" cy="58" r="36" fill="url(#' + mid + ')" stroke="url(#' + gid + ')" stroke-width="5"/>' +
+      '<circle cx="60" cy="58" r="29" fill="none" stroke="#ffe066" stroke-width="1.4" stroke-dasharray="3 3"/>' + gems + swords +
+      '<path d="' + starPath(60, 57, 9, 4, 5) + '" fill="#ffe066" stroke="#b07d00" stroke-width="1.2"/>' +
+      '<g clip-path="url(#' + mc + ')"><rect x="-30" y="10" width="14" height="100" fill="#fff" opacity=".35" transform="skewX(-20)"><animate attributeName="x" values="-30;150;150" dur="3s" repeatCount="indefinite"/></rect></g>' +
+      crown(60, 20, 0.85) +
+      '<path d="M0 86 L16 80 L16 110 L0 104 L7 95Z M120 86 L104 80 L104 110 L120 104 L113 95Z" fill="' + c2 + '"/>' +
+      '<path d="M10 82 H110 L106 95 L110 108 H10 L14 95Z" fill="' + c1 + '" stroke="url(#' + gid + ')" stroke-width="3" stroke-linejoin="round"/>' +
+      bigText(t, 60, 101, fit(t, 90, 20, 10), '#fff', c2, 4) +
+      (t2 ? bigText(t2, 60, 118, fit(t2, 70, 10, 7), '#b07d00', '#fff', 3) : '') +
+      sparkle(10, 22, 7, '#fff', 1.3) + sparkle(110, 26, 6, '#fff', 1.8) + sparkle(104, 66, 5, '#fff3bf', 1.1) + sparkle(16, 66, 5, '#fff3bf', 1.6) + sparkle(36, 10, 4, '#ffd43b', 2.2) + sparkle(86, 8, 4, '#ffd43b', 1.5);
+    return svgOpen(size, t, 'bs-stamp') + '<defs>' + defs + '</defs>' + body + '</svg>';
+  }
   function liveStamp(d, size) {
     var clip = nid('lc'), gid = nid('lg'), mid = nid('lm'), rank = d.rank || 10, t = String(d.t || ''), t2 = String(d.t2 || '');
     var defs = '<clipPath id="' + clip + '"><circle cx="60" cy="60" r="58"/></clipPath>' +
@@ -1981,6 +2032,7 @@ table.dash th.mcol, table.dash td.mcol { border-left: 2px solid var(--gold); }
     if (d.k === 'hk') return hanko(d, size);
     if (d.k === 'pp') return pop(d, size);
     if (d.k === 'lv') return liveStamp(d, size);
+    if (d.k === 'bs') return bossStamp(d, size);
     return sticker(d, size);
   }
   // 先生が絵と言葉で作るスタンプ（以前のスタンプもこの形で表示）
@@ -2084,12 +2136,16 @@ table.dash th.mcol, table.dash td.mcol { border-left: 2px solid var(--gold); }
     { id: 'lv1', k: 'lv', rank: 1, t: '優勝!!', t2: 'CHAMPION', live: 'rank1' },
     { id: 'lv2', k: 'lv', rank: 2, t: '準優勝!', t2: 'Fantastic!', live: 'rank2' },
     { id: 'lv3', k: 'lv', rank: 3, t: '3位入賞!', t2: 'Great job!', live: 'rank3' },
-    { id: 'lv10', k: 'lv', rank: 10, t: 'TOP 10!', t2: '入賞おめでとう', live: 'top10' }
+    { id: 'lv10', k: 'lv', rank: 10, t: 'TOP 10!', t2: '入賞おめでとう', live: 'top10' },
+    // ---- 範囲の総復習のラスボスをたおしたとき（いちばん立派。先生スタンプの一覧には出さない） ----
+    { id: 'bs1', k: 'bs', t: 'ラスボス撃破!!', t2: 'LEGENDARY', c1: '#e03131', c2: '#862e2e', rules: ['boss'] },
+    { id: 'bs2', k: 'bs', t: 'ラスボス撃破!!', t2: 'LEGENDARY', c1: '#7048e8', c2: '#3b2a7a', rules: ['boss'] },
+    { id: 'bs3', k: 'bs', t: 'ラスボス撃破!!', t2: 'LEGENDARY', c1: '#1c7ed6', c2: '#0b3d6e', rules: ['boss'] }
   ];
   var byId = {};
   L.forEach(function (d) { byId[d.id] = d; });
   function pool(rule) { return L.filter(function (d) { return (d.rules || []).indexOf(rule) >= 0; }); }
-  var KINDS = { st: 'ゆるかわ', hk: 'ハンコ', pp: 'キラキラ', lv: 'ライブ表彰' };
+  var KINDS = { st: 'ゆるかわ', hk: 'ハンコ', pp: 'キラキラ', lv: 'ライブ表彰', bs: 'ラスボス撃破' };
   root.StampSet = { list: L, byId: byId, pool: pool, KINDS: KINDS };
 })(typeof globalThis !== 'undefined' ? globalThis : this);
 /*
@@ -2622,7 +2678,7 @@ const DEFAULT_SETTINGS = {
   picAvatar: true,         // 画像・お絵かきのアバターを使えるようにする
   picApproval: true,       // 画像・お絵かきのアバターは、先生が承認してからほかの人に見せる
   rosterOnly: false,       // 名簿に登録した生徒だけ使える
-  rangeTask: { need: 2, gap: 3, minutes: 15, maxQ: 15 } // 課題（範囲の総復習）：別の日に need 回正解・最初の正解から gap 日あけても正解／1回の時間（分）と問題数
+  rangeTask: { need: 2, gap: 3, minutes: 15, maxQ: 15, bossQ: 10 } // 課題（範囲の総復習）：別の日に need 回正解・最初の正解から gap 日あけても正解／1回の時間（分）と問題数
 };
 function mergeSettings(s) {
   const d = JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
@@ -2968,7 +3024,7 @@ function openMistakes(records) {
      students:[メール]（あれば、その生徒だけに配信。なければ classes の生徒全員）, src:{文法ID: 問題セットID} }]
    settings.folders = [{ id, name }]
    課題（通常）＝ふくまれる文法をすべてマスター ／ 課題（マスターモード、文法2つ以上）＝すべてマスター＋まとめ問題に合格
-   課題（範囲の総復習、kind:"range"）＝文法ごとの観点を、日をあけてすべて確かめる（rangeStatus）
+   課題（範囲の総復習、kind:"range"）＝文法ごとの観点を、日をあけてすべて確かめる（rangeStatus）。そのあとラスボス（bossInfo）
    ストーリーモードの課題は settings.storyGoal（全クラス）と settings.classTasks[クラス].storyGoal */
 function taskForStudent(t, cls, email) {
   if (Array.isArray(t.students) && t.students.length) return t.students.indexOf(String(email || "").toLowerCase()) >= 0;
@@ -3007,11 +3063,11 @@ function taskPassed(history) { return Object.keys(taskPassAt(history)); }
 function taskStatus(t, mAt, passAt, now, history, settings) {
   if (isRangeTask(t)) {
     // 範囲の総復習：n／total＝確認済みの観点の数、done＝全部の観点がそろった（そのあとまちがえてもクリアは消さない）
-    const rs = rangeStatus(t, history, rangeConf(settings), now);
+    const rs = rangeStatus(t, history, rangeConf(settings), now), bi = bossInfo(t, history, now);
     return { n: rs.confirmed, total: rs.total, ready: true, mm: false, range: true, passed: !!rs.everAt, done: !!rs.everAt, doneAt: rs.everAt,
       weak: rs.vps.filter((v) => v.st === "weak").length, stuck: rs.vps.filter((v) => v.stuck).length,
       vps: rs.vps.map((v) => ({ i: v.iid, k: v.k, s: v.st, l: v.left, x: v.stuck ? 1 : 0 })),
-      due: t.due ? dueState(t.due, rs.everAt, now) : null };
+      boss: bi.at || null, bossToday: bi.today, due: t.due ? dueState(t.due, rs.everAt, now) : null };
   }
   const items = t.items || [], n = items.filter((id) => mAt[id]).length, ready = items.length > 0 && n === items.length;
   const mm = isMasterTask(t), pass = mm ? (passAt || {})[t.id] || null : null;
@@ -3167,11 +3223,11 @@ const VIEWPOINTS = {
   ot2: [["let＋人＋動詞の原形（〜させてあげる）", "\\blet\\b"], ["help＋人＋動詞の原形（〜するのを手伝う）", "\\bhelp(ed|s)?\\b"], ["make＋人＋動詞の原形（〜させる）", "\\b(made|make|makes)\\b"]],
   ex1: [["How＋形容詞・副詞！", "^how\\b"], ["What＋a / an＋形容詞＋名詞！", "^what\\b"]]
 };
-const RANGE_DEFAULT = { need: 2, gap: 3, minutes: 15, maxQ: 15 };
+const RANGE_DEFAULT = { need: 2, gap: 3, minutes: 15, maxQ: 15, bossQ: 10 };
 function isRangeTask(t) { return !!t && t.kind === "range"; }
 function rangeConf(settings) {
   const r = (settings || {}).rangeTask || {}, num = (v, lo, hi, d) => { const n = Math.round(Number(v)); return n >= lo && n <= hi ? n : d; };
-  return { need: num(r.need, 1, 5, RANGE_DEFAULT.need), gap: num(r.gap, 0, 30, RANGE_DEFAULT.gap), minutes: num(r.minutes, 5, 40, RANGE_DEFAULT.minutes), maxQ: num(r.maxQ, 5, 40, RANGE_DEFAULT.maxQ) };
+  return { need: num(r.need, 1, 5, RANGE_DEFAULT.need), gap: num(r.gap, 0, 30, RANGE_DEFAULT.gap), minutes: num(r.minutes, 5, 40, RANGE_DEFAULT.minutes), maxQ: num(r.maxQ, 5, 40, RANGE_DEFAULT.maxQ), bossQ: num(r.bossQ, 3, 30, RANGE_DEFAULT.bossQ) };
 }
 // その文法の観点 [{ name, re, dflt }]（観点が決まっていない文法は「この文法」1つ）
 function vpDefs(itemId) {
@@ -3238,6 +3294,28 @@ function rangeStatus(t, history, conf, now) {
     if (doneN === keys.length) { everAt = a.ts; break; }
   }
   return { vps: vps, confirmed: vps.filter((v) => v.st === "done").length, total: vps.length, everAt: everAt };
+}
+/* ラスボス（ダンジョン制覇のあとのおまけ）：挑戦の記録は itemId "boss"・段階0・タグ b:課題ID。全問正解（passed）でたおした
+   at：はじめてたおした日時、today：今日もう挑戦したか（挑戦は1日1回） */
+function bossInfo(t, history, now) {
+  const today = dayKey(now || Date.now()), key = "b:" + t.id;
+  let at = null, todayTry = false, tries = 0;
+  (history || []).filter((r) => r.itemId === "boss" && (r.tags || []).indexOf(key) >= 0).sort((a, b) => tsNum(a.timestamp) - tsNum(b.timestamp)).forEach((r) => {
+    tries++;
+    if (dayKey(r.timestamp) === today) todayTry = true;
+    if (r.passed && !at) at = r.timestamp;
+  });
+  return { at: at, today: todayTry, tries: tries };
+}
+// 問題ごとのまちがえた回数（あとで正解した問題もふくめて数える） {qid: 回数}
+function mistakeCounts(records) {
+  const m = {};
+  (records || []).forEach((r) => (r.details || []).forEach((d) => {
+    if (!d || !d.qid) return;
+    const ok = d.contentCorrect !== undefined && d.contentCorrect !== null ? !!d.contentCorrect : !!d.correct;
+    if (!ok) m[d.qid] = (m[d.qid] || 0) + 1;
+  }));
+  return m;
 }
 /* PDF・Word の問題セット：文のリスト → 段階2〜4の問題（サーバーとお試しモードで共通）
    問題ID は「項目ID-段階-セットID＋種類＋文の番号」（記録・復習・まちがい集計に使う） */
@@ -3308,24 +3386,28 @@ function rewardExtra() {
 }
 function rewardState(history) {
   const rw = computeRewards(history, state.settings, ITEM_IDS, rewardExtra());
-  rw.autoStamps = state.settings.autoStamps === false ? [] : autoStampEvents(history);
+  rw.autoStamps = autoStampEvents(history).filter((s) => state.settings.autoStamps !== false || s.rule === "boss"); // ラスボスのスタンプは、自動スタンプを止めていても出す
   rw.unlocked = new Set(AVATAR_SET.list.concat(THEMES).filter((it) => isOpen(it, rw, (state.profile || {}).owned)).map((it) => it.id));
   return rw;
 }
 /* 条件で自動でもらえるスタンプ（記録から決まる。絵は条件ごとの候補から生徒ごとに選ばれる） */
-const STAMP_RULES = { first: "はじめての練習", week3: "1週間に3日練習", week5: "1週間に5日練習", week7: "1週間に7日練習", achieve: "文法をマスター", perfect: "全問正解", comeback: "おかえり" };
+const STAMP_RULES = { first: "はじめての練習", week3: "1週間に3日練習", week5: "1週間に5日練習", week7: "1週間に7日練習", achieve: "文法をマスター", perfect: "全問正解", comeback: "おかえり", boss: "ラスボス撃破" };
 const strHash = (s) => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0; return h; };
 function autoStampEvents(history) {
   const SS = window.StampSet; if (!SS) return [];
   const h = (history || []).slice().sort((a, b) => (String(a.timestamp) < String(b.timestamp) ? -1 : 1));
   const out = [], seen = new Set(), weekDays = {}, pc = {};
   let lastDay = null;
-  const add = (rule, key, r) => {
+  const add = (rule, key, r, sub) => {
     if (seen.has(key)) return; seen.add(key);
     const pool = SS.pool(rule); if (!pool.length) return;
-    out.push({ rule, key, ts: r.timestamp, design: pool[strHash(state.email + "|" + key) % pool.length].id, note: STAMP_RULES[rule] + (rule === "achieve" ? "：" + ((CONTENT.find((c) => c.id === r.itemId) || {}).short || "") : "") });
+    out.push({ rule, key, ts: r.timestamp, design: pool[strHash(state.email + "|" + key) % pool.length].id, note: STAMP_RULES[rule] + (rule === "achieve" ? "：" + ((CONTENT.find((c) => c.id === r.itemId) || {}).short || "") : sub ? "：" + sub : "") });
   };
   h.forEach((r, i) => {
+    if (r.itemId === "boss" && r.passed) {
+      const tid = String((r.tags || []).find((x) => /^b:/.test(x)) || "").slice(2), tk = ((state.settings || {}).tasks || []).find((x) => x.id === tid);
+      if (tid) add("boss", "boss:" + tid, r, tk ? tk.name : "");
+    }
     const day = dayKey(r.timestamp), wk = weekOf(day);
     if (i === 0) add("first", "first", r);
     if (day !== lastDay) {
@@ -3389,6 +3471,7 @@ function nextStep() {
   const st = taskChecker();
   for (const t of sortTasks(myTasks(), st)) {
     const x = st(t);
+    if (x.range && x.done && !x.boss && !x.bossToday) return { task: t, range: true, boss: true, it: taskItems(t)[0] };
     if (x.done) continue;
     if (x.range) { if (rangeOf(t).vps.some((v) => v.useful && !v.stuckToday)) return { task: t, range: true, it: taskItems(t)[0] }; continue; }
     for (const it of taskItems(t)) {
@@ -3740,7 +3823,7 @@ const api = MODE === "api" ? remoteApi(async (action, args) => {
   async bootstrap() {
     const results = lsGet("eg_results", []);
     return { email: "お試しユーザー", isAdmin: true, settings: lsGet("eg_settings", null), progress: computeProgress(results), history: results, hasEleven: !!lsGet("eg_eleven_key", ""),
-      profile: demoProfile(), tstamps: lsGet("eg_tstamps", []), mistakes: openMistakes(results), classes: demoClasses(), teacher: { scope: null, owner: true }, content: demoContent() };
+      profile: demoProfile(), tstamps: lsGet("eg_tstamps", []), mistakes: openMistakes(results), wrongs: mistakeCounts(results), classes: demoClasses(), teacher: { scope: null, owner: true }, content: demoContent() };
   },
   async seedContent(d) {
     const cur = lsGet("eg_items", null) || [], have = new Set(cur.map((x) => x.id));
@@ -4176,7 +4259,7 @@ function dueBlockHTML(due, d) {
 const dueCls = (d, done) => (done ? "done" : !d ? "none" : d.state === "over" ? "over" : d.left <= 2 ? "soon" : "open");
 const kindChip = (t) => isRangeTask(t) ? `<span class="kind-chip rg">課題（範囲の総復習）</span>` : `<span class="kind-chip ${isMasterTask(t) ? "mm" : ""}">${isMasterTask(t) ? "課題（マスターモード）" : "課題（通常）"}</span>`;
 function taskCardHTML(t, x) {
-  const go = x.range ? (x.done ? "制覇" : `たおした ${x.n}/${x.total}`) : x.done ? "クリア" : x.mm && x.ready ? "まとめ問題へ" : `マスター ${x.n}/${x.total}`;
+  const go = x.range ? (x.done ? (x.boss ? "👑 制覇" : "制覇") : `たおした ${x.n}/${x.total}`) : x.done ? "クリア" : x.mm && x.ready ? "まとめ問題へ" : `マスター ${x.n}/${x.total}`;
   return `<button class="task-card due-${dueCls(x.due, x.done)}" data-t="${esc(t.id)}">
     <span class="tc-due">${dueBlockHTML(t.due, x.due)}</span>
     <span class="tc-main">${kindChip(t)}<span class="tc-title">${esc(t.name)}</span><span class="tc-sub">${taskItems(t).map((it) => esc(it.short)).join("・")}</span></span>
@@ -4204,6 +4287,7 @@ function storyTaskCardHTML(st, sg) {
 }
 function renderHome() {
   if (lsGet("eg_range_draft", null) && !(session && session.range)) flushRangeDraft().then(() => { if ($(".home")) renderHome(); });
+  if (lsGet("eg_boss_draft", null) && !(session && session.boss)) flushBossDraft().then(() => { if ($(".home")) renderHome(); });
   if (state.isAdmin && !state.viewAsStudent) return renderAdminHome();
   applySkin(state.profile.theme);
   const st = taskChecker();
@@ -4355,6 +4439,7 @@ function renderTaskView(tid, back) {
     bindBack(() => { curTask = null; (renderTaskView.back || renderHome)(); });
     $$(".item-card").forEach((b) => (b.onclick = () => renderItem(+b.dataset.i)));
     $("#goRange").onclick = () => startRange(t);
+    if ($("#goBoss")) $("#goBoss").onclick = () => startBoss(t);
     return;
   }
   render(`${header(t.name, true)}
@@ -4925,7 +5010,7 @@ function rewardGifts(before) {
   if (after.days > before.days) gifts.push({ big: "🐾", title: "今日のスタンプ！", text: after.onCard === 0 ? `スタンプカードが1枚うまりました（${after.cards}枚目）` : `スタンプカード ${after.onCard} / ${STAMPS_PER_CARD}` + (after.streak >= 2 ? `　🔥${after.streak}日連続` : "") });
   if (after.level.index > before.level.index) gifts.push({ big: "🥋", title: `${after.level.name}に昇級！`, text: `けいけん値 ${after.xp}。新しいキャラクターやアイテムが使えるようになるかも！` });
   const oldKeys = new Set(before.autoStamps.map((s) => s.key));
-  after.autoStamps.filter((s) => !oldKeys.has(s.key)).forEach((s) => gifts.push({ html: stampArt(s.design, 160), title: "スタンプをもらいました！", text: s.note }));
+  after.autoStamps.filter((s) => !oldKeys.has(s.key)).forEach((s) => (s.rule === "boss" ? gifts.unshift({ html: stampArt(s.design, 220), title: "👑 伝説のスタンプをもらいました！", text: s.note }) : gifts.push({ html: stampArt(s.design, 160), title: "スタンプをもらいました！", text: s.note }))); // ラスボスのスタンプはいちばん先に
   BADGES.filter((b) => after.badges.has(b.id) && !before.badges.has(b.id)).forEach((b) => gifts.push({ big: b.ico, title: "バッジ「" + b.name + "」", text: b.desc + "（+20pt）" }));
   const newItems = AVATAR_SET.list.filter((it) => after.unlocked.has(it.id) && !before.unlocked.has(it.id) && !shopPrice(it.un));
   const newThemes = THEMES.filter((t) => after.unlocked.has(t.id) && !before.unlocked.has(t.id) && !shopPrice(t.un));
@@ -5232,8 +5317,8 @@ function startQuiz(i, stage) {
 
 function quizHeader() {
   const { stage, qs, index, i } = session;
-  return `${header(session.range ? "総復習ダンジョン" : session.story ? "とどめの一撃" : session.master ? "まとめ問題" : session.review ? "復習" : `段階${stage}　${CONTENT[i].short}`, true)}
-    <div class="progress"><div class="progress-bar s${session.review || session.master || session.story || session.range ? 3 : stage}" style="width:${(index / qs.length) * 100}%"></div></div>
+  return `${header(session.boss ? "ラスボス戦" : session.range ? "総復習ダンジョン" : session.story ? "とどめの一撃" : session.master ? "まとめ問題" : session.review ? "復習" : `段階${stage}　${CONTENT[i].short}`, true)}
+    <div class="progress"><div class="progress-bar s${session.review || session.master || session.story || session.range || session.boss ? 3 : stage}" style="width:${(index / qs.length) * 100}%"></div></div>
     <div class="progress-text">${index + 1} / ${qs.length}</div>${session.story ? storyBattleBar() : ""}`;
 }
 
@@ -5284,12 +5369,12 @@ function renderQuestion() {
   const stage = q._st || session.stage; // 復習では問題ごとに段階がちがう
   render(`${quizHeader()}
     <main class="wrap">
-      ${session.range ? `<div class="review-tag">${rangeTagHTML(q)}</div>` : session.review || session.master || session.story ? `<div class="review-tag">${esc(q._from || "")}</div>` : ""}
+      ${session.boss ? `<div class="review-tag">${bossTagHTML(q)}</div>` : session.range ? `<div class="review-tag">${rangeTagHTML(q)}</div>` : session.review || session.master || session.story ? `<div class="review-tag">${esc(q._from || "")}</div>` : ""}
       ${questionCard(q, stage)}
       ${answerBlock({ lang: "en-US", placeholder: stage === 4 ? "聞き取り中に英語で言おう" : "マイクをタップして英語で言おう", multiline: false })}
       <div id="result"></div>
     </main>`);
-  bindBack(() => (session.range ? quitRange() : session.story ? renderStory() : session.master ? backToTask(session.master) : session.review ? renderReview() : renderItem(session.i)));
+  bindBack(() => (session.boss ? quitBoss() : session.range ? quitRange() : session.story ? renderStory() : session.master ? backToTask(session.master) : session.review ? renderReview() : renderItem(session.i)));
 
   let shownAt = 0, latency = null;
   const limit = state.settings.stage4.timeLimitSec;
@@ -5350,7 +5435,7 @@ async function judgeQuestion(q, ans, via, latency, ctl) {
   const late = stage === 4 && (latency == null || latency > state.settings.stage4.timeLimitSec);
   const finalCorrect = correct && !late;
   session.log.push({ qid: q.qid, st: stage, q: qText(q), a: ans.text, correct: finalCorrect, contentCorrect: correct, latency: latency == null ? null : Math.round(latency * 10) / 10, via, by });
-  const extra = session.range ? rangeAfter(q, finalCorrect) : ""; // 総復習：記録のしるし・まちがえたときの練習と再確認
+  const extra = session.boss ? bossAfter(q, finalCorrect) : session.range ? rangeAfter(q, finalCorrect) : ""; // 総復習：記録のしるし・まちがえたときの練習と再確認
 
   const isLast = session.index + 1 >= session.qs.length;
   res.innerHTML = `<div class="panel">
@@ -5367,6 +5452,7 @@ async function judgeQuestion(q, ans, via, latency, ctl) {
 }
 
 async function renderQuizResult() {
+  if (session.boss) return renderBossResult();
   if (session.range) return renderRangeResult();
   if (session.review) return renderReviewResult();
   if (session.master) return renderMasterResult();
@@ -5407,7 +5493,7 @@ function applyToMistakes(details, ts) {
     if (!d || !d.qid) return;
     const ok = d.contentCorrect !== undefined && d.contentCorrect !== null ? d.contentCorrect : d.correct;
     if (ok) map.delete(d.qid);
-    else { const e = Object.assign({ qid: d.qid, wrong: 0 }, map.get(d.qid) || {}); e.wrong++; e.a = d.a || ""; e.ts = ts; map.set(d.qid, e); }
+    else { state.wrongs = state.wrongs || {}; state.wrongs[d.qid] = (state.wrongs[d.qid] || 0) + 1; const e = Object.assign({ qid: d.qid, wrong: 0 }, map.get(d.qid) || {}); e.wrong++; e.a = d.a || ""; e.ts = ts; map.set(d.qid, e); }
   });
   state.mistakes = Array.from(map.values());
 }
@@ -5584,7 +5670,7 @@ function rangePanelHTML(t, x) {
   return `<section class="panel range-panel ${x.done ? "done" : ""}">
     <h2>${x.done ? "🏆 ダンジョン制覇！" : "🗝️ 総復習ダンジョン"} <small>たおしたモンスター ${rs.confirmed} / ${rs.total}</small></h2>
     <p class="hint">${rangeRuleText(c)}</p>
-    ${dungeonHTML(t, rs)}
+    ${x.done ? bossPanelHTML(t, x) : ""}${dungeonHTML(t, rs)}${x.done ? "" : bossPanelHTML(t, x)}
     <button class="btn primary big" id="goRange">${todo ? `ダンジョンに入る（${c.minutes}分・最大${c.maxQ}問）` : rs.confirmed === rs.total ? "もう一度たしかめる" : "今日の分は終わり！ もう少し練習する"}</button>
     ${!todo && rs.confirmed < rs.total ? `<p class="hint center">いまは、日をあけて再確認を待っているモンスターだけです。${rs.vps.filter((v) => v.waitTo).map((v) => v.waitTo).sort()[0] ? `次は ${fmtDue(rs.vps.filter((v) => v.waitTo).map((v) => v.waitTo).sort()[0])} から挑戦できます。` : ""}</p>` : ""}
   </section>`;
@@ -5738,6 +5824,147 @@ async function renderRangeResult() {
   if (firstClear) showGifts([{ title: "ダンジョン制覇！", text: `課題（範囲の総復習）「${t.name}」の観点をすべて確かめました。`, big: "🏆" }]);
   if (rec.total) await saveResult(Object.assign({}, rec, { tags: ["r:" + t.id].concat(rec.tags) }));
   else { const el = $("#saveState"); if (el) el.textContent = ""; }
+}
+
+/* ===== 課題（範囲の総復習）：ラスボス =====
+   ダンジョンのモンスターをすべてたおすと、最深部にラスボスが出る。範囲のすべての文法の問題（段階2〜4）から、
+   その生徒がまちがえた回数の多い問題を中心に bossQ 問（時間制限なし・小さな誤りも厳しく判定）。全問正解でたおせる。
+   挑戦は1日1回（スタートしたら、途中でやめても1回）。たおすとごほうびに特別なスタンプ「ラスボス撃破」（スタンプ帳に入る） */
+let bossUid = 0;
+function bossSVG(size, st) {
+  const id = "bsa" + (++bossUid), down = st === "down", lock = st === "locked";
+  const mon = monsterSVG("dragon-0", 92, { down }).replace(/^<svg class="monster-svg" width="92" height="92"/, '<svg x="14" y="22" width="92" height="92"');
+  const crownG = `<g transform="translate(60,36) scale(.5)"><path d="M-22 10 L-26 -12 L-12 0 L0 -18 L12 0 L26 -12 L22 10Z" fill="#ffd43b" stroke="#c99200" stroke-width="2.6" stroke-linejoin="round"/><rect x="-22" y="8" width="44" height="7" rx="2" fill="#fab005" stroke="#c99200" stroke-width="2.2"/><circle cx="0" cy="-18" r="3.6" fill="#ff6b6b"/><circle cx="-26" cy="-12" r="3" fill="#4dabf7"/><circle cx="26" cy="-12" r="3" fill="#4dabf7"/></g>`;
+  return `<svg class="boss-svg ${st}" width="${size}" height="${size}" viewBox="0 0 120 120" role="img" aria-label="ラスボス">
+    <defs><radialGradient id="${id}" cx="50%" cy="55%" r="55%"><stop offset="0" stop-color="#ff6b6b" stop-opacity=".8"/><stop offset=".55" stop-color="#7950f2" stop-opacity=".4"/><stop offset="1" stop-color="#7950f2" stop-opacity="0"/></radialGradient></defs>
+    ${down ? "" : `<circle cx="60" cy="64" r="56" fill="url(#${id})">${lock ? "" : `<animate attributeName="r" values="50;58;50" dur="2.4s" repeatCount="indefinite"/>`}</circle>`}
+    ${down ? "" : `<path d="M24 66 Q10 100 16 116 L104 116 Q110 100 96 66 Q60 84 24 66Z" fill="#212529" stroke="#c92a2a" stroke-width="2.5" stroke-linejoin="round"/>`}
+    ${mon}${down ? "" : crownG}${lock ? `<text x="60" y="76" text-anchor="middle" font-size="40" font-weight="900" fill="#fff">？</text>` : ""}</svg>`;
+}
+// 範囲のすべての文法の問題（段階2〜4、同じ問題は1つ）
+function bossPool(t) {
+  const all = [], seen = {};
+  (t.items || []).forEach((iid) => vpDefs(iid).forEach((v, k) => rangePool(iid, k).forEach((q) => { if (!seen[q.qid]) { seen[q.qid] = 1; all.push(q); } })));
+  return all;
+}
+// まちがえた回数の多い問題を中心に n 問（回数を重みにしたランダム）→ 足りない分は、ほかの問題から文法がかたよらないように
+function bossPlan(t, n) {
+  const W = state.wrongs || {}, pool = bossPool(t), picks = [];
+  let mis = pool.filter((q) => (W[q.qid] || 0) > 0);
+  while (picks.length < n && mis.length) {
+    const sum = mis.reduce((a, q) => a + W[q.qid], 0);
+    let r = Math.random() * sum, j = 0;
+    for (; j < mis.length - 1; j++) { r -= W[mis[j].qid]; if (r <= 0) break; }
+    picks.push(Object.assign({ _miss: W[mis[j].qid] }, mis[j]));
+    mis.splice(j, 1);
+  }
+  const cnt = {}; picks.forEach((q) => { cnt[q._iid] = (cnt[q._iid] || 0) + 1; });
+  const rest = pool.filter((q) => !(W[q.qid] > 0)).map((q) => ({ q, r: Math.random() }));
+  while (picks.length < n && rest.length) {
+    rest.sort((a, b) => (cnt[a.q._iid] || 0) - (cnt[b.q._iid] || 0) || a.r - b.r);
+    const q = rest.shift().q;
+    cnt[q._iid] = (cnt[q._iid] || 0) + 1;
+    picks.push(Object.assign({}, q));
+  }
+  // 順番はばらばらに。同じ文法が続かないように
+  const sh = picks.map((q) => ({ q, r: Math.random() })).sort((a, b) => a.r - b.r).map((x) => x.q), qs = [];
+  while (sh.length) { const prev = qs.length ? qs[qs.length - 1]._iid : ""; const j = sh.findIndex((q) => q._iid !== prev); qs.push(sh.splice(j < 0 ? 0 : j, 1)[0]); }
+  return qs;
+}
+function bossPanelHTML(t, x) {
+  const c = rangeConfNow(), b = bossInfo(t, state.history);
+  if (!x.done) return `<div class="boss-room locked">${bossSVG(76, "locked")}<div class="boss-txt"><b>👑 最深部：ラスボス</b><span class="hint">モンスターをすべてたおすと、ラスボスがあらわれる…</span></div></div>`;
+  const btn = b.today ? `<p class="boss-wait">今日はもう挑戦しました。また明日！</p>`
+    : `<button class="btn boss-btn big" id="goBoss">${b.at ? "ラスボスともう一度たたかう" : "👑 ラスボスに挑む"}（${c.bossQ}問）</button>`;
+  return `<div class="boss-room ${b.at ? "down" : "ready"}">${bossSVG(b.at ? 92 : 116, b.at ? "down" : "ready")}<div class="boss-txt">
+    <b>${b.at ? `👑 ラスボスをたおした！（${fmtDate(b.at)}）` : "👑 ラスボスがあらわれた！"}</b>
+    <span class="hint">${b.at ? "ごほうびのスタンプ「ラスボス撃破」は、スタンプ帳に入っています。" : `範囲のすべての文法から、まちがえたことのある問題を中心に${c.bossQ}問。<b>全問正解</b>でたおせます（挑戦は1日1回）。たおすと、とっても立派なスタンプがもらえます。`}</span>
+    ${btn}</div></div>`;
+}
+function startBoss(t) {
+  const c = rangeConfNow(), b = bossInfo(t, state.history);
+  if (!rangeOf(t).everAt || b.today) return renderTaskView(t.id);
+  const qs = bossPlan(t, c.bossQ);
+  if (!qs.length) return renderTaskView(t.id);
+  const nm = qs.filter((q) => q._miss).length;
+  session = { i: 0, stage: 3, qs, index: 0, log: [], startedAt: Date.now(), boss: { t, c, n: qs.length, miss: 0 } };
+  render(`${header("ラスボス戦", true)}
+    <main class="wrap">
+      <section class="q-card s3 intro boss-intro">
+        <div class="boss-big">${bossSVG(150, "ready")}</div>
+        <div class="q-label">👑 課題（範囲の総復習）「${esc(t.name)}」</div>
+        <div class="q-main ja">ラスボスがあらわれた！</div>
+        <ul class="rules">
+          <li>問題は <b>${qs.length}問</b>。範囲のすべての文法から出ます${nm ? `（そのうち <b>${nm}問</b> は、前にあなたがまちがえた問題）` : ""}。</li>
+          <li>時間制限はありません。小さなまちがいも × です。<b>全問正解</b>でラスボスをたおせます。</li>
+          <li>挑戦は<b>1日1回</b>。スタートしたら、途中でやめても1回と数えます。1問まちがえても、最後まで答えよう。</li>
+        </ul>
+      </section>
+      <button class="btn boss-btn big" id="go">たたかう！</button>
+      ${footerNote()}
+    </main>`);
+  bindBack(() => renderTaskView(t.id));
+  $("#go").onclick = () => { bossDraft(); renderQuestion(); };
+}
+function bossTagHTML(q) {
+  const B = session.boss, ok = session.log.filter((l) => l.correct).length, hp = Math.max(0, B.n - ok);
+  return `<span class="rg-tag boss-tag">${bossSVG(34, "ready")}<span>ラスボス　<span class="boss-hp">${"♥".repeat(Math.min(hp, 20))}</span>${B.miss ? `<small>（もうたおせない…最後まで答えよう）</small>` : ""}<br><small>${esc(q._from || "")}</small></span></span>`;
+}
+function bossDraft() {
+  const B = session.boss;
+  lsSet("eg_boss_draft", { tid: B.t.id, n: B.n, at: Date.now(), startedAt: session.startedAt, score: session.log.filter((l) => l.correct).length, log: session.log.slice(-40) });
+}
+function bossAfter(q, ok) {
+  const B = session.boss;
+  bossDraft();
+  if (ok) return "";
+  B.miss++;
+  return B.miss === 1 ? `<div class="rg-note stop">💥 ラスボスにはね返された！ 今回はたおせないけれど、最後まで答えて、まちがえた問題を確かめよう。</div>` : "";
+}
+function bossRecord(tid, score, n, log, startedAt) {
+  const c = rangeConfNow();
+  return { itemId: "boss", stage: 0, task: tid, score, total: n, passed: n >= c.bossQ && score === n, tags: ["b:" + tid],
+    durationSec: Math.round((Date.now() - (startedAt || Date.now())) / 1000), details: log || [] };
+}
+// 途中でやめたとき・アプリを閉じたときも、1回の挑戦として記録する
+async function flushBossDraft() {
+  const d = lsGet("eg_boss_draft", null);
+  lsSet("eg_boss_draft", null);
+  if (!d || !d.tid || !(d.n >= 1)) return;
+  try {
+    const r = bossRecord(d.tid, Math.min(d.score || 0, d.n), d.n, d.log || [], d.startedAt);
+    await api.saveResult(r);
+    state.history = state.history.concat([{ timestamp: new Date(d.at || Date.now()).toISOString(), itemId: "boss", stage: 0, score: r.score, total: r.total, passed: r.passed, tags: r.tags }]);
+  } catch (e) {}
+}
+function quitBoss() {
+  const B = session && session.boss;
+  if (!B) return renderHome();
+  const t = B.t;
+  if (lsGet("eg_boss_draft", null)) flushBossDraft().then(() => renderTaskView(t.id)); else renderTaskView(t.id);
+}
+async function renderBossResult() {
+  const { log, boss: B, qs } = session, t = B.t;
+  lsSet("eg_boss_draft", null);
+  const score = log.filter((l) => l.correct).length, rec = bossRecord(t.id, score, B.n, log, session.startedAt), win = rec.passed;
+  render(`${header("ラスボス戦　結果", true)}
+    <main class="wrap">
+      <section class="result-card boss-result ${win ? "ok" : ""}">
+        <div class="boss-big">${bossSVG(130, win ? "down" : "ready")}</div>
+        <div class="big-score">${score}<span>/${B.n}</span></div>
+        <div class="verdict ${win ? "ok" : ""}">${win ? "👑 ラスボスをたおした！" : "ラスボスは強かった…"}</div>
+        <div class="sub">${win ? "ごほうびに、とっても立派なスタンプをもらいました！" : `${B.n - score}問まちがえました。下の正しい英文を確かめて、また明日挑戦しよう。`}</div>
+      </section>
+      <ol class="log">${log.map((l, n) => { const q = qs[n] || {}; return `<li class="${l.correct ? "ok" : "ng"}"><span class="mark">${l.correct ? "○" : "×"}</span>
+        <span><span class="lq">${esc(l.q)}</span><span class="la">${esc(l.a)}</span>${l.correct ? "" : `<span class="la boss-ans">正しい英文：${esc(qModel(q))}</span>`}</span></li>`; }).join("")}</ol>
+      <div class="save" id="saveState">記録しています…</div>
+      <div class="btn-row"><button class="btn primary" id="toTask">ダンジョンの地図へ</button>${win ? "" : `<button class="btn" id="toReview">まちがえた問題を復習</button>`}</div>
+      ${footerNote()}
+    </main>`);
+  bindBack(() => renderTaskView(t.id));
+  $("#toTask").onclick = () => renderTaskView(t.id);
+  if ($("#toReview")) $("#toReview").onclick = () => renderReview();
+  await saveResult(rec);
 }
 
 /* ===== 管理者設定 ===== */
@@ -6212,7 +6439,7 @@ async function renderTeachers() {
 const STAMP_COLORS = ["#e03131", "#e64980", "#f76707", "#f08c00", "#2b8a3e", "#1971c2", "#7048e8", "#495057"];
 async function renderTeacherStamps() {
   const SS = window.StampSet || { list: [] };
-  const choices = SS.list.filter((d) => d.k !== "lv").sort((a, b) => (a.rules ? 1 : 0) - (b.rules ? 1 : 0));
+  const choices = SS.list.filter((d) => d.k !== "lv" && d.k !== "bs").sort((a, b) => (a.rules ? 1 : 0) - (b.rules ? 1 : 0));
   const st = { mode: "pick", design: { id: (choices[0] || {}).id }, make: { a: "cat", t: "よくできました", c: "#e03131", po: "banzai", ex: "sparkle", cr: false }, to: new Set(), all: false, msg: "", students: null, sent: null };
   render(`${header("先生スタンプ", true)}<main class="wrap"><div class="judging"><span class="spinner"></span>読み込んでいます…</div></main>`);
   bindBack(renderHome);
@@ -6598,6 +6825,7 @@ async function init() {
     applySettings(b.settings);
     state.tstamps = b.tstamps || [];
     state.mistakes = b.mistakes || [];
+    state.wrongs = b.wrongs || {};
     state.teacher = b.teacher || null;
     state.classes = b.classes || [];
     await applyContent(b.content);
@@ -6875,7 +7103,7 @@ function positionRing(pos, size) {
 function nextGoalHTML() {
   const nx = nextStep();
   if (!nx) return `<div class="next-goal done">🎉 すべての文法をマスターしました！</div>`;
-  if (nx.task) return `<button class="next-goal" id="goNext"><span class="ng-label">次の目標</span><span class="ng-text">課題「${esc(nx.task.name)}」${nx.range ? "の総復習ダンジョンを進める" : "のまとめ問題に合格"}</span><span class="ng-go">▶</span></button>`;
+  if (nx.task) return `<button class="next-goal" id="goNext"><span class="ng-label">次の目標</span><span class="ng-text">課題「${esc(nx.task.name)}」${nx.boss ? "のラスボスに挑む" : nx.range ? "の総復習ダンジョンを進める" : "のまとめ問題に合格"}</span><span class="ng-go">▶</span></button>`;
   const gain = Math.round((STAGE_W[nx.stage - 1] / (CONTENT.length * 10)) * 1000) / 10;
   return `<button class="next-goal" id="goNext"><span class="ng-label">次の目標</span><span class="ng-text">「${esc(nx.it.short)}」の段階${nx.stage}をクリア</span><span class="ng-gain">現在地 +${gain}</span><span class="ng-go">▶</span></button>`;
 }
@@ -7171,6 +7399,7 @@ async function renderTaskAdmin(opt) {
         <div class="row"><span>最初の正解から、あける日数</span><span class="num-in"><input type="number" id="rgGap" min="0" max="30" value="${rangeConf(s).gap}">日以上</span></div>
         <div class="row"><span>1回の時間</span><span class="num-in"><input type="number" id="rgMin" min="5" max="40" value="${rangeConf(s).minutes}">分まで</span></div>
         <div class="row"><span>1回の問題数</span><span class="num-in"><input type="number" id="rgMax" min="5" max="40" value="${rangeConf(s).maxQ}">問まで</span></div>
+        <div class="row"><span>ラスボスの問題数（全問正解でたおせる）</span><span class="num-in"><input type="number" id="rgBoss" min="3" max="30" value="${rangeConf(s).bossQ}">問</span></div>
         <div class="btn-row"><button class="btn" id="rgSave">総復習の設定を保存</button></div>
         <div class="msg" id="sgMsg"></div>
       </section>
@@ -7230,7 +7459,7 @@ async function renderTaskAdmin(opt) {
   };
   $("#rgSave").onclick = async () => {
     const v = (id) => parseFloat($(id).value);
-    try { await saveRaw((ns) => { ns.rangeTask = rangeConf({ rangeTask: { need: v("#rgNeed"), gap: v("#rgGap"), minutes: v("#rgMin"), maxQ: v("#rgMax") } }); }); sgMsg("保存しました", true); }
+    try { await saveRaw((ns) => { ns.rangeTask = rangeConf({ rangeTask: { need: v("#rgNeed"), gap: v("#rgGap"), minutes: v("#rgMin"), maxQ: v("#rgMax"), bossQ: v("#rgBoss") } }); }); sgMsg("保存しました", true); }
     catch (e) { sgMsg("保存できませんでした：" + e.message); }
   };
   // 進み具合（クリアした人数）は、学習記録のデータを読んでから表示
@@ -7295,7 +7524,7 @@ function renderTaskEdit(id, draft) {
     const mmOk = P.length >= 2;
     $("#tkKindM").disabled = !mmOk;
     if (!mmOk && $("#tkKindM").checked) $("#tkKindN").checked = true;
-    $("#tkKindHint").innerHTML = $("#tkKindR").checked ? (P.length ? `課題（範囲の総復習）では、次の観点を1つずつ確かめます（全部で${P.reduce((a, it) => a + vpDefs(it.id).length, 0)}こ）。それぞれ、別の日に${rc.need}回正解し、最初の正解から${rc.gap}日以上あけても正解すれば確認済みです。弱点から優先して出題し、まちがえたら練習と再確認をします。<ul class="rg-vplist">${P.map((it) => `<li><b>${esc(it.short)}</b>：${vpDefs(it.id).map((v) => esc(v.name)).join("／")}</li>`).join("")}</ul>` : "下の一覧から文法を選ぶと、確かめる観点が表示されます。")
+    $("#tkKindHint").innerHTML = $("#tkKindR").checked ? (P.length ? `課題（範囲の総復習）では、次の観点を1つずつ確かめます（全部で${P.reduce((a, it) => a + vpDefs(it.id).length, 0)}こ）。それぞれ、別の日に${rc.need}回正解し、最初の正解から${rc.gap}日以上あけても正解すれば確認済みです。弱点から優先して出題し、まちがえたら練習と再確認をします。すべて確かめる（ダンジョン制覇＝課題クリア）と、おまけのラスボス（まちがえた問題を中心に${rc.bossQ}問・全問正解でたおせる・1日1回）が出て、たおすと特別なスタンプがもらえます。<ul class="rg-vplist">${P.map((it) => `<li><b>${esc(it.short)}</b>：${vpDefs(it.id).map((v) => esc(v.name)).join("／")}</li>`).join("")}</ul>` : "下の一覧から文法を選ぶと、確かめる観点が表示されます。")
       : !mmOk ? "課題（マスターモード）は、文法を2つ以上選ぶと選べます（文法が1つの課題はマスターモードにできません）。"
       : `課題（マスターモード）では、先に出てくる文法（${P.slice(0, -1).map((it) => esc(it.short)).join("・")}）を、これまでの既習事項としてまとめ問題で復習します。まとめ問題には、すべての文法をマスターしてから挑戦できます。`;
   };
@@ -7386,12 +7615,13 @@ function rangeProgressHTML(t, X, cls) {
     return `<li><button class="link" data-detail="${esc(st.email)}">${st.no ? `<small>${esc(st.no)}</small> ` : ""}${esc(personName(st))}</button>${!cls && st.cls ? `<small class="cls-tag">${esc(st.cls)}</small>` : ""}
       <span class="rg-call">${L.map((v) => { const it = CONTENT.find((c) => c.id === v.i); return `<span class="chip small ${v.x ? "rg-stuck" : ""}">${v.x ? "🛑 " : "× "}${it ? esc(it.short) : esc(v.i)}：${esc(vpName(v.i, v.k))}</span>`; }).join(" ")}</span></li>`;
   });
-  return `<div class="table-wrap"><table class="dash rg-table"><thead>
+  const bossN = X.filter(({ x }) => x && x.boss).length;
+  return `<p class="hint boss-sum">👑 ラスボスをたおした生徒：<b>${bossN}</b>人（ラスボスは、ダンジョン制覇のあとのおまけです）</p><div class="table-wrap"><table class="dash rg-table"><thead>
       <tr><th></th>${items.map((it) => `<th colspan="${vpDefs(it.id).length}" title="${esc(it.title)}">${gradeOf(it)}-${itemNo(it)} ${esc(it.short)}</th>`).join("")}<th>観点</th><th>状況</th></tr>
       <tr><th></th>${cols.map((c) => `<th title="${esc(c.name)}"><small>${c.k + 1}</small></th>`).join("")}<th></th><th></th></tr></thead>
     <tbody>${X.map(({ st, x }) => `<tr><th class="name"><button class="link" data-detail="${esc(st.email)}">${st.no ? `<small>${esc(st.no)}</small> ` : ""}${esc(personName(st))}</button>${!cls && st.cls ? `<small class="cls-tag">${esc(st.cls)}</small>` : ""}</th>
       ${cols.map((c) => { const v = vpOf(x, c.it.id, c.k), m = mark[v.s] || mark.new; return `<td class="${m[1]} ${v.x ? "rg-stuck" : ""}" title="${esc(c.it.short + "：" + c.name)}">${v.x ? "🛑" : m[0]}</td>`; }).join("")}
-      <td>${x ? `${x.n} / ${x.total}` : ""}</td><td>${x && x.done ? `<span class="ok">🏆 制覇${x.doneAt ? `（${fmtDate(x.doneAt)}）` : ""}</span>` : x && x.due && x.due.state === "over" ? `<span class="ng">期限切れ</span>` : "とりくみ中"}</td></tr>`).join("") || `<tr><td colspan="${cols.length + 3}">対象の生徒がいません</td></tr>`}</tbody></table></div>
+      <td>${x ? `${x.n} / ${x.total}` : ""}</td><td>${x && x.done ? `<span class="ok">🏆 制覇${x.doneAt ? `（${fmtDate(x.doneAt)}）` : ""}</span>${x.boss ? `<br><span class="boss-ok">👑 ラスボス撃破</span>` : ""}` : x && x.due && x.due.state === "over" ? `<span class="ng">期限切れ</span>` : "とりくみ中"}</td></tr>`).join("") || `<tr><td colspan="${cols.length + 3}">対象の生徒がいません</td></tr>`}</tbody></table></div>
     <p class="hint">○ 確認済み（別の日に正解し、日をあけても正解）　△ 確認中　× 苦手（いちばん新しい答えがまちがい）　🛑 同じ観点で3回まちがえて、その日を終えた（まだ正解していない）　－ まだ出ていない</p>
     <details class="rg-legend"><summary>観点の一覧</summary>${items.map((it) => `<div><b>${gradeOf(it)}-${itemNo(it)} ${esc(it.short)}</b>：${vpDefs(it.id).map((v, k) => `${k + 1}. ${esc(v.name)}`).join("　")}</div>`).join("")}</details>
     <h2>🙋 声をかけたい生徒</h2>
