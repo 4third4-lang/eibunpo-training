@@ -663,6 +663,11 @@ table.sets td, table.sets th { vertical-align: top; }
 .rg-calls li { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
 .rg-call .chip.rg-stuck { background: #ffc9c9; color: #a61e1e; }
 @media (max-width: 480px) { .dg-mon { width: 92px; } }
+/* 締め切りの時刻 */
+.due-in { display: inline-flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.due-in input[type="time"] { width: auto; min-width: 8.5em; }
+.due-hint { margin-top: -4px; text-align: right; font-size: 12px; }
+.tc-due .due-time { display: block; font-weight: 800; }
 /* ラスボス */
 .boss-room { display: flex; gap: 12px; align-items: center; margin: 10px 0 14px; padding: 10px 12px; border-radius: 16px; background: linear-gradient(135deg, #1a1b2e, #3b1f4a); color: #f8f9fa; box-shadow: inset 0 0 0 2px #c92a2a; }
 .boss-room.locked { background: #1f2238; box-shadow: inset 0 0 0 2px #3b3f63; }
@@ -3020,7 +3025,7 @@ function openMistakes(records) {
   return Object.keys(m).map((k) => m[k]).filter((e) => !e.ok).map((e) => ({ qid: e.qid, wrong: e.wrong, a: e.a, ts: e.ts }));
 }
 /* ---------- 課題 ----------
-   settings.tasks = [{ id, name, folder（フォルダID）, items:[文法ID], kind:"normal"|"mm", due:"YYYY-MM-DD", classes:[クラス]（空＝全クラス）,
+   settings.tasks = [{ id, name, folder（フォルダID）, items:[文法ID], kind:"normal"|"mm"|"range", due:"YYYY-MM-DD"（その日の終わりまで）または "YYYY-MM-DDTHH:MM"（その時刻まで。日本時間）, classes:[クラス]（空＝全クラス）,
      students:[メール]（あれば、その生徒だけに配信。なければ classes の生徒全員）, src:{文法ID: 問題セットID} }]
    settings.folders = [{ id, name }]
    課題（通常）＝ふくまれる文法をすべてマスター ／ 課題（マスターモード、文法2つ以上）＝すべてマスター＋まとめ問題に合格
@@ -3042,7 +3047,7 @@ function settingsForClass(settings, cls, all, email) {
   s.myTasks = T; s.due = {}; s.src = {}; s.mm = {};
   T.filter((t) => !isRangeTask(t)).forEach((t) => t.items.forEach((id) => { // 範囲の総復習は「課題の文法」に数えない（自由練習・締め切りの表示はそのまま）
     seen[id] = 1;
-    if (t.due && (!s.due[id] || t.due < s.due[id])) s.due[id] = t.due;
+    if (t.due && (!s.due[id] || dueEnd(t.due) < dueEnd(s.due[id]))) s.due[id] = t.due;
     if (t.src && t.src[id]) s.src[id] = t.src[id];
   }));
   s.assigned = Object.keys(seen); // 課題に入っている文法（それ以外は自由練習）
@@ -3129,12 +3134,20 @@ function masteredAt(history, settings) {
   return done;
 }
 /* 締め切りの状態：done（期限内にマスター）/ late（期限後にマスター）/ over（期限切れ・まだ）/ open（期限前・まだ） */
+/* 締め切り：「YYYY-MM-DD」（その日の終わり 23:59 まで）か「YYYY-MM-DDTHH:MM」（その時刻まで）。どちらも日本時間
+   left：締め切りの日まであと何日（今日なら0）、hours：締め切りまであと何時間（切り上げ） */
+const dueDay = (due) => String(due || "").slice(0, 10);
+const dueTime = (due) => { const m = /T(\d{2}:\d{2})$/.exec(String(due || "")); return m ? m[1] : ""; };
+const jstDay = (ms) => new Date(ms + 9 * 3600000).toISOString().slice(0, 10);
+function dueEnd(due) { const t = dueTime(due); return Date.parse(dueDay(due) + "T" + (t ? t + ":00" : "23:59:59") + "+09:00"); }
 function dueState(due, mastered, now) {
   if (!due) return null;
-  const end = new Date(due + "T23:59:59").getTime();
-  const left = Math.round((new Date(due + "T00:00:00").getTime() - new Date(dayKey(now || Date.now()) + "T00:00:00").getTime()) / 86400000);
-  if (mastered) return { due, left, state: new Date(mastered).getTime() <= end ? "done" : "late" };
-  return { due, left, state: (now || Date.now()) > end ? "over" : "open" };
+  const n = now || Date.now(), end = dueEnd(due);
+  if (isNaN(end)) return null;
+  const left = Math.round((Date.parse(dueDay(due) + "T00:00:00+09:00") - Date.parse(jstDay(n) + "T00:00:00+09:00")) / 86400000);
+  const hours = Math.max(0, Math.ceil((end - n) / 3600000));
+  if (mastered) return { due, left, hours, state: new Date(mastered).getTime() <= end ? "done" : "late" };
+  return { due, left, hours, state: n > end ? "over" : "open" };
 }
 
 /* マスターモード：成功したマスターモードのID ／ そのクラスで使うマスターモード */
@@ -3428,7 +3441,13 @@ function autoStampEvents(history) {
 }
 /* 次にやるとよい段階（課題の中で、まだクリアしていない最初のもの） */
 /* 締め切り */
-const fmtDue = (d) => { const p = String(d || "").split("-"); return p.length === 3 ? `${+p[1]}/${+p[2]}` : ""; };
+const fmtDay = (d) => { const p = dueDay(d).split("-"); return p.length === 3 ? `${+p[1]}/${+p[2]}` : ""; };
+const fmtDue = (d) => { const t = dueTime(d), s = fmtDay(d); return s && t ? s + " " + t : s; }; // 10/25 または 10/25 17:00
+const fmtDueW = (d) => { const t = dueTime(d); return `${fmtDay(d)}（${dueWeek(d)}）${t ? " " + t : ""}`; }; // 10/25（土） 17:00
+const dueJoin = (day, time) => (day ? day + (time ? "T" + time : "") : "");
+// 「あと◯日」：締め切りの日が今日なら「今日まで！」（時刻があれば「今日 17:00まで！」）
+//   時刻つきで、のこり24時間以内なら「あと◯時間」
+const dueLeft = (d) => (d.left <= 0 ? (dueTime(d.due) ? `今日 ${dueTime(d.due)}まで！` : "今日まで！") : dueTime(d.due) && d.hours <= 24 ? `あと${d.hours}時間` : `あと${d.left}日`);
 function dueOf(id, mm) {
   const due = (state.settings.due || {})[id];
   return isAssigned(id) && due ? dueState(due, (mm || masteredAt(state.history, state.settings))[id]) : null;
@@ -3438,7 +3457,7 @@ function dueChip(d) {
   if (d.state === "done") return `<span class="due ok">✓ 期限内にクリア</span>`;
   if (d.state === "late") return `<span class="due">クリア（締め切り後）</span>`;
   if (d.state === "over") return `<span class="due ng">締め切り ${fmtDue(d.due)} を過ぎています</span>`;
-  return `<span class="due ${d.left <= 2 ? "warn" : ""}">締め切り ${fmtDue(d.due)}（${d.left === 0 ? "今日まで" : "あと" + d.left + "日"}）</span>`;
+  return `<span class="due ${d.left <= 2 ? "warn" : ""}">締め切り ${fmtDue(d.due)}（${dueLeft(d)}）</span>`;
 }
 /* ---------- 生徒の課題（名前つき・フォルダ分け） ---------- */
 const myTasks = () => state.settings.myTasks || [];
@@ -3450,7 +3469,7 @@ function taskChecker() {
 }
 // 締め切りが近い順（まだの課題 → クリアした課題）
 function sortTasks(list, st) {
-  const key = (t) => { const x = st(t); return x.done ? 5e15 + (t.due ? tsNum(t.due) : 0) : t.due ? tsNum(t.due) : 3e15; };
+  const key = (t) => { const x = st(t), e = t.due ? dueEnd(t.due) || 0 : 0; return x.done ? 5e15 + e : t.due ? e : 3e15; };
   return list.slice().sort((a, b) => key(a) - key(b));
 }
 const taskItems = (t) => CONTENT.filter((it) => t.items.indexOf(it.id) >= 0); // 教材の順番
@@ -3463,7 +3482,7 @@ function myFolders() {
 }
 function folderState(f, st) {
   const todo = f.tasks.filter((t) => !st(t).done);
-  const dues = todo.filter((t) => t.due).map((t) => t.due).sort();
+  const dues = todo.filter((t) => t.due).map((t) => t.due).sort((a, b) => dueEnd(a) - dueEnd(b));
   const over = todo.filter((t) => { const d = st(t).due; return d && d.state === "over"; }).length;
   return { todo: todo.length, total: f.tasks.length, due: dues[0] || "", over };
 }
@@ -4235,7 +4254,7 @@ const myName = () => state.profile.nickname || (MODE === "demo" ? "お試しユ�
 
 /* ===== ホーム（生徒画面）：入り口が一目で見え、課題（フォルダ）がいちばん目立つ ===== */
 const WEEK_JA = ["日", "月", "火", "水", "木", "金", "土"];
-const dueWeek = (d) => { const t = new Date(String(d) + "T00:00:00"); return isNaN(t) ? "" : WEEK_JA[t.getDay()]; };
+const dueWeek = (d) => { const t = new Date(dueDay(d) + "T00:00:00"); return isNaN(t) ? "" : WEEK_JA[t.getDay()]; };
 let itemBack = null; // 文法の画面から「もどる」で帰る先（課題・自由練習）
 let curTask = null;  // いま開いている課題（文法の画面の上に出す）
 function itemCardHTML(it, i) {
@@ -4254,7 +4273,7 @@ function itemCardHTML(it, i) {
 }
 // 締め切りのブロック（左に大きく）
 function dueBlockHTML(due, d) {
-  return d ? `<b>${fmtDue(due)}</b><small>（${dueWeek(due)}）</small><em>${d.state === "done" ? "✓ クリア" : d.state === "late" ? "クリア" : d.state === "over" ? "期限切れ" : d.left === 0 ? "今日まで！" : `あと${d.left}日`}</em>` : `<small>締め切り</small><b class="nd">なし</b>`;
+  return d ? `<b>${fmtDay(due)}</b><small>（${dueWeek(due)}）</small>${dueTime(due) ? `<small class="due-time">${dueTime(due)}まで</small>` : ""}<em>${d.state === "done" ? "✓ クリア" : d.state === "late" ? "クリア" : d.state === "over" ? "期限切れ" : d.left <= 0 || (dueTime(due) && d.hours <= 24) ? (dueTime(due) ? `あと${d.hours}時間！` : "今日まで！") : `あと${d.left}日`}</em>` : `<small>締め切り</small><b class="nd">なし</b>`;
 }
 const dueCls = (d, done) => (done ? "done" : !d ? "none" : d.state === "over" ? "over" : d.left <= 2 ? "soon" : "open");
 const kindChip = (t) => isRangeTask(t) ? `<span class="kind-chip rg">課題（範囲の総復習）</span>` : `<span class="kind-chip ${isMasterTask(t) ? "mm" : ""}">${isMasterTask(t) ? "課題（マスターモード）" : "課題（通常）"}</span>`;
@@ -4271,7 +4290,7 @@ function folderCardHTML(f, fs) {
   return `<button class="folder-card ${fs.todo ? "has-task" : "all-done"} ${fs.over ? "has-over" : ""}" data-f="${esc(f.id)}">
     <span class="fc-ico" aria-hidden="true">${fs.todo ? "📂" : "📁"}</span>
     <span class="fc-main"><span class="fc-name">${esc(f.name)}</span>
-      <span class="fc-sub">${fs.todo ? (fs.due ? `<span class="fc-due ${fs.over ? "over" : d && d.left <= 2 ? "soon" : ""}">〆 ${fmtDue(fs.due)}（${dueWeek(fs.due)}）${fs.over ? "期限切れあり" : d.left === 0 ? "今日まで！" : `あと${d.left}日`}</span>` : "締め切りなし") : `✓ ${fs.total}つ すべてクリア`}</span></span>
+      <span class="fc-sub">${fs.todo ? (fs.due ? `<span class="fc-due ${fs.over ? "over" : d && d.left <= 2 ? "soon" : ""}">〆 ${fmtDueW(fs.due)}　${fs.over ? "期限切れあり" : dueLeft(d)}</span>` : "締め切りなし") : `✓ ${fs.total}つ すべてクリア`}</span></span>
     ${fs.todo ? `<span class="fc-badge">課題あり<b>${fs.todo}</b></span>` : ""}
   </button>`;
 }
@@ -6089,7 +6108,7 @@ function dueText(d) {
   if (d.state === "done") return `<span class="due ok">${base} ✓期限内</span>`;
   if (d.state === "late") return `<span class="due">${base} 期限後にマスター</span>`;
   if (d.state === "over") return `<span class="due ng">${base} 期限切れ</span>`;
-  return `<span class="due ${d.left <= 2 ? "warn" : ""}">${base}（あと${d.left}日）</span>`;
+  return `<span class="due ${d.left <= 2 ? "warn" : ""}">${base}（${dueLeft(d)}）</span>`;
 }
 // 練習した日のカレンダー（月曜はじまり・weeks 週ぶん）
 function calendarHTML(dayCounts, weeks) {
@@ -7131,7 +7150,7 @@ function storyGoalInfo(st) {
   if (k < 0) return null;
   const K = kingdomOf(st.order[k]), reached = st.done.has(g.upto);
   const d = g.due ? dueState(g.due, reached ? Date.now() : null) : null;
-  const left = d && !reached ? (d.state === "over" ? "（締め切りを過ぎています）" : `（${fmtDue(g.due)}まで・あと${d.left}日）`) : g.due ? `（${fmtDue(g.due)}まで）` : "";
+  const left = d && !reached ? (d.state === "over" ? "（締め切りを過ぎています）" : `（${fmtDue(g.due)}まで・${dueLeft(d)}）`) : g.due ? `（${fmtDue(g.due)}まで）` : "";
   return { k, reached, text: `第${k + 1}の王国「${K.name}」までとりもどす${reached ? "　✓ 達成" : left}`, cls: reached ? "ok" : d && d.state === "over" ? "ng" : "" };
 }
 async function renderStory(focus) {
@@ -7363,7 +7382,7 @@ async function renderTaskAdmin(opt) {
   };
   const row = (t) => `<div class="tk-row">
       <div class="tk-main"><div class="tk-name">${esc(t.name)} ${kindChip(t)}</div>
-        <div class="tk-meta">${taskShorts(t).map(esc).join("・")}　｜　${esc(taskClassText(t))}　｜　${t.due ? `締め切り ${fmtDue(t.due)}（${dueWeek(t.due)}）` : "締め切りなし"}</div>
+        <div class="tk-meta">${taskShorts(t).map(esc).join("・")}　｜　${esc(taskClassText(t))}　｜　${t.due ? `締め切り ${fmtDueW(t.due)}` : "締め切りなし"}</div>
         ${prog(t)}</div>
       <div class="tk-btns"><button class="btn small primary" data-tprog="${esc(t.id)}">進み具合</button><button class="btn small" data-tedit="${esc(t.id)}">編集</button><button class="btn small" data-tcopy="${esc(t.id)}">コピー</button><button class="btn small danger" data-tdel="${esc(t.id)}">削除</button></div>
     </div>`;
@@ -7388,7 +7407,8 @@ async function renderTaskAdmin(opt) {
         <p class="hint">「ストーリーモードの第〇の王国までとりもどす」を課題にします。生徒のホームの「課題」の枠に出ます。</p>
         <div class="row"><span>クラス</span><select id="sgCls">${sgScopes.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join("")}</select></div>
         <div class="row"><span>どこまで</span><select id="sgUpto"></select></div>
-        <div class="row"><span>締め切り</span><input type="date" id="sgDue"></div>
+        <div class="row"><span>締め切り</span><span class="due-in"><input type="date" id="sgDue"><input type="time" id="sgDueT" aria-label="締め切りの時刻"></span></div>
+        <p class="hint due-hint">時刻は日本時間です。時刻を入れないと、その日の終わり（23:59）までになります。</p>
         <div class="btn-row"><button class="btn" id="sgSave">ストーリーモードの課題を保存</button></div>
         <h2>🏁 課題（マスターモード）のまとめ問題</h2>
         <div class="row"><span>問題の数</span><span class="num-in"><input type="number" id="mtNum" min="5" max="50" value="${(s.masterTask || {}).num || 20}">問</span></div>
@@ -7443,12 +7463,12 @@ async function renderTaskAdmin(opt) {
   const drawSg = () => {
     const g = sgOf($("#sgCls").value);
     $("#sgUpto").innerHTML = `<option value="">なし</option>` + CONTENT.map((it, k) => `<option value="${esc(it.id)}" ${g && g.upto === it.id ? "selected" : ""}>第${k + 1}の王国「${esc(kingdomOf(it).name)}」まで（${esc(it.short)}）</option>`).join("");
-    $("#sgDue").value = (g && g.due) || "";
+    $("#sgDue").value = dueDay(g && g.due); $("#sgDueT").value = dueTime(g && g.due);
   };
   $("#sgCls").onchange = drawSg; drawSg();
   const sgMsg = (t, ok) => { const m = $("#sgMsg"); m.textContent = t; m.className = "msg " + (ok ? "ok" : "ng"); };
   $("#sgSave").onclick = async () => {
-    const c = $("#sgCls").value, up = $("#sgUpto").value, g = up ? { upto: up, due: $("#sgDue").value || "" } : null;
+    const c = $("#sgCls").value, up = $("#sgUpto").value, g = up ? { upto: up, due: dueJoin($("#sgDue").value, $("#sgDueT").value) } : null;
     try { await saveRaw((ns) => { if (c) { ns.classTasks[c] = Object.assign({}, ns.classTasks[c] || {}, { storyGoal: g }); } else ns.storyGoal = g; }); sgMsg("保存しました", true); }
     catch (e) { sgMsg("保存できませんでした：" + e.message); }
   };
@@ -7491,7 +7511,8 @@ function renderTaskEdit(id, draft) {
         <p class="hint">① クラスを選ぶと、そのクラスの生徒全員にチェックが入ります（クラスを選ばないと全クラス）。② 配信しない生徒はチェックを外すと、チェックの入った生徒だけに配信されます。</p>
         <div class="tk-cls">${classes.length ? classes.map((c) => `<label class="cls-pick"><input type="checkbox" data-tc value="${esc(c)}" ${t.classes.indexOf(c) >= 0 ? "checked" : ""}><span>${esc(c)}</span></label>`).join("") : `<span class="hint">全クラス（名簿にクラスを登録すると選べます）</span>`}</div>
         <div id="tkStu" class="tk-stu"><span class="hint">生徒の一覧を読みこんでいます…</span></div>
-        <div class="row"><span>締め切り</span><input type="date" id="tkDue" value="${esc(t.due || "")}"></div>
+        <div class="row"><span>締め切り</span><span class="due-in"><input type="date" id="tkDue" value="${esc(dueDay(t.due))}"><input type="time" id="tkDueT" value="${esc(dueTime(t.due))}" aria-label="締め切りの時刻"></span></div>
+        <p class="hint due-hint">時刻は日本時間です。時刻を入れないと、その日の終わり（23:59）までになります。</p>
         <h2>文法を選ぶ</h2>
         <div id="tkPicked" class="tk-picked"></div>
         <div class="tk-items">${GRADES.map((g) => {
@@ -7563,7 +7584,7 @@ function renderTaskEdit(id, draft) {
   const read = () => {
     const P = picked();
     const out = { id: t.id || newId("t"), name: $("#tkName").value.trim().slice(0, 40), folder: $("#tkFolder").value, items: P.map((it) => it.id).concat(t.items.filter((x) => !CONTENT.some((c) => c.id === x))),
-      kind: $("#tkKindR").checked ? "range" : $("#tkKindM").checked && P.length >= 2 ? "mm" : "normal", due: $("#tkDue").value || "", classes: selCls(), src: {} };
+      kind: $("#tkKindR").checked ? "range" : $("#tkKindM").checked && P.length >= 2 ? "mm" : "normal", due: dueJoin($("#tkDue").value, $("#tkDueT").value), classes: selCls(), src: {} };
     if (taskAdminCache) { const L = pool(), on = L.filter((st) => !off.has(st.email)); if (on.length < L.length) out.students = on.map((st) => st.email); }
     else if (Array.isArray(t.students) && t.students.length) out.students = t.students.slice(); // 一覧を読めなかったときは、前の配信先のまま
     P.forEach((it) => { const v = $(`[data-ts="${it.id}"]`).value; if (v && v !== "new") out.src[it.id] = v; });
@@ -7650,7 +7671,7 @@ async function renderTaskProgress(id, cls) {
     <main class="wrap wide">
       <section class="panel">
         <h2>${esc(t.name)} ${kindChip(t)}</h2>
-        <p class="hint">${items.map((it) => esc(it.short)).join("・")}　｜　${esc(taskClassText(t))}　｜　${t.due ? `締め切り ${fmtDue(t.due)}（${dueWeek(t.due)}）` : "締め切りなし"}</p>
+        <p class="hint">${items.map((it) => esc(it.short)).join("・")}　｜　${esc(taskClassText(t))}　｜　${t.due ? `締め切り ${fmtDueW(t.due)}` : "締め切りなし"}</p>
         <div class="toolbar">${classes.length > 1 ? clsSelect("tpCls", classes, cls) : ""}<button class="btn small" id="tpEdit">課題を直す</button></div>
         <div class="sum-cards"><div><b>${list.length}</b><small>対象の生徒</small></div><div><b class="ok">${done}</b><small>${isRangeTask(t) ? "制覇" : "クリア"}</small></div><div><b>${list.length - done}</b><small>まだ</small></div><div><b class="${over ? "ng" : ""}">${over}</b><small>期限切れ</small></div></div>
         ${isRangeTask(t) ? rangeProgressHTML(t, X, cls) : `<div class="table-wrap"><table class="dash"><thead><tr><th></th>${items.map((it) => `<th title="${esc(it.title)}">${gradeOf(it)}-${itemNo(it)}<br><small>${esc(it.short)}</small></th>`).join("")}${mm ? `<th class="mcol">まとめ<br><small>問題</small></th>` : ""}<th>状況</th></tr></thead>
