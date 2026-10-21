@@ -998,6 +998,19 @@ table.dash th.mcol, table.dash td.mcol { border-left: 2px solid var(--gold); }
 .tk-stu-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 2px 10px; }
 .stu-pick { margin: 0; font-size: 14px; }
 
+/* タップの反応（iPad で押したことがすぐわかるように） */
+button, summary, a, label, input, select, textarea, .stage-card, .item-card { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+button:not(:disabled):active, summary:active { transform: scale(.96); filter: brightness(.93); transition: transform .05s, filter .05s; }
+.icon-btn { min-width: 44px; min-height: 44px; }
+.stage-card.locked { opacity: .55; }
+.btn[aria-disabled="true"] { opacity: .5; }
+.text-in summary { padding: 10px 2px; }
+.fog-cover { cursor: pointer; }
+.net-busy { position: fixed; top: calc(8px + env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); z-index: 60; background: rgba(20, 30, 45, .85); color: #fff; font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 99px; display: flex; align-items: center; gap: 8px; pointer-events: none; opacity: 0; transition: opacity .15s; }
+.net-busy.on { opacity: 1; }
+.net-busy .spinner { width: 14px; height: 14px; border-width: 2px; margin: 0; }
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 70; max-width: min(92vw, 520px); background: rgba(20, 30, 45, .92); color: #fff; font-size: 14px; font-weight: 700; padding: 10px 16px; border-radius: 14px; box-shadow: 0 6px 20px rgba(0,0,0,.2); pointer-events: none; animation: fadeIn .15s ease-out; }
+.mic.wait { opacity: .7; }
 </style>
 </head>
 <body>
@@ -2629,6 +2642,31 @@ const shuffle = (arr) => { const a = arr.slice(); for (let i = a.length - 1; i >
 const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* 保存できない環境では無視 */ } };
 const pct = (x) => Math.round(x * 100);
+/* ===== 操作の反応を良くするための共通部品 ===== */
+// iPad の Safari で、ボタンを押したときの見た目（:active）が出るようにする
+document.addEventListener("touchstart", () => {}, { passive: true });
+// 画面を切りかえるたびに増える番号（もどったあとに、前の画面の通信結果で描き直さないため）
+let navSeq = 0;
+// 画面の下に短いお知らせを出す
+let toastTimer = 0;
+function toast(text, ms) {
+  let el = document.getElementById("toast");
+  if (!el) { el = document.createElement("div"); el.id = "toast"; el.className = "toast"; el.setAttribute("role", "status"); document.body.appendChild(el); }
+  el.textContent = text; el.classList.remove("hidden");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.add("hidden"), ms || 3500);
+}
+// 通信中は画面の上に「通信中…」を出す（押したのに何も起きないように見えないため）
+let netPending = 0, netTimer = 0;
+function netBusy(on) {
+  netPending = Math.max(0, netPending + (on ? 1 : -1));
+  let el = document.getElementById("netBusy");
+  if (!el) { el = document.createElement("div"); el.id = "netBusy"; el.className = "net-busy"; el.innerHTML = `<span class="spinner"></span>通信中…`; (document.body || document.documentElement).appendChild(el); }
+  clearTimeout(netTimer);
+  if (netPending > 0) netTimer = setTimeout(() => el.classList.add("on"), 400); else el.classList.remove("on");
+}
+// 思わぬエラーで「押しても何も起きない」ままにならないように知らせる
+window.addEventListener("error", (e) => { const m = String(e.message || ""); if (!m || /Script error|ResizeObserver/.test(m)) return; console.warn(e); toast("うまく動きませんでした。もう一度タップしてください。"); });
+window.addEventListener("unhandledrejection", (e) => { const m = String((e.reason && e.reason.message) || e.reason || ""); if (/AbortError|aborted/.test(m)) return; console.warn(e.reason); toast(m && /[ぁ-んァ-ン一-龥]/.test(m) ? m : "うまく動きませんでした。もう一度タップしてください。"); });
 
 /* ===== 公開用の設定（Apps Script をデプロイしたら書きかえる） ===== */
 const API_URL = "https://script.google.com/macros/s/AKfycbxeB_MHgba3nt5yL-OYsViJG2JTHtBfoJ7GSvgLEBOE0e_HUJ1pj4i1qkN7w2i-aM20zg/exec";     // 記録・判定用（アクセスできるユーザー：全員）のURL
@@ -3666,8 +3704,21 @@ function buildTranslateRequest(q, grammar, text) {
 
 /* ---------- データの保存先（本番: Apps Script ／ お試し: この端末） ---------- */
 class AuthError extends Error {}
+// 読みこむだけの通信：返ってくる前に別の画面へ移っていたら、その結果は使わない（「もどる」が効かないように見えるのを防ぐ）
+const STALE_DROP = new Set(["getDashboard", "getStudents", "getStudentDetail", "getMistakeStats", "getReports", "getTeachers", "getSentStamps", "picQueue", "ranking", "storyPeers", "judge", "transcribe"]);
 const remoteApi = (callFn) => ({
-  call: callFn,
+  async call(action, args) {
+    const seq = navSeq;
+    netBusy(true);
+    try {
+      const r = await callFn(action, args);
+      if (STALE_DROP.has(action) && seq !== navSeq) return new Promise(() => {});
+      return r;
+    } catch (e) {
+      if (STALE_DROP.has(action) && seq !== navSeq) return new Promise(() => {});
+      throw e;
+    } finally { netBusy(false); }
+  },
   bootstrap() { return this.call("getBootstrap", { contentVer: (lsGet("eg_content", null) || {}).ver || "" }); },
   seedContent(d) { return this.call("seedContent", d); },
   setItemUse(itemIds, use) { return this.call("setItemUse", { itemIds, use }); },
@@ -3825,13 +3876,23 @@ function demoSummary(email, h, pf, r) {
   return { profile: { email, cls: r.cls || "", no: r.no || "", name: r.name || "", nickname: pf.nickname, avatar: pf.avatar, reg: !!r.reg }, level: rw.level, xp: rw.xp, points: rw.points, days: rw.days,
     streak: rw.streak, bestStreak: rw.bestStreak, badges: Array.from(rw.badges), mastered: rw.mastered, progress: computeProgress(h), masteredAt: mm, due, assigned: eff.assigned, taskList: eff.myTasks || [], taskStates, story: storyDone(h), storyGoal: eff.storyGoal || null, dayCounts: days, total: h.length };
 }
+// 通信の待ち時間の上限（秒）。時間のかかる処理（PDF・Word からの問題づくりなど）は長め
+const API_TIMEOUT = { judge: 90, transcribe: 90, importSentences: 360, saveSet: 360, seedContent: 180, getReports: 120 };
 const api = MODE === "api" ? remoteApi(async (action, args) => {
   const token = lsGet("eg_token", "");
   if (!token) throw new AuthError("ログインしてください");
   let res;
+  const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+  const limit = API_TIMEOUT[action] || 60;
+  const tm = ctrl ? setTimeout(() => ctrl.abort(), limit * 1000) : 0;
   try {
-    res = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action, token, args: args === undefined ? null : args }) });
-  } catch (e) { throw new Error("通信できませんでした。ネットワークを確認してください。"); }
+    res = await fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action, token, args: args === undefined ? null : args }), signal: ctrl ? ctrl.signal : undefined });
+  } catch (e) {
+    clearTimeout(tm);
+    if (ctrl && ctrl.signal.aborted) throw new Error("通信に時間がかかりすぎました。もう一度ためしてください。");
+    throw new Error("通信できませんでした。ネットワークを確認してください。");
+  }
+  clearTimeout(tm);
   const data = await res.json().catch(() => ({ error: "サーバーの応答を読み取れませんでした" }));
   if (data.authError) { lsSet("eg_token", ""); throw new AuthError(data.error || "ログインしてください"); }
   if (data.error) throw new Error(data.error);
@@ -3935,19 +3996,33 @@ const api = MODE === "api" ? remoteApi(async (action, args) => {
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 const speechAvailable = !!SR;
 
-function listen({ lang, continuous, silenceSec, onInterim, onSpeechStart, onEnd, onError }) {
+let srLastEnd = 0; // 前の聞き取りが終わった時刻（iPad では、続けてすぐ始めると何も聞こえないことがあるため少し待つ）
+/* 音声認識を1回動かす。かならず onEnd が1回だけ呼ばれる（エラーや反応がないときも、時間で打ち切る） */
+function listen({ lang, continuous, silenceSec, maxSec, onInterim, onSpeechStart, onEnd, onError }) {
   const r = new SR();
   r.lang = lang; r.interimResults = true; r.continuous = !!continuous; r.maxAlternatives = 3;
   const sep = lang.startsWith("ja") ? "" : " ";
-  let finals = [], segAlts = [], alts = [], lastInterim = "", started = false, errored = false;
+  let finals = [], segAlts = [], alts = [], lastInterim = "", started = false, errCode = "", ended = false, silent = false;
+  let silenceTimer = 0, errTimer = 0, stopTimer = 0, maxTimer = 0, startTimer = 0;
   // 話し終わってから silenceSec 秒たったら、自動で聞き取りを終える
-  let silenceTimer = null;
   const armSilence = () => {
     if (!silenceSec) return;
     clearTimeout(silenceTimer);
-    silenceTimer = setTimeout(() => { try { r.stop(); } catch (e) {} }, silenceSec * 1000);
+    silenceTimer = setTimeout(() => ctl.stop(), silenceSec * 1000);
   };
   const markStart = () => { if (!started) { started = true; onSpeechStart && onSpeechStart(); } };
+  const finish = () => {
+    if (ended) return;
+    ended = true;
+    [silenceTimer, errTimer, stopTimer, maxTimer, startTimer].forEach(clearTimeout);
+    srLastEnd = Date.now();
+    r.onresult = r.onerror = r.onend = r.onspeechstart = null;
+    if (silent) return;
+    let text = finals.filter(Boolean).join(sep).trim();
+    if (!text && lastInterim) text = lastInterim.trim();
+    const all = [text].concat(continuous ? [] : alts).filter(Boolean);
+    onEnd && onEnd({ text, alts: Array.from(new Set(all)), segAlts: segAlts.filter(Boolean), errored: !!errCode, error: errCode, heard: started });
+  };
   r.onspeechstart = markStart;
   r.onresult = (e) => {
     let interim = "";
@@ -3964,21 +4039,29 @@ function listen({ lang, continuous, silenceSec, onInterim, onSpeechStart, onEnd,
     armSilence();
     onInterim && onInterim((finals.filter(Boolean).join(sep) + sep + interim).trim());
   };
-  r.onerror = (e) => { errored = true; onError && onError(e.error || "error"); };
-  r.onend = () => {
-    clearTimeout(silenceTimer);
-    let text = finals.filter(Boolean).join(sep).trim();
-    if (!text && lastInterim) text = lastInterim.trim();
-    const all = [text].concat(continuous ? [] : alts).filter(Boolean);
-    onEnd && onEnd({ text, alts: Array.from(new Set(all)), segAlts: segAlts.filter(Boolean), errored });
+  // エラーのあと onend が来ない端末があるので、少し待って自分で終える
+  r.onerror = (e) => { errCode = e.error || "error"; if (errCode !== "aborted") onError && onError(errCode); clearTimeout(errTimer); errTimer = setTimeout(finish, 800); };
+  r.onend = finish;
+  const ctl = {
+    // 止める：止まったという知らせが来なければ、1.5秒で打ち切る
+    stop() { if (ended) return; try { r.stop(); } catch (e) {} clearTimeout(stopTimer); stopTimer = setTimeout(() => { try { r.abort(); } catch (e) {} finish(); }, 1500); },
+    // 画面を移るときなど：結果を使わずに終える
+    abort() { if (ended) return; silent = true; try { r.abort(); } catch (e) {} finish(); },
+    get active() { return !ended; }
   };
-  try { r.start(); } catch (e) { setTimeout(() => onError && onError("start-failed"), 0); }
-  return r;
+  const wait = Math.max(0, 350 - (Date.now() - srLastEnd));
+  startTimer = setTimeout(() => {
+    if (ended) return;
+    try { r.start(); } catch (e) { errCode = "start-failed"; onError && onError(errCode); finish(); return; }
+    maxTimer = setTimeout(() => ctl.stop(), (maxSec || (continuous ? 120 : 30)) * 1000);
+  }, wait);
+  return ctl;
 }
 const SR_ERRORS = {
   "not-allowed": "マイクの使用が許可されていません。ブラウザの設定でマイクを許可してください。",
   "service-not-allowed": "音声認識が使えません。iPadの場合は「設定」→「Siri」と「キーボード」→「音声入力」をオンにしてください。",
   "no-speech": "声が聞き取れませんでした。もう一度マイクをタップして話してください。",
+  "aborted": "聞き取りが止まりました。もう一度マイクをタップして話してください。",
   "audio-capture": "マイクが見つかりません。",
   "network": "音声認識の通信に失敗しました。ネットワークを確認してください。",
   "start-failed": "音声認識を開始できませんでした。マイクボタンをタップしてください。"
@@ -3988,53 +4071,92 @@ const SR_ERRORS = {
 const recorderAvailable = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
 let micStream = null; // マイクは段階1の画面にいる間つないだままにする（許可を何度も聞かれないように）
 async function getMic() {
-  if (micStream && micStream.getTracks().some((t) => t.readyState === "live")) return micStream;
+  // つないだままのマイクが止まっていたり、音が来ない状態（muted）なら、つなぎ直す
+  if (micStream && micStream.getAudioTracks().some((t) => t.readyState === "live" && t.enabled && !t.muted)) return micStream;
+  releaseMic();
   micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
   return micStream;
 }
 function releaseMic() { if (micStream) { micStream.getTracks().forEach((t) => t.stop()); micStream = null; } }
-/* 録音して、話し終わって silenceSec 秒たったら自動で止める */
-function startRecording({ silenceSec, maxSec = 90, noSpeechSec = 10, onLevel }) {
-  let stopFn = () => {};
-  const done = (async () => {
+/* 音の大きさを調べる部品。iPad では、タップした瞬間に作って動かしておかないと止まったままになる */
+function newAudioCtx() {
+  try { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; const ac = new AC(); if (ac.resume) ac.resume().catch(() => {}); return ac; } catch (e) { return null; }
+}
+/* 録音して、話し終わって silenceSec 秒たったら自動で止める。
+   音の大きさがわからない端末では、自動では止めずに「タップで止める」にする（onNoLevel で知らせる） */
+function startRecording({ silenceSec, maxSec = 90, noSpeechSec = 15, ac, onLevel, onNoLevel }) {
+  let stopFn = null, stopReq = false, resolveDone, rejectDone;
+  const done = new Promise((res, rej) => { resolveDone = res; rejectDone = rej; });
+  (async () => {
     const stream = await getMic();
+    if (stopReq) { if (ac) ac.close().catch(() => {}); return resolveDone({ blob: new Blob([]), spoke: false, cancelled: true }); }
     const types = ["audio/webm;codecs=opus", "audio/mp4", "audio/webm", "audio/aac"];
     const mime = types.find((t) => window.MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) || "";
     const rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
     const chunks = [];
     rec.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
-    const stopped = new Promise((res) => { rec.onstop = res; });
-    stopFn = () => { if (rec.state !== "inactive") rec.stop(); };
-    const AC = window.AudioContext || window.webkitAudioContext;
-    let ac = null, analyser = null, buf = null;
+    let stopWait = null;
+    const stopped = new Promise((res) => { rec.onstop = res; stopWait = res; });
+    stopFn = () => {
+      if (rec.state !== "inactive") { try { rec.stop(); } catch (e) {} }
+      setTimeout(stopWait, 2500); // 止まった知らせが来ない端末への保険
+    };
+    let analyser = null, buf = null, gain = null;
     try {
-      ac = new AC(); const src = ac.createMediaStreamSource(stream);
-      analyser = ac.createAnalyser(); analyser.fftSize = 1024; src.connect(analyser);
-      buf = new Uint8Array(analyser.fftSize);
+      if (!ac) ac = newAudioCtx();
+      if (ac) {
+        if (ac.state === "suspended" && ac.resume) ac.resume().catch(() => {});
+        const src = ac.createMediaStreamSource(stream);
+        analyser = ac.createAnalyser(); analyser.fftSize = 1024; src.connect(analyser);
+        // 出力につながないと動かない端末があるので、音量0でつないでおく
+        gain = ac.createGain(); gain.gain.value = 0; analyser.connect(gain); gain.connect(ac.destination);
+        buf = new Uint8Array(analyser.fftSize);
+      }
     } catch (e) { analyser = null; }
-    let spoke = false;
+    let spoke = false, levelOk = !!analyser, sawSignal = false, noise = 0.01, peak = 0;
     const t0 = performance.now(); let lastLoud = t0;
     rec.start(250);
+    if (stopReq) stopFn();
     const tick = setInterval(() => {
       const now = performance.now();
-      if (analyser) {
+      if (levelOk) {
         analyser.getByteTimeDomainData(buf);
-        let sum = 0; for (let k = 0; k < buf.length; k++) { const x = (buf[k] - 128) / 128; sum += x * x; }
+        let sum = 0, dev = 0; for (let k = 0; k < buf.length; k++) { const x = (buf[k] - 128) / 128; sum += x * x; if (buf[k] !== 128) dev++; }
         const rms = Math.sqrt(sum / buf.length);
+        if (dev) sawSignal = true;
+        if (now - t0 > 300) peak = Math.max(peak, rms);
+        // 1.5秒たっても音のデータがまったく来なければ、この端末では音の大きさがわからない
+        if (!sawSignal && now - t0 > 1500) { levelOk = false; onNoLevel && onNoLevel(); }
+        // 周りの雑音の大きさに合わせて、話しているかどうかを決める
+        if (now - t0 < 500) noise = Math.max(noise * 0.8, rms);
+        const thr = Math.min(0.05, Math.max(0.012, noise * 2.5));
         onLevel && onLevel(Math.min(1, rms * 6));
-        if (rms > 0.03) { spoke = true; lastLoud = now; }
-      } else spoke = true;
-      if (spoke && silenceSec && now - lastLoud > silenceSec * 1000) stopFn();
-      else if (!spoke && now - t0 > noSpeechSec * 1000) stopFn();
+        if (rms > thr) { spoke = true; lastLoud = now; }
+      }
+      if (levelOk && spoke && silenceSec && now - lastLoud > silenceSec * 1000) stopFn();
+      else if (levelOk && !spoke && now - t0 > noSpeechSec * 1000) stopFn();
       else if (now - t0 > maxSec * 1000) stopFn();
     }, 100);
     timers.push(tick);
     await stopped;
     clearInterval(tick);
     if (ac) ac.close().catch(() => {});
-    return { blob: new Blob(chunks, { type: rec.mimeType || mime || "audio/webm" }), spoke };
-  })();
-  return { stop: () => stopFn(), done };
+    const blob = new Blob(chunks, { type: rec.mimeType || mime || "audio/webm" });
+    // 文字起こしにまわすかどうか：自分でタップして止めたとき・音の大きさがわからないときは、1秒以上あればまわす。
+    // 自動で止まったときは、声らしい音があったときだけ（まったくの無音なら「聞き取れませんでした」）
+    const long = performance.now() - t0 > 1000;
+    const send = spoke || (long && (stopReq || !levelOk || peak > 0.006));
+    resolveDone({ blob, spoke: send, levelOk });
+  })().catch((e) => { if (ac) ac.close().catch(() => {}); rejectDone(e); });
+  return {
+    stop: () => {
+      stopReq = true;
+      if (stopFn) stopFn();
+      // マイクの許可を待っているあいだに止めたとき
+      else setTimeout(() => { if (!stopFn) resolveDone({ blob: new Blob([]), spoke: false, cancelled: true }); }, 300);
+    },
+    done
+  };
 }
 const blobToBase64 = (blob) => new Promise((res, rej) => {
   const fr = new FileReader();
@@ -4054,7 +4176,7 @@ function speak(text, lang, onDone) {
     let done = false;
     const fin = () => { if (!done) { done = true; onDone && onDone(); } };
     u.onend = fin; u.onerror = fin;
-    setTimeout(fin, 8000); // 読み上げが終わらない端末への保険
+    setTimeout(fin, Math.max(8000, String(text).length * 300)); // 読み上げが終わらない端末への保険
     speechSynthesis.speak(u);
   } catch (e) { onDone && onDone(); }
 }
@@ -4079,7 +4201,7 @@ function stopAll() {
 
 /* ---------- 画面の描画 ---------- */
 const app = () => $("#app");
-function render(html, opts) { stopAll(); if (!(opts && opts.keepMic)) releaseMic(); app().innerHTML = html; if (!(opts && opts.keepScroll)) window.scrollTo(0, 0); }
+function render(html, opts) { navSeq++; stopAll(); if (!(opts && opts.keepMic)) releaseMic(); app().innerHTML = html; if (!(opts && opts.keepScroll)) window.scrollTo(0, 0); }
 const showAdmin = () => state.isAdmin && !state.viewAsStudent;
 function header(title, backFn) {
   const sw = state.isAdmin ? `<span class="view-switch" role="group" aria-label="画面の切りかえ">
@@ -4475,7 +4597,7 @@ function renderTaskView(tid, back) {
     </main>`);
   bindBack(() => { curTask = null; (renderTaskView.back || renderHome)(); });
   $$(".item-card").forEach((b) => (b.onclick = () => renderItem(+b.dataset.i)));
-  if ($("#goMaster")) $("#goMaster").onclick = () => startMaster(m);
+  if ($("#goMaster")) $("#goMaster").onclick = (e) => { if (e.currentTarget.getAttribute("aria-disabled") === "true") return toast(`🔒 ${m.list.length}つの文法をすべてマスターすると挑戦できます。`); startMaster(m); };
 }
 // 自由練習（課題になっていない文法。中1〜中3）
 function renderFree() {
@@ -4643,7 +4765,7 @@ function avatarPicker() {
       <div class="av-bgs"><span class="hint">背景</span>${START_BGS.map((id) => `<button type="button" class="bgpick ${pick.bg === id ? "active" : ""}" data-bg="${id}">${avatarHTML({ b: pick.b || "cat", bg: id, sk: pick.sk }, 40)}</button>`).join("")}</div>
       <label class="nick-row"><span>ニックネーム（ランキングなどで表示。10文字まで・あとで変えられます）</span><input type="text" id="pkNick" maxlength="10" value="${esc(nick)}" placeholder="例：えいごマン"></label>
       <div class="av-big">${pick.b ? avatarHTML(pick, 110) : ""}</div>
-      <button class="btn primary big" id="avGo" ${pick.b ? "" : "disabled"}>${pick.b ? "このアバターにする！" : "キャラクターを選んでね"}</button>
+      <button class="btn primary big" id="avGo" ${pick.b ? "" : `aria-disabled="true"`}>${pick.b ? "このアバターにする！" : "キャラクターを選んでね"}</button>
       <div class="msg ng" id="avErr"></div></div>`;
     $("#pkNick", el).oninput = (e) => { nick = e.target.value; };
     const mk = (mode) => openPicMaker(mode, async (url) => {
@@ -4657,6 +4779,7 @@ function avatarPicker() {
     $$(".skin", el).forEach((bt) => (bt.onclick = () => { pick.sk = +bt.dataset.sk; draw(); }));
     $$(".bgpick", el).forEach((bt) => (bt.onclick = () => { pick.bg = bt.dataset.bg; draw(); }));
     $("#avGo", el).onclick = async (e) => {
+      if (!pick.b) return toast("先に、上からキャラクターを選んでね。");
       e.target.disabled = true;
       const before = rewardState(state.history);
       try {
@@ -4706,7 +4829,7 @@ function renderAvatar(tab) {
     } else if (tab === "theme") {
       side = `<p class="hint">アプリの色を変えられます。</p><div class="theme-grid">${THEMES.map((t) => {
         const open = isOpen(t, rw, owned);
-        return `<button class="theme-item ${theme === t.id ? "active" : ""} ${open ? "" : "locked"}" data-theme-id="${t.id}" ${open ? "" : "disabled"}>
+        return `<button class="theme-item ${theme === t.id ? "active" : ""} ${open ? "" : "locked"}" data-theme-id="${t.id}" ${open ? "" : `aria-disabled="true" data-lock="${esc(unlockText(t.un))}"`}>
           <span class="swatch" style="background:${t.c}"></span><span class="nm">${esc(t.name)}</span>${open ? "" : `<span class="lock">🔒 ${esc(unlockText(t.un))}</span>`}</button>`;
       }).join("")}</div>`;
     } else {
@@ -4718,7 +4841,7 @@ function renderAvatar(tab) {
           const open = isOpen(it, rw, owned);
           const av = Object.assign({}, draft, { [it.k]: it.id });
           if (it.k === "b") { delete av.mk; if (!it.human) delete av.sk; }
-          return `<button class="av-item ${draft[tab] === it.id ? "active" : ""} ${open ? "" : "locked"}" data-id="${it.id}" ${open ? "" : (shopPrice(it.un) ? 'data-shop="1"' : "disabled")}>${avatarHTML(av, 76)}<span class="nm">${esc(it.name)}</span>${open ? "" : `<span class="lock">🔒 ${esc(unlockText(it.un))}</span>`}</button>`;
+          return `<button class="av-item ${draft[tab] === it.id ? "active" : ""} ${open ? "" : "locked"}" data-id="${it.id}" ${open ? "" : (shopPrice(it.un) ? 'data-shop="1"' : `aria-disabled="true" data-lock="${esc(unlockText(it.un))}"`)}>${avatarHTML(av, 76)}<span class="nm">${esc(it.name)}</span>${open ? "" : `<span class="lock">🔒 ${esc(unlockText(it.un))}</span>`}</button>`;
         }).join("")}</div>`;
     }
     render(`${header("着せ替え", true)}
@@ -4743,6 +4866,7 @@ function renderAvatar(tab) {
     bindBack(leave);
     $$(".seg button").forEach((b) => (b.onclick = () => { tab = b.dataset.t; draw(); }));
     $$(".av-item[data-id]").forEach((b) => (b.onclick = () => {
+      if (b.dataset.lock) return toast(`🔒 ${b.dataset.lock}使えるようになります。`);
       if (b.dataset.shop) return renderShop();
       const id = b.dataset.id;
       if (draft.b === "pic" && tab !== "bg") { const keepBg = draft.bg; draft = JSON.parse(JSON.stringify(draft.fb || { b: "cat" })); if (keepBg && !draft.bg) draft.bg = keepBg; }
@@ -4759,7 +4883,7 @@ function renderAvatar(tab) {
     $$("[data-k]").forEach((b) => (b.onclick = () => { mk[b.dataset.k] = b.dataset.v; draw(); }));
     if ($("#mkRand")) $("#mkRand").onclick = () => { Object.keys(A.MAKER).forEach((k) => { mk[k] = A.MAKER[k][Math.floor(Math.random() * A.MAKER[k].length)][0]; }); draw(); };
     if ($("#mkUse")) $("#mkUse").onclick = () => { if (draft.b === "pic") draft = Object.assign({ bg: draft.bg }, draft.fb || {}); draft.b = "maker"; draft.mk = Object.assign({}, mk); delete draft.sk; lsSet("eg_lastmk", mk); tab = "b"; draw(); };
-    $$("[data-theme-id]").forEach((b) => (b.onclick = () => { theme = b.dataset.themeId; applySkin(theme); draw(); }));
+    $$("[data-theme-id]").forEach((b) => (b.onclick = () => { if (b.dataset.lock) return toast(`🔒 ${b.dataset.lock}使えるようになります。`); theme = b.dataset.themeId; applySkin(theme); draw(); }));
     $("#goShop").onclick = () => { applySkin(state.profile.theme); renderShop(); };
     if ($("#avReset")) $("#avReset").onclick = () => { draft = JSON.parse(JSON.stringify(state.profile.avatar || { b: "cat", bg: "bg_sky" })); theme = state.profile.theme || "umi"; applySkin(theme); draw(); };
     $("#avSave").onclick = async (e) => {
@@ -4797,7 +4921,7 @@ function renderShop() {
     const item = (it, preview) => {
       const have = owned.includes(it.id), price = shopPrice(it.un);
       return `<div class="shop-item ${have ? "have" : ""}">${preview}<span class="nm">${esc(it.name)}</span>
-        ${have ? `<span class="tag ok">持っている</span>` : `<button class="btn small ${rw.points.avail >= price ? "primary" : ""}" data-buy="${it.id}" ${rw.points.avail >= price ? "" : "disabled"}>🪙 ${price}pt</button>`}</div>`;
+        ${have ? `<span class="tag ok">持っている</span>` : `<button class="btn small ${rw.points.avail >= price ? "primary" : ""}" data-buy="${it.id}" ${rw.points.avail >= price ? "" : `aria-disabled="true" data-short="${price - rw.points.avail}"`}>🪙 ${price}pt</button>`}</div>`;
     };
     render(`${header("お店", true)}
       <main class="wrap">
@@ -4822,6 +4946,7 @@ function renderShop() {
     $("#onlyCan").onchange = (e) => { onlyCan = e.target.checked; draw(); };
     $$("[data-buy]").forEach((b) => (b.onclick = async () => {
       const it = findGoods(b.dataset.buy);
+      if (b.dataset.short) return toast(`🪙 あと ${b.dataset.short}pt で交換できます。練習してポイントをためよう！`);
       if (b.dataset.armed !== "1") { $$("[data-buy]").forEach((x) => { if (x !== b) { x.dataset.armed = ""; } }); b.dataset.armed = "1"; b.textContent = "交換する？"; return; }
       b.disabled = true;
       const before = rewardState(state.history);
@@ -5053,7 +5178,7 @@ function renderItem(i) {
       : n > 0 ? `<span class="tag">合格 ${n}/${need}回</span>`
       : p.attempts[s - 1] ? `<span class="tag">最高 ${pct(p.best[s - 1])}%</span>`
       : unlocked ? `<span class="tag">${need > 1 ? `${need}回合格でクリア` : "未挑戦"}</span>` : `<span class="tag lock">🔒 前の段階をクリアしよう</span>`;
-    return `<button class="stage-card s${s}" data-s="${s}" ${unlocked ? "" : "disabled"}>
+    return `<button class="stage-card s${s}${unlocked ? "" : " locked"}" data-s="${s}" ${unlocked ? "" : `aria-disabled="true"`}>
       <span class="stage-no">段階${s}</span>
       <span class="stage-body"><span class="stage-name">${STAGE_NAMES[s - 1]}</span><span class="stage-desc">${STAGE_DESC[s - 1]}</span></span>
       ${status}
@@ -5070,6 +5195,7 @@ function renderItem(i) {
   bindBack(itemBack || renderHome);
   $$(".stage-card").forEach((b) => (b.onclick = () => {
     const s = +b.dataset.s;
+    if (b.classList.contains("locked")) return toast(`🔒 段階${s - 1}をクリアすると、段階${s}に進めます。`);
     if (s === 1) renderStage1(i); else startQuiz(i, s);
   }));
 }
@@ -5096,44 +5222,69 @@ function answerBlock({ lang, placeholder, multiline }) {
 /* マイク操作をまとめたコントローラ */
 function mountAnswer({ lang, continuous, silenceSec, confirm, onSubmit, onSpeechStart }) {
   let current = { text: "", alts: [] };
-  const tEl = $("#transcript"), mic = $("#micBtn"), msg = $("#msg"), conf = $("#confirmRow");
+  const tEl = $("#transcript"), mic = $("#micBtn"), msg = $("#msg"), conf = $("#confirmRow"), hint = $("#micHint");
+  const hint0 = hint ? hint.textContent : "";
   const setText = (t, interim) => { tEl.innerHTML = t ? `<span class="${interim ? "interim" : ""}">${esc(t)}</span>` : `<span class="ph">…</span>`; };
   const setMsg = (m, cls) => { msg.textContent = m || ""; msg.className = "msg " + (cls || ""); };
-  let listening = false;
-  const stopUI = () => { listening = false; mic && mic.classList.remove("on"); };
-  function start() {
-    if (!speechAvailable || listening) return;
+  const hasText = !!$("#textIn");
+  let listening = false, rec = null, byUser = false, t0 = 0, retries = 0, misses = 0, done = false;
+  const alive = () => document.body.contains(tEl);
+  const stopUI = () => { listening = false; if (mic) mic.classList.remove("on"); if (hint) hint.textContent = hint0; };
+  // auto=true：何も聞こえなかったので、自動でもう一度聞き取る
+  function start(auto) {
+    if (!speechAvailable || done || !alive()) return;
+    if (listening && rec && rec.active) return;
+    if (!auto) { t0 = Date.now(); retries = 0; }
+    byUser = false;
     setMsg(""); conf.classList.add("hidden");
-    listening = true; mic && mic.classList.add("on");
-    setText("", true);
-    activeRec = listen({
+    listening = true; if (mic) mic.classList.add("on");
+    if (hint) hint.textContent = "聞いています…　話し終わったら、もう一度タップしても止まります";
+    if (!auto) setText("", true);
+    rec = activeRec = listen({
       lang, continuous, silenceSec,
       onSpeechStart: () => onSpeechStart && onSpeechStart(),
       onInterim: (t) => setText(t, true),
-      onError: (err) => { if (err !== "aborted") setMsg(SR_ERRORS[err] || ("音声認識エラー: " + err), "ng"); },
       onEnd: (res) => {
-        stopUI(); activeRec = null;
-        if (!res.text) { if (!msg.textContent) setMsg(SR_ERRORS["no-speech"], "ng"); setText(""); return; }
+        if (activeRec === rec) activeRec = null;
+        rec = null;
+        if (!alive() || done) return;
+        if (!res.text) {
+          const err = res.error || "";
+          // 何も聞こえなかったときは、25秒までは自動で聞き直す（タップし直さなくてよいように）
+          if (!byUser && (!err || err === "no-speech" || err === "aborted") && retries < 4 && Date.now() - t0 < 25000) {
+            retries++; listening = false; start(true); return;
+          }
+          stopUI(); setText("");
+          misses++;
+          setMsg((SR_ERRORS[err] || SR_ERRORS["no-speech"]) + (misses >= 2 && hasText ? "（「文字で入力する」でも答えられます）" : ""), err && err !== "no-speech" && err !== "aborted" ? "ng" : "warn");
+          return;
+        }
+        stopUI(); misses = 0;
         current = res; setText(res.text, false);
-        if (confirm) conf.classList.remove("hidden"); else onSubmit(current, "voice");
+        if (confirm) conf.classList.remove("hidden"); else { done = true; onSubmit(current, "voice"); }
       }
     });
   }
-  function stop() { if (activeRec) { try { activeRec.stop(); } catch (e) {} } }
-  if (mic) mic.onclick = () => (listening ? stop() : start());
-  $("#submitBtn").onclick = () => { conf.classList.add("hidden"); onSubmit(current, "voice"); };
+  function stop() { byUser = true; if (rec) rec.stop(); else stopUI(); }
+  if (mic) mic.onclick = () => (listening && rec && rec.active ? stop() : start());
+  $("#submitBtn").onclick = () => { conf.classList.add("hidden"); done = true; onSubmit(current, "voice"); };
   $("#retryBtn").onclick = () => { conf.classList.add("hidden"); setText(""); start(); };
   const ti = $("#textIn"), ts = $("#textSubmit");
   if (ti && ts) {
     let firstKey = true;
     ti.addEventListener("input", () => { if (firstKey) { firstKey = false; onSpeechStart && onSpeechStart(); } });
-    const go = () => { const v = ti.value.trim(); if (!v) return; setText(v, false); onSubmit({ text: v, alts: [v] }, "text"); };
+    const go = () => {
+      const v = ti.value.trim();
+      if (!v) { setMsg("答えを入力してから「答える」を押してね。", "warn"); ti.focus(); return; }
+      if (rec) { byUser = true; rec.abort(); rec = null; stopUI(); }
+      done = true; setText(v, false); onSubmit({ text: v, alts: [v] }, "text");
+    };
     ts.onclick = go;
     if (ti.tagName === "INPUT") ti.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.isComposing) go(); });
   }
   return {
     start, setMsg,
-    disable() { if (mic) mic.disabled = true; if (ti) ti.disabled = true; if (ts) ts.disabled = true; conf.classList.add("hidden"); },
+    disable() { done = true; if (rec) { rec.abort(); rec = null; } stopUI(); if (mic) mic.disabled = true; if (ti) ti.disabled = true; if (ts) ts.disabled = true; conf.classList.add("hidden"); },
   };
 }
 
@@ -5193,35 +5344,47 @@ function renderStage1Rec(i) {
   const mic = $("#micBtn"), tEl = $("#transcript"), msg = $("#msg"), hint = $("#micHint"), level = $("#level"), bar = $("#levelBar");
   const setMsg = (m, cls) => { msg.textContent = m || ""; msg.className = "msg " + (cls || ""); };
   let recording = null, busy = false;
-  const lock = () => { mic.disabled = true; const ti = $("#textIn"), ts = $("#textSubmit"); if (ti) ti.disabled = true; if (ts) ts.disabled = true; };
+  const ti = $("#textIn"), ts = $("#textSubmit");
+  const lock = () => { mic.disabled = true; if (ti) ti.disabled = true; if (ts) ts.disabled = true; };
+  const unlock = () => { busy = false; mic.disabled = false; mic.classList.remove("on", "wait"); level.classList.add("hidden"); if (ti) ti.disabled = false; if (ts) ts.disabled = false; };
+  const again = (m, cls) => { unlock(); hint.textContent = "もう一度タップして話そう"; tEl.innerHTML = `<span class="ph">…</span>`; if (m) setMsg(m, cls || "warn"); };
   mic.onclick = async () => {
     if (busy) return;
-    if (recording) { recording.stop(); return; }
+    if (recording) { recording.stop(); mic.classList.add("wait"); hint.textContent = "止めています…"; return; }
     setMsg("");
+    const ac = newAudioCtx(); // タップした瞬間に作る（iPad で音の大きさを調べるため）
     try {
-      recording = startRecording({ silenceSec: sec, onLevel: (v) => { bar.style.width = Math.round(v * 100) + "%"; } });
+      recording = startRecording({ silenceSec: sec, ac,
+        onLevel: (v) => { bar.style.width = Math.round(v * 100) + "%"; },
+        onNoLevel: () => { level.classList.add("hidden"); hint.textContent = "録音中…　話し終わったら、マイクをタップしてね"; } });
       mic.classList.add("on"); level.classList.remove("hidden");
       hint.textContent = "録音中…　話し終わると自動で止まります（タップでも止まります）";
       tEl.innerHTML = `<span class="ph">録音しています…</span>`;
-      const { blob, spoke } = await recording.done;
-      recording = null; mic.classList.remove("on"); level.classList.add("hidden");
-      if (!spoke || blob.size < 1000) { hint.textContent = "もう一度タップして話そう"; tEl.innerHTML = `<span class="ph">…</span>`; return setMsg(SR_ERRORS["no-speech"], "ng"); }
+      const r = await recording.done;
+      if (busy) return; // 録音中に「文字で入力」で答えたとき
+      recording = null; mic.classList.remove("on", "wait"); level.classList.add("hidden");
+      if (r.cancelled) return again("");
+      if (!r.spoke || r.blob.size < 1000) return again(SR_ERRORS["no-speech"] + (r.levelOk ? "（マイクに近づいて、はっきり話してみよう）" : ""));
       busy = true; lock();
       hint.textContent = "";
       tEl.innerHTML = `<span class="judging"><span class="spinner"></span>文字に起こしています…</span>`;
-      const { text } = await api.transcribe(blob);
-      if (!text) { busy = false; mic.disabled = false; hint.textContent = "もう一度タップして話そう"; tEl.innerHTML = `<span class="ph">…</span>`; return setMsg(SR_ERRORS["no-speech"], "ng"); }
+      const { text } = await api.transcribe(r.blob);
+      if (!text) return again(SR_ERRORS["no-speech"]);
       tEl.innerHTML = `<span>${esc(text)}</span>`;
       await judgeStage1(i, text, null);
     } catch (e) {
-      recording = null; busy = false; mic.disabled = false; mic.classList.remove("on"); level.classList.add("hidden");
+      recording = null;
       const m = String(e && (e.name || "")).includes("NotAllowed") ? SR_ERRORS["not-allowed"] : ("聞き取りに失敗しました：" + (e.message || e));
-      setMsg(m + "（文字で入力して答えることもできます）", "ng");
-      hint.textContent = "もう一度タップして話そう";
+      again(m + (ti ? "（文字で入力して答えることもできます）" : ""), "ng");
     }
   };
-  const ti = $("#textIn"), ts = $("#textSubmit");
-  if (ti && ts) ts.onclick = () => { const v = ti.value.trim(); if (!v || busy) return; busy = true; lock(); tEl.innerHTML = `<span>${esc(v)}</span>`; judgeStage1(i, v, null); };
+  if (ti && ts) ts.onclick = () => {
+    const v = ti.value.trim();
+    if (busy) return;
+    if (!v) { setMsg("答えを入力してから「答える」を押してね。", "warn"); ti.focus(); return; }
+    if (recording) { recording.stop(); recording = null; }
+    busy = true; lock(); mic.classList.remove("on", "wait"); level.classList.add("hidden"); tEl.innerHTML = `<span>${esc(v)}</span>`; judgeStage1(i, v, null);
+  };
 }
 /* ブラウザの音声認識を使う版 */
 function renderStage1Browser(i) {
@@ -5396,6 +5559,7 @@ function renderQuestion() {
   bindBack(() => (session.boss ? quitBoss() : session.range ? quitRange() : session.story ? renderStory() : session.master ? backToTask(session.master) : session.review ? renderReview() : renderItem(session.i)));
 
   let shownAt = 0, latency = null;
+  const seq = navSeq; // この画面の番号（ほかの画面に移ったら、聞き取りを始めない）
   const limit = state.settings.stage4.timeLimitSec;
   const confirm = stage === 4 ? !state.settings.autoSubmitStage4 : state.settings.confirmBeforeSubmit;
   const ctl = mountAnswer({
@@ -5415,9 +5579,10 @@ function renderQuestion() {
         else if (el >= limit) { clearInterval(tick); if (bar) bar.classList.add("late"); ctl.setMsg("時間切れ！でも最後まで言ってみよう。", "warn"); }
       }, 100);
       timers.push(tick);
-      if (speechAvailable) ctl.start();
+      // 読み上げの直後は、iPad でマイクの音が入らないことがあるので少し待つ
+      if (speechAvailable) timers.push(setTimeout(() => { if (seq === navSeq) ctl.start(); }, state.settings.ttsStage4 ? 400 : 0));
     };
-    if (state.settings.ttsStage4) speak(q.ja, "ja-JP", begin); else begin();
+    if (state.settings.ttsStage4) speak(q.ja, "ja-JP", () => { if (seq === navSeq) begin(); }); else begin();
   }
 }
 
@@ -5582,7 +5747,7 @@ function taskPanelHTML(m, x) {
     <h2>${done ? "🏅 " : "🏁 "}まとめ問題（${num}問）</h2>
     <p class="hint">「${esc(last.short)}」を中心に、これまでに習った「${prev.map((it) => esc(it.short)).join("」「")}」もまざって出ます。${MASTER_FORMAT_NOTE}${pct(pass)}% 以上正解で、この課題はクリア。はじめて合格すると、新しいアバターがもらえます。</p>
     ${best ? `<p class="hint">これまでの最高：${pct(best)}%${done ? "（合格）" : ""}</p>` : ""}
-    <button class="btn primary big" id="goMaster" ${ready ? "" : "disabled"}>${ready ? (done ? "もう一度挑戦する" : "まとめ問題に挑戦！") : `🔒 ${m.list.length}つの文法をすべてマスターすると挑戦できます`}</button>
+    <button class="btn primary big" id="goMaster" ${ready ? "" : `aria-disabled="true"`}>${ready ? (done ? "もう一度挑戦する" : "まとめ問題に挑戦！") : `🔒 ${m.list.length}つの文法をすべてマスターすると挑戦できます`}</button>
   </section>`;
 }
 const backToTask = (m) => renderTaskView(m.id);
@@ -5809,7 +5974,9 @@ function quitRange() {
   const R = session && session.range;
   if (!R) return renderHome();
   const t = R.t;
-  if (R.ev.some((e) => e.m !== "!")) flushRangeDraft().then(() => renderTaskView(t.id)); else { lsSet("eg_range_draft", null); renderTaskView(t.id); }
+  // 先に画面をもどし、記録は後ろで送る（送り終わったら、まだ同じ画面にいれば表示を新しくする）
+  if (R.ev.some((e) => e.m !== "!")) { renderTaskView(t.id); const seq = navSeq; flushRangeDraft().then(() => { if (seq === navSeq) renderTaskView(t.id); }); }
+  else { lsSet("eg_range_draft", null); renderTaskView(t.id); }
 }
 async function renderRangeResult() {
   const { log, range: R } = session, t = R.t;
@@ -5960,7 +6127,7 @@ function quitBoss() {
   const B = session && session.boss;
   if (!B) return renderHome();
   const t = B.t;
-  if (lsGet("eg_boss_draft", null)) flushBossDraft().then(() => renderTaskView(t.id)); else renderTaskView(t.id);
+  if (lsGet("eg_boss_draft", null)) { renderTaskView(t.id); const seq = navSeq; flushBossDraft().then(() => { if (seq === navSeq) renderTaskView(t.id); }); } else renderTaskView(t.id);
 }
 async function renderBossResult() {
   const { log, boss: B, qs } = session, t = B.t;
@@ -6270,6 +6437,7 @@ async function renderStudents(cls) {
     if ($("#stuCls")) $("#stuCls").onchange = (e) => { lsSet("eg_cls", e.target.value); renderStudents(e.target.value); };
     $("#rosterCheck").onclick = () => {
       const r = parseRoster($("#rosterIn").value);
+      if (!r.rows.length && !r.errors.length) { $("#rosterPrev").innerHTML = `<div class="msg warn">上の欄に名簿を貼り付けてから「読みこむ」を押してください。</div>`; return; }
       $("#rosterPrev").innerHTML = (r.errors.length ? `<div class="msg ng">${r.errors.slice(0, 5).map(esc).join("<br>")}${r.errors.length > 5 ? `<br>ほか${r.errors.length - 5}行` : ""}</div>` : "") +
         (r.rows.length ? `<div class="table-wrap"><table class="people"><thead><tr><th>メール</th><th>クラス</th><th>番号</th><th>名前</th></tr></thead><tbody>${r.rows.slice(0, 50).map((x) => `<tr><td>${esc(x.email)}</td><td>${esc(x.cls)}</td><td>${esc(x.no)}</td><td>${esc(x.name)}</td></tr>`).join("")}</tbody></table></div>
           ${r.rows.length > 50 ? `<p class="hint">ほか ${r.rows.length - 50}人</p>` : ""}<div class="btn-row"><button class="btn primary" id="rosterGo">この ${r.rows.length}人 を登録する</button></div>` : "");
@@ -7221,6 +7389,7 @@ function storyMapHTML(st, peers) {
   }).join("") + `<p class="hint">🏰＝とりもどした王国（押すと王国の話が読める）　👾＝いま戦っている封印獣${(peers || []).length ? "　小さなアバター＝同じクラスの仲間がいる王国" : ""}</p>`;
 }
 function bindMap(st) {
+  $$(".fog-cover").forEach((f) => (f.onclick = () => toast("☁️ 前の大陸の王国をとりもどすと、霧が晴れて進めるようになります。")));
   $$(".kn").forEach((b) => (b.onclick = () => {
     const k = +b.dataset.k, it = st.order[k], K = kingdomOf(it);
     if (st.done.has(it.id)) showGifts([{ html: castleSVG("done", (STORY.continents[gradeOf(it) - 1] || {}).color || "#2f9e44", 90), title: K.name, text: String(K.episode).replace(/\{name\}/g, storyName()) }], "とじる");
