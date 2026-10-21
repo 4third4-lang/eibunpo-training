@@ -2709,7 +2709,6 @@ const DEFAULT_SETTINGS = {
   masterTask: { num: 20, pass: 0.8 }, // 課題（マスターモード）のまとめ問題
   classTasks: {},          // クラスごとのストーリーモードの課題 {クラス: {storyGoal}}
   sttStage1: "elevenlabs", // 段階1の聞き取り: "elevenlabs"（録音して文字起こし）/ "browser"（ブラウザの音声認識）
-  sttStage24: "ios",       // 段階2〜4（英語で答える問題）の聞き取り: "ios"（iPad・iPhone だけ ElevenLabs）/ "all"（すべての端末で ElevenLabs）/ "browser"（ブラウザの音声認識）
   lockProgression: true,
   allowText: true,
   confirmBeforeSubmit: true,
@@ -3731,7 +3730,7 @@ const remoteApi = (callFn) => ({
   saveResult(r) { return this.call("saveResult", r); },
   saveSettings(s) { return this.call("saveSettings", s); },
   judge(req) { return this.call("judge", req); },
-  async transcribe(blob, lang) { return this.call("transcribe", { b64: await blobToBase64(blob), mime: blob.type || "audio/webm", lang: lang || "" }); },
+  async transcribe(blob) { return this.call("transcribe", { b64: await blobToBase64(blob), mime: blob.type || "audio/webm" }); },
   dashboard() { return this.call("getDashboard"); },
   saveProfile(p) { return this.call("saveProfile", p); },
   buy(id) { return this.call("buy", { id }); },
@@ -3972,13 +3971,12 @@ const api = MODE === "api" ? remoteApi(async (action, args) => {
     if (!res.ok) throw new Error((data.error && data.error.message) || ("通信エラー " + res.status));
     return parseClaude(data);
   },
-  async transcribe(blob, lang) {
+  async transcribe(blob) {
     const key = lsGet("eg_eleven_key", "");
     if (!key) throw new Error("ElevenLabs のAPIキーが設定されていません");
     const fd = new FormData();
     fd.append("model_id", ELEVEN_MODEL);
     fd.append("tag_audio_events", "false");
-    if (lang === "en" || lang === "ja") fd.append("language_code", lang);
     fd.append("file", blob, "answer." + ((blob.type || "").includes("mp4") ? "mp4" : "webm"));
     const res = await fetch(ELEVEN_URL, { method: "POST", headers: { "xi-api-key": key }, body: fd });
     const data = await res.json().catch(() => ({}));
@@ -4080,26 +4078,18 @@ async function getMic() {
   return micStream;
 }
 function releaseMic() { if (micStream) { micStream.getTracks().forEach((t) => t.stop()); micStream = null; } }
-/* 音の大きさを調べる部品。iPad では、タップのときに動かしておかないと止まったままになるので、
-   1つだけ作って、画面をタップするたびに動かし直す（自動で聞き取りを始める段階4でも使えるように） */
-let sharedAC = null;
+/* 音の大きさを調べる部品。iPad では、タップした瞬間に作って動かしておかないと止まったままになる */
 function newAudioCtx() {
-  try {
-    if (!sharedAC || sharedAC.state === "closed") { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; sharedAC = new AC(); }
-    if (sharedAC.state !== "running" && sharedAC.resume) sharedAC.resume().catch(() => {});
-    return sharedAC;
-  } catch (e) { return null; }
+  try { const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null; const ac = new AC(); if (ac.resume) ac.resume().catch(() => {}); return ac; } catch (e) { return null; }
 }
-["touchend", "click"].forEach((ev) => document.addEventListener(ev, () => { if (recorderAvailable && state.hasEleven && (!sharedAC || sharedAC.state !== "running")) newAudioCtx(); }, true));
 /* 録音して、話し終わって silenceSec 秒たったら自動で止める。
    音の大きさがわからない端末では、自動では止めずに「タップで止める」にする（onNoLevel で知らせる） */
-function startRecording({ silenceSec, maxSec = 90, noSpeechSec = 15, ac, onLevel, onNoLevel, onSpeech }) {
-  const unhook = (nodes) => nodes.forEach((n) => { try { n && n.disconnect(); } catch (e) {} });
+function startRecording({ silenceSec, maxSec = 90, noSpeechSec = 15, ac, onLevel, onNoLevel }) {
   let stopFn = null, stopReq = false, resolveDone, rejectDone;
   const done = new Promise((res, rej) => { resolveDone = res; rejectDone = rej; });
   (async () => {
     const stream = await getMic();
-    if (stopReq) return resolveDone({ blob: new Blob([]), spoke: false, cancelled: true });
+    if (stopReq) { if (ac) ac.close().catch(() => {}); return resolveDone({ blob: new Blob([]), spoke: false, cancelled: true }); }
     const types = ["audio/webm;codecs=opus", "audio/mp4", "audio/webm", "audio/aac"];
     const mime = types.find((t) => window.MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) || "";
     const rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
@@ -4111,12 +4101,12 @@ function startRecording({ silenceSec, maxSec = 90, noSpeechSec = 15, ac, onLevel
       if (rec.state !== "inactive") { try { rec.stop(); } catch (e) {} }
       setTimeout(stopWait, 2500); // 止まった知らせが来ない端末への保険
     };
-    let analyser = null, buf = null, gain = null, src = null;
+    let analyser = null, buf = null, gain = null;
     try {
       if (!ac) ac = newAudioCtx();
       if (ac) {
         if (ac.state === "suspended" && ac.resume) ac.resume().catch(() => {});
-        src = ac.createMediaStreamSource(stream);
+        const src = ac.createMediaStreamSource(stream);
         analyser = ac.createAnalyser(); analyser.fftSize = 1024; src.connect(analyser);
         // 出力につながないと動かない端末があるので、音量0でつないでおく
         gain = ac.createGain(); gain.gain.value = 0; analyser.connect(gain); gain.connect(ac.destination);
@@ -4141,7 +4131,7 @@ function startRecording({ silenceSec, maxSec = 90, noSpeechSec = 15, ac, onLevel
         if (now - t0 < 500) noise = Math.max(noise * 0.8, rms);
         const thr = Math.min(0.05, Math.max(0.012, noise * 2.5));
         onLevel && onLevel(Math.min(1, rms * 6));
-        if (rms > thr) { if (!spoke) onSpeech && onSpeech(); spoke = true; lastLoud = now; }
+        if (rms > thr) { spoke = true; lastLoud = now; }
       }
       if (levelOk && spoke && silenceSec && now - lastLoud > silenceSec * 1000) stopFn();
       else if (levelOk && !spoke && now - t0 > noSpeechSec * 1000) stopFn();
@@ -4150,14 +4140,14 @@ function startRecording({ silenceSec, maxSec = 90, noSpeechSec = 15, ac, onLevel
     timers.push(tick);
     await stopped;
     clearInterval(tick);
-    unhook([src, analyser, gain]);
+    if (ac) ac.close().catch(() => {});
     const blob = new Blob(chunks, { type: rec.mimeType || mime || "audio/webm" });
     // 文字起こしにまわすかどうか：自分でタップして止めたとき・音の大きさがわからないときは、1秒以上あればまわす。
     // 自動で止まったときは、声らしい音があったときだけ（まったくの無音なら「聞き取れませんでした」）
     const long = performance.now() - t0 > 1000;
     const send = spoke || (long && (stopReq || !levelOk || peak > 0.006));
     resolveDone({ blob, spoke: send, levelOk });
-  })().catch((e) => rejectDone(e));
+  })().catch((e) => { if (ac) ac.close().catch(() => {}); rejectDone(e); });
   return {
     stop: () => {
       stopReq = true;
@@ -4200,10 +4190,6 @@ function applySettings(raw) {
   state.settings = mergeSettings(settingsForClass(state.rawSettings, state.profile.cls, state.isAdmin, state.email));
 }
 const useEleven = () => state.settings.sttStage1 === "elevenlabs" && state.hasEleven && recorderAvailable;
-// iPad・iPhone（iPad の Safari は「Mac」と名のるので、タッチできるかで見分ける）
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints >= 1);
-// 段階2〜4など英語で答える問題を、ElevenLabs で聞き取るか（ブラウザの音声認識は iPad で聞き取れないことが多いため）
-const useElevenEn = () => state.hasEleven && recorderAvailable && (state.settings.sttStage24 === "all" || (state.settings.sttStage24 !== "browser" && isIOS));
 let session = null;      // 進行中の練習
 let activeRec = null;    // 動作中の音声認識
 let timers = [];
@@ -4266,7 +4252,6 @@ function renderAdminHome() {
           <dt>クリアに必要な合格回数</dt><dd>${[1, 2, 3, 4].map((k) => `段階${k}：${requiredPasses(k)}回`).join("　")}</dd>
           <dt>合格ライン</dt><dd>${[1, 2, 3, 4].map((k) => `段階${k}：${pct(s["stage" + k].passRatio)}%`).join("　")}</dd>
           <dt>段階1の聞き取り</dt><dd>${esc(stt)}</dd>
-          <dt>段階2〜4の聞き取り</dt><dd>${s.sttStage24 === "browser" ? "ブラウザの音声認識" : !state.hasEleven ? "ElevenLabs（APIキー未設定のため、いまはブラウザの音声認識）" : s.sttStage24 === "all" ? "すべての端末で ElevenLabs" : "iPad・iPhone は ElevenLabs、ほかはブラウザの音声認識"}</dd>
           <dt>進め方</dt><dd>${s.lockProgression ? "前の段階をクリアしないと次に進めない" : "どの段階からでも練習できる"}</dd>
           <dt>ごほうび</dt><dd>ランキング：${s.showRanking ? "生徒に表示" : "表示しない"}　自動スタンプ：${s.autoStamps !== false ? "あり" : "なし"}　おみくじ：${s.omikuji !== false ? "あり" : "なし"}</dd>
         </dl>
@@ -5025,7 +5010,7 @@ function renderOmikuji() {
       ${answerBlock({ lang: "en-US", placeholder: "マイクをタップして英語で言おう", multiline: false })}
       <div id="result"></div>
       ${footerNote()}
-    </main>`, { keepMic: useElevenEn() });
+    </main>`);
   bindBack(renderHome);
   const ctl = mountAnswer({ lang: "en-US", continuous: false, confirm: state.settings.confirmBeforeSubmit, onSubmit: (ans) => judgeOmikuji(q, st, ans, ctl, O) });
 }
@@ -5217,14 +5202,12 @@ function renderItem(i) {
 
 /* ===== マイクと回答欄（共通部品） ===== */
 function answerBlock({ lang, placeholder, multiline }) {
-  const rec = lang.startsWith("en") && useElevenEn();
-  const textOnly = !speechAvailable && !rec;
+  const textOnly = !speechAvailable;
   return `<div class="answer">
     <div class="transcript" id="transcript" aria-live="polite"><span class="ph">${esc(placeholder)}</span></div>
     <div class="mic-row">
       ${textOnly ? "" : `<button class="mic" id="micBtn" aria-label="話す"><span class="mic-ico"></span></button>`}
-      <div class="mic-side"><div class="mic-hint" id="micHint">${textOnly ? "" : rec ? "タップして英語で話そう。話し終わると自動で止まります" : (lang.startsWith("ja") ? `タップして話そう。話し終わって${state.settings.stage1.silenceSec}秒たつと自動で判定します` : "タップして英語で話そう")}</div>
-      ${rec ? `<div class="level hidden" id="level"><i id="levelBar"></i></div>` : ""}</div>
+      <div class="mic-hint" id="micHint">${textOnly ? "" : (lang.startsWith("ja") ? `タップして話そう。話し終わって${state.settings.stage1.silenceSec}秒たつと自動で判定します` : "タップして英語で話そう")}</div>
     </div>
     <div class="msg" id="msg"></div>
     <div class="confirm hidden" id="confirmRow">
@@ -5238,7 +5221,6 @@ function answerBlock({ lang, placeholder, multiline }) {
 }
 /* マイク操作をまとめたコントローラ */
 function mountAnswer({ lang, continuous, silenceSec, confirm, onSubmit, onSpeechStart }) {
-  if (lang.startsWith("en") && useElevenEn()) return mountAnswerRec({ lang, confirm, onSubmit, onSpeechStart });
   let current = { text: "", alts: [] };
   const tEl = $("#transcript"), mic = $("#micBtn"), msg = $("#msg"), conf = $("#confirmRow"), hint = $("#micHint");
   const hint0 = hint ? hint.textContent : "";
@@ -5303,85 +5285,6 @@ function mountAnswer({ lang, continuous, silenceSec, confirm, onSubmit, onSpeech
   return {
     start, setMsg,
     disable() { done = true; if (rec) { rec.abort(); rec = null; } stopUI(); if (mic) mic.disabled = true; if (ti) ti.disabled = true; if (ts) ts.disabled = true; conf.classList.add("hidden"); },
-  };
-}
-
-/* 録音して ElevenLabs で文字起こしする版（iPad の段階2〜4など）。mountAnswer と同じ使い方 */
-const REC_SILENCE_EN = 1.8; // 英語の答え：話し終わって何秒で自動で止めるか
-function mountAnswerRec({ lang, confirm, onSubmit, onSpeechStart }) {
-  let current = { text: "", alts: [] };
-  const tEl = $("#transcript"), mic = $("#micBtn"), msg = $("#msg"), conf = $("#confirmRow"), hint = $("#micHint"), level = $("#level"), bar = $("#levelBar");
-  const hint0 = hint ? hint.textContent : "";
-  const ti = $("#textIn"), ts = $("#textSubmit");
-  const setText = (t) => { tEl.innerHTML = t ? `<span>${esc(t)}</span>` : `<span class="ph">…</span>`; };
-  const setMsg = (m, cls) => { msg.textContent = m || ""; msg.className = "msg " + (cls || ""); };
-  let recording = null, busy = false, done = false, misses = 0, spokeSent = false;
-  const alive = () => document.body.contains(tEl);
-  const idle = (m, cls) => {
-    recording = null; busy = false;
-    if (mic) { mic.disabled = false; mic.classList.remove("on", "wait"); }
-    if (level) level.classList.add("hidden");
-    if (hint) hint.textContent = hint0;
-    if (m) { misses++; setMsg(m + (misses >= 2 && ti ? "（「文字で入力する」でも答えられます）" : ""), cls || "warn"); setText(""); }
-  };
-  async function start() {
-    if (done || busy || recording || !alive()) return;
-    setMsg(""); conf.classList.add("hidden"); spokeSent = false;
-    const ac = newAudioCtx(), recAt = performance.now();
-    try {
-      recording = startRecording({ silenceSec: REC_SILENCE_EN, maxSec: 30, noSpeechSec: 12, ac,
-        onLevel: (v) => { if (bar) bar.style.width = Math.round(v * 100) + "%"; },
-        onSpeech: () => { if (!spokeSent) { spokeSent = true; onSpeechStart && onSpeechStart(); } },
-        // 音の大きさがわからない端末：話し始めの時間は録音を始めた時とし、止めるのはタップで
-        onNoLevel: () => { if (level) level.classList.add("hidden"); if (hint) hint.textContent = "録音中…　言い終わったら、マイクをタップしてね"; if (!spokeSent) { spokeSent = true; onSpeechStart && onSpeechStart(); } } });
-      if (mic) mic.classList.add("on"); if (level) level.classList.remove("hidden");
-      if (hint) hint.textContent = "録音中…　言い終わると自動で止まります（タップでも止まります）";
-      tEl.innerHTML = `<span class="ph">録音しています…</span>`;
-      const r = await recording.done;
-      if (done || !alive()) return;
-      recording = null;
-      if (mic) mic.classList.remove("on", "wait"); if (level) level.classList.add("hidden");
-      if (r.cancelled) return idle();
-      if (!r.spoke || r.blob.size < 1000) return idle(SR_ERRORS["no-speech"] + (r.levelOk ? "（マイクに近づいて、はっきり話してみよう）" : ""));
-      busy = true; if (mic) mic.disabled = true;
-      if (hint) hint.textContent = "";
-      tEl.innerHTML = `<span class="judging"><span class="spinner"></span>文字に起こしています…</span>`;
-      const { text } = await api.transcribe(r.blob, "en");
-      if (done || !alive()) return;
-      if (!text) return idle(SR_ERRORS["no-speech"]);
-      // 声が小さくて話し始めがわからなかったときは、録音を始めた時を話し始めとする（段階4で時間オーバーにしないため）
-      if (!spokeSent) { spokeSent = true; onSpeechStart && onSpeechStart(recAt); }
-      idle(); misses = 0;
-      current = { text, alts: [text] }; setText(text);
-      if (confirm) conf.classList.remove("hidden"); else { done = true; onSubmit(current, "voice"); }
-    } catch (e) {
-      if (done || !alive()) return;
-      const m = String(e && (e.name || "")).includes("NotAllowed") ? SR_ERRORS["not-allowed"] : ("聞き取りに失敗しました：" + (e.message || e));
-      idle(m, "ng");
-    }
-  }
-  if (mic) mic.onclick = () => {
-    if (busy) return;
-    if (recording) { recording.stop(); mic.classList.add("wait"); if (hint) hint.textContent = "止めています…"; return; }
-    start();
-  };
-  $("#submitBtn").onclick = () => { conf.classList.add("hidden"); done = true; onSubmit(current, "voice"); };
-  $("#retryBtn").onclick = () => { conf.classList.add("hidden"); setText(""); start(); };
-  if (ti && ts) {
-    let firstKey = true;
-    ti.addEventListener("input", () => { if (firstKey) { firstKey = false; onSpeechStart && onSpeechStart(); } });
-    const go = () => {
-      const v = ti.value.trim();
-      if (!v) { setMsg("答えを入力してから「答える」を押してね。", "warn"); ti.focus(); return; }
-      if (recording) { recording.stop(); }
-      done = true; idle(); setText(v); onSubmit({ text: v, alts: [v] }, "text");
-    };
-    ts.onclick = go;
-    if (ti.tagName === "INPUT") ti.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.isComposing) go(); });
-  }
-  return {
-    start, setMsg,
-    disable() { done = true; if (recording) recording.stop(); recording = null; if (mic) { mic.disabled = true; mic.classList.remove("on", "wait"); } if (level) level.classList.add("hidden"); if (hint) hint.textContent = hint0; if (ti) ti.disabled = true; if (ts) ts.disabled = true; conf.classList.add("hidden"); },
   };
 }
 
@@ -5652,7 +5555,7 @@ function renderQuestion() {
       ${questionCard(q, stage)}
       ${answerBlock({ lang: "en-US", placeholder: stage === 4 ? "聞き取り中に英語で言おう" : "マイクをタップして英語で言おう", multiline: false })}
       <div id="result"></div>
-    </main>`, { keepMic: useElevenEn() });
+    </main>`);
   bindBack(() => (session.boss ? quitBoss() : session.range ? quitRange() : session.story ? renderStory() : session.master ? backToTask(session.master) : session.review ? renderReview() : renderItem(session.i)));
 
   let shownAt = 0, latency = null;
@@ -5661,7 +5564,7 @@ function renderQuestion() {
   const confirm = stage === 4 ? !state.settings.autoSubmitStage4 : state.settings.confirmBeforeSubmit;
   const ctl = mountAnswer({
     lang: "en-US", continuous: false, confirm,
-    onSpeechStart: (at) => { if (latency == null && shownAt) latency = Math.max(0, ((at || performance.now()) - shownAt) / 1000); },
+    onSpeechStart: () => { if (latency == null && shownAt) latency = (performance.now() - shownAt) / 1000; },
     onSubmit: (ans, via) => judgeQuestion(q, ans, via, latency, ctl)
   });
 
@@ -5677,7 +5580,7 @@ function renderQuestion() {
       }, 100);
       timers.push(tick);
       // 読み上げの直後は、iPad でマイクの音が入らないことがあるので少し待つ
-      if (speechAvailable || useElevenEn()) timers.push(setTimeout(() => { if (seq === navSeq) ctl.start(); }, state.settings.ttsStage4 ? 400 : 0));
+      if (speechAvailable) timers.push(setTimeout(() => { if (seq === navSeq) ctl.start(); }, state.settings.ttsStage4 ? 400 : 0));
     };
     if (state.settings.ttsStage4) speak(q.ja, "ja-JP", () => { if (seq === navSeq) begin(); }); else begin();
   }
@@ -6304,12 +6207,6 @@ function renderSettings() {
         ${chk("picAp", s.picApproval !== false, "画像・お絵かきのアバターは、先生が承認してからほかの生徒に見せる（おすすめ）")}
         <h2>段階1の聞き取り</h2>
         ${chk("eleven", s.sttStage1 === "elevenlabs", "ElevenLabs で文字起こしする（日本語と英語がまざっても聞き取れる）")}
-        <h2>段階2〜4の聞き取り</h2>
-        <div class="row"><span>英語で答える問題<br><small>（段階2〜4・総復習・ラスボス・復習・まとめ問題・とどめの一撃・おみくじ）</small></span><select id="stt24" class="wide">
-          <option value="ios" ${s.sttStage24 !== "all" && s.sttStage24 !== "browser" ? "selected" : ""}>iPad・iPhone だけ ElevenLabs（おすすめ）</option>
-          <option value="all" ${s.sttStage24 === "all" ? "selected" : ""}>すべての端末で ElevenLabs</option>
-          <option value="browser" ${s.sttStage24 === "browser" ? "selected" : ""}>ブラウザの音声認識（ElevenLabs を使わない）</option></select></div>
-        <p class="hint">iPad・iPhone のブラウザの音声認識は、大きな声でも「聞き取れませんでした」になることがあるため、録音して ElevenLabs で文字起こしします（1問ごとに数秒かかり、ElevenLabs の利用料がかかります）。</p>
         ${MODE === "demo" ? `<div class="row"><span>ElevenLabs APIキー<br><small>（お試しモード専用。この端末にだけ保存）</small></span><input type="password" id="elevenkey" value="${esc(lsGet("eg_eleven_key", ""))}" class="wide" autocomplete="off"></div>` : `<p class="hint">APIキーは Apps Script の「スクリプト プロパティ」（ELEVENLABS_API_KEY）で管理しています。${state.hasEleven ? "（設定済み）" : "（まだ設定されていません。設定されるまではブラウザの音声認識を使います）"}</p>`}
         <h2>AI</h2>
         <div class="row"><span>Claudeのモデル名</span><input type="text" id="model" value="${esc(s.model)}" class="wide"></div>
@@ -6334,7 +6231,6 @@ function renderSettings() {
       story: { on: $("#stOn").checked, peers: $("#stPeers").checked, num: Math.max(3, Math.min(30, Math.round(parseFloat($("#stNum").value) || 10))), pass: Math.min(1, Math.max(0.1, (parseFloat($("#stPass").value) || 80) / 100)) },
       rosterOnly: $("#rosterOnly").checked,
       sttStage1: $("#eleven").checked ? "elevenlabs" : "browser",
-      sttStage24: $("#stt24").value,
       lockProgression: $("#lock").checked,
       allowText: $("#allowText").checked,
       confirmBeforeSubmit: $("#confirm").checked,
