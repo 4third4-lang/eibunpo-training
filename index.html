@@ -5872,17 +5872,25 @@ function rangePool(iid, k) {
   }));
   return out;
 }
-// 問題を選ぶ：この回で使っていない・最近出ていない問題から（low：段階2の問題を先に）
-function rangePick(pool, used, low) {
+// 段階2の問題と、段階3・4（日本語→英語）の問題の割合（2：1）
+const RANGE_MIX = { s2: 2, s34: 1 };
+// 次は段階2の問題にするか（mix：この回でこれまでに出した数）。2問・1問・2問・1問…の順になる
+const rangeWant2 = (mix) => mix.s2 * RANGE_MIX.s34 < (mix.s34 + 1) * RANGE_MIX.s2;
+// 問題を選ぶ：この回で使っていない・最近出ていない問題から。
+// 段階2と段階3・4は mix の割合（2：1）になるように選ぶ（low：まちがえた直後の練習なので段階2を先に）。
+// その観点にほしい種類の問題がなければ、もう一方の種類から出す
+function rangePick(pool, used, low, mix) {
   const seen = lsGet("eg_rseen", {}), today = dayKey(Date.now());
-  const score = (q) => (used[q.qid] ? 1e6 : 0) + (seen[q.qid] === today ? 1000 : seen[q.qid] ? 100 : 0) + (low ? (q._src === 2 ? 0 : 10) : (q._src === 2 ? 10 : 0)) + Math.random();
+  const want2 = low || !mix || rangeWant2(mix);
+  const score = (q) => (used[q.qid] ? 1e6 : 0) + (seen[q.qid] === today ? 1000 : 0) + ((q._src === 2) === want2 ? 0 : 300) + (seen[q.qid] && seen[q.qid] !== today ? 100 : 0) + Math.random();
   const q = pool.slice().sort((a, b) => score(a) - score(b))[0];
   if (!q || used[q.qid]) return null;
   used[q.qid] = 1;
+  if (mix) { if (q._src === 2) mix.s2++; else mix.s34++; }
   return Object.assign({}, q);
 }
 function startRange(t) {
-  const c = rangeConfNow(), rs = rangeOf(t), used = {};
+  const c = rangeConfNow(), rs = rangeOf(t), used = {}, mix = { s2: 0, s34: 0 };
   const misItems = new Set((state.mistakes || []).map((m) => String(m.qid || "").split("-")[0]));
   const pri = (v) => v.stuckToday ? 99 : v.st === "weak" ? 1 : v.st === "new" ? 2 : v.st === "prog" ? (v.useful ? 3 : 5) : 6;
   const cand = rs.vps.map((v) => ({ v, p: pri(v) - (misItems.has(v.iid) ? 0.5 : 0) + Math.random() * 0.3, pool: rangePool(v.iid, v.k) }))
@@ -5890,17 +5898,17 @@ function startRange(t) {
   const plan = [];
   // 1巡目：苦手・未確認・今日確かめると進む観点から1問ずつ → 確認済み・日をあけて待っている観点は2問まで（ためし）
   // → 2巡目からは苦手な観点だけをもう1問（同じ日の正解は1回と数えるので、ほかの観点はくり返さない）
-  cand.filter((x) => x.p < 5).forEach((x) => { if (plan.length < c.maxQ) { const q = rangePick(x.pool, used, false); if (q) plan.push(q); } });
-  cand.filter((x) => x.p >= 5).slice(0, 2).forEach((x) => { if (plan.length < c.maxQ) { const q = rangePick(x.pool, used, false); if (q) plan.push(q); } });
+  cand.filter((x) => x.p < 5).forEach((x) => { if (plan.length < c.maxQ) { const q = rangePick(x.pool, used, false, mix); if (q) plan.push(q); } });
+  cand.filter((x) => x.p >= 5).slice(0, 2).forEach((x) => { if (plan.length < c.maxQ) { const q = rangePick(x.pool, used, false, mix); if (q) plan.push(q); } });
   for (let r = 1; r < 3 && plan.length < c.maxQ; r++) {
-    cand.filter((x) => x.v.st === "weak").forEach((x) => { if (plan.length < c.maxQ) { const q = rangePick(x.pool, used, true); if (q) plan.push(q); } });
+    cand.filter((x) => x.v.st === "weak").forEach((x) => { if (plan.length < c.maxQ) { const q = rangePick(x.pool, used, false, mix); if (q) plan.push(q); } });
   }
   if (!plan.length) return renderTaskView(t.id);
   // 同じ文法が続かないようにならべる（どの文法を使うかを毎回考える）
   const qs = [], rest = plan.slice();
   while (rest.length) { const prev = qs.length ? qs[qs.length - 1]._iid : ""; const j = rest.findIndex((q) => q._iid !== prev); qs.push(rest.splice(j < 0 ? 0 : j, 1)[0]); }
   session = { i: 0, stage: 3, qs, index: 0, log: [], startedAt: Date.now(),
-    range: { t, c, used, wrong: {}, rechecks: {}, ev: [], before: rs, endAt: Date.now() + c.minutes * 60000 } };
+    range: { t, c, used, mix, wrong: {}, rechecks: {}, ev: [], before: rs, endAt: Date.now() + c.minutes * 60000 } };
   render(`${header("総復習ダンジョン", true)}
     <main class="wrap">
       <section class="q-card s3 intro">
@@ -5943,9 +5951,9 @@ function rangeAfter(q, ok) {
       html = `<div class="rg-note stop">🛑 「${esc(vpName(q._iid, q._vk))}」は、今日はここまでにしよう。ルールを見直して、先生に聞いたり、次の日にもう一度チャレンジしたりしよう。</div>` + rangeRuleHTML(q._iid);
     } else {
       const pool = rangePool(q._iid, q._vk);
-      const pr = session.qs.length < R.c.maxQ * 2 ? rangePick(pool, R.used, q._src >= 3) : null;
+      const pr = session.qs.length < R.c.maxQ * 2 ? rangePick(pool, R.used, q._src >= 3, R.mix) : null;
       if (pr) session.qs.splice(session.index + 1, 0, Object.assign(pr, { _practice: true }));
-      if (!R.rechecks[key]) { const rq = rangePick(pool, R.used, false); if (rq) { R.rechecks[key] = 1; session.qs.push(Object.assign(rq, { _recheck: true })); } }
+      if (!R.rechecks[key]) { const rq = rangePick(pool, R.used, false, R.mix); if (rq) { R.rechecks[key] = 1; session.qs.push(Object.assign(rq, { _recheck: true })); } }
       html = rangeRuleHTML(q._iid) + (pr ? `<div class="rg-note">💪 次は、同じポイントの問題で練習します。</div>` : "");
     }
   }
