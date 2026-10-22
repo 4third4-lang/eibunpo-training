@@ -3727,7 +3727,8 @@ const remoteApi = (callFn) => ({
   importSentences(d) { return this.call("importSentences", d); },
   saveSet(d) { return this.call("saveSet", d); },
   deleteSet(id) { return this.call("deleteSet", { id }); },
-  saveResult(r) { return this.call("saveResult", r); },
+  // rid：混み合って送り直したときに、同じ記録が2回書きこまれないためのしるし
+  saveResult(r) { return this.call("saveResult", Object.assign({ rid: Date.now().toString(36) + Math.random().toString(36).slice(2, 10) }, r)); },
   saveSettings(s) { return this.call("saveSettings", s); },
   judge(req) { return this.call("judge", req); },
   async transcribe(blob) { return this.call("transcribe", { b64: await blobToBase64(blob), mime: blob.type || "audio/webm" }); },
@@ -3878,7 +3879,23 @@ function demoSummary(email, h, pf, r) {
 }
 // 通信の待ち時間の上限（秒）。時間のかかる処理（PDF・Word からの問題づくりなど）は長め
 const API_TIMEOUT = { judge: 90, transcribe: 90, importSentences: 360, saveSet: 360, seedContent: 180, getReports: 120 };
-const api = MODE === "api" ? remoteApi(async (action, args) => {
+// 混み合ったとき（Google の同時実行の上限・一時的なエラー）は、少し待って自動で送り直す
+const API_WRITES = new Set(["saveResult", "saveProfile", "buy", "omikuji", "savePic", "sendStamp", "saveSettings", "importRoster", "adminUpdateStudent", "saveTeacher", "removeTeacher", "seedContent", "setItemUse", "setItemOrder", "saveSet", "deleteSet", "judgePic", "markStampsRead", "importSentences"]);
+const API_NO_RETRY = new Set(["importSentences", "saveSet", "seedContent"]); // 時間のかかる処理は送り直さない
+const BUSY_RE = /Lock timeout|simultaneous|invoked too many|Service Spreadsheets|timed out while accessing|Internal error|サーバー エラー|一時的/i;
+class RetryableError extends Error {}
+async function apiWithRetry(action, args) {
+  for (let k = 0; ; k++) {
+    try { return await apiOnce(action, args); }
+    catch (e) {
+      // 送り直すのは：混み合ってサーバーの処理が動く前に断られたとき（書きこむ操作も）／読みこむだけの操作が通信に失敗したとき
+      const retry = e instanceof RetryableError || (!API_WRITES.has(action) && !(e instanceof AuthError) && /通信できませんでした/.test(e.message));
+      if (!retry || API_NO_RETRY.has(action) || k >= 2) throw e instanceof RetryableError ? new Error("混み合っています。少し待ってから、もう一度ためしてください。") : e;
+      await new Promise((r) => setTimeout(r, 700 + Math.random() * 1300 * (k + 1))); // みんなが同時に送り直さないように、待つ時間をずらす
+    }
+  }
+}
+async function apiOnce(action, args) {
   const token = lsGet("eg_token", "");
   if (!token) throw new AuthError("ログインしてください");
   let res;
@@ -3893,11 +3910,15 @@ const api = MODE === "api" ? remoteApi(async (action, args) => {
     throw new Error("通信できませんでした。ネットワークを確認してください。");
   }
   clearTimeout(tm);
-  const data = await res.json().catch(() => ({ error: "サーバーの応答を読み取れませんでした" }));
+  // サーバーが混み合って Google のエラーページが返ってきたとき（処理は動いていない）
+  if (res.status === 429 || res.status >= 500) throw new RetryableError("HTTP " + res.status);
+  const data = await res.json().catch(() => null);
+  if (!data) throw new RetryableError("not json");
   if (data.authError) { lsSet("eg_token", ""); throw new AuthError(data.error || "ログインしてください"); }
-  if (data.error) throw new Error(data.error);
+  if (data.error) throw (BUSY_RE.test(data.error) ? new RetryableError(data.error) : new Error(data.error));
   return data.result;
-}) : MODE === "gas" ? remoteApi((action, args) => new Promise((res, rej) =>
+}
+const api = MODE === "api" ? remoteApi(apiWithRetry) : MODE === "gas" ? remoteApi((action, args) => new Promise((res, rej) =>
   google.script.run.withSuccessHandler(res).withFailureHandler((e) => rej(new Error((e && e.message) || String(e)))).apiCall(action, args === undefined ? null : args)
 )) : Object.assign({}, demoRewardsApi, {
   async bootstrap() {
