@@ -1011,6 +1011,26 @@ button:not(:disabled):active, summary:active { transform: scale(.96); filter: br
 .net-busy .spinner { width: 14px; height: 14px; border-width: 2px; margin: 0; }
 .toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 70; max-width: min(92vw, 520px); background: rgba(20, 30, 45, .92); color: #fff; font-size: 14px; font-weight: 700; padding: 10px 16px; border-radius: 14px; box-shadow: 0 6px 20px rgba(0,0,0,.2); pointer-events: none; animation: fadeIn .15s ease-out; }
 .mic.wait { opacity: .7; }
+.sync-badge { position: fixed; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 55; padding: 8px 14px; border-radius: 99px; border: none; background: var(--warn-bg); color: var(--warn); font-weight: 800; font-size: 13px; box-shadow: 0 4px 14px rgba(0,0,0,.15); }
+.save.warn { color: var(--warn); }
+/* ホーム：最初に押すボタン */
+.main-go { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 12px 16px; margin-bottom: 10px; border-radius: 16px; border: none; background: var(--accent); color: var(--accent-ink); box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 35%, transparent); }
+.main-go.task { background: linear-gradient(135deg, var(--orange), #e8590c); color: #fff; }
+.main-go .mg-ico { font-size: 28px; line-height: 1; flex: none; }
+.main-go .mg-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.main-go .mg-label { font-size: 19px; font-weight: 900; line-height: 1.3; }
+.main-go .mg-sub { font-size: 13px; font-weight: 700; opacity: .92; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.main-go .mg-go { font-size: 22px; font-weight: 900; flex: none; }
+.main-go.done { justify-content: center; background: var(--ok-bg); color: var(--ok); box-shadow: none; font-weight: 800; }
+/* 自由練習：検索と絞りこみ */
+.free-tools { position: sticky; top: calc(58px + env(safe-area-inset-top)); z-index: 4; background: var(--bg); padding: 6px 0 10px; }
+.free-search { width: 100%; font: inherit; font-size: 16px; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.free-chips { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.free-chips button { padding: 7px 14px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface); font-weight: 700; font-size: 14px; }
+.free-chips button.on { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.free-count { font-size: 13px; color: var(--muted); margin: 0 4px 8px; }
+.item-card .task-tag { font-size: 11px; font-weight: 800; color: var(--orange); margin-left: 6px; }
+.item-card .why { display: block; font-size: 12px; color: var(--muted); font-weight: 700; }
 </style>
 </head>
 <body>
@@ -3524,6 +3544,45 @@ function folderState(f, st) {
   const over = todo.filter((t) => { const d = st(t).due; return d && d.state === "over"; }).length;
   return { todo: todo.length, total: f.tasks.length, due: dues[0] || "", over };
 }
+/* ホームのいちばん上のボタン：今日の課題 → 前回の続き → はじめての練習 の順に、次にやることを1つ決める
+   返り値 { kind: "task"|"continue"|"first", label, sub, go() } ／ すべてマスターしたら { kind: "done" } */
+function mainAction() {
+  const st = taskChecker();
+  const stageGo = (it, k, t) => () => {
+    const i = CONTENT.indexOf(it);
+    if (t) { renderTaskView.back = renderHome; itemBack = () => renderTaskView(t.id); curTask = t; }
+    else { itemBack = renderHome; curTask = null; }
+    if (k === 1) renderStage1(i); else startQuiz(i, k);
+  };
+  const nextIn = (it) => { for (let k = 1; k <= 4; k++) if (!isCleared(it.id, k) && isUnlocked(it.id, k)) return k; return 0; };
+  const dueTxt = (t) => (t.due ? `・締め切り ${fmtDue(t.due)}` : "");
+  for (const t of sortTasks(myTasks(), st)) {
+    const x = st(t);
+    if (x.range && x.done && !x.boss && !x.bossToday) return { kind: "task", label: "今日の課題を始める", sub: `「${t.name}」のラスボスに挑む`, go: () => { renderTaskView.back = renderHome; startBoss(t); } };
+    if (x.done) continue;
+    if (x.range) {
+      if (rangeOf(t).vps.some((v) => v.useful && !v.stuckToday)) return { kind: "task", label: "今日の課題を始める", sub: `「${t.name}」の総復習ダンジョン${dueTxt(t)}`, go: () => { renderTaskView.back = renderHome; startRange(t); } };
+      continue;
+    }
+    for (const it of taskItems(t)) { const k = nextIn(it); if (k) return { kind: "task", label: "今日の課題を始める", sub: `「${t.name}」${it.short}・段階${k}${dueTxt(t)}`, go: stageGo(it, k, t) }; }
+    if (x.mm && x.ready && !x.passed) return { kind: "task", label: "今日の課題を始める", sub: `「${t.name}」のまとめ問題${dueTxt(t)}`, go: () => { renderTaskView.back = renderHome; startMaster(taskRun(t)); } };
+  }
+  // 前回の続き：最後に練習した文法の、まだクリアしていない段階
+  const last = state.history.slice().reverse().find((r) => r.stage >= 1 && r.stage <= 4 && CONTENT.some((c) => c.id === r.itemId));
+  if (last) {
+    const it = CONTENT.find((c) => c.id === last.itemId), k = nextIn(it);
+    if (k) return { kind: "continue", label: "前回の続きから", sub: `「${it.short}」段階${k}（${STAGE_NAMES[k - 1]}）`, go: stageGo(it, k) };
+  }
+  const nx = nextStep();
+  if (nx && !nx.task) return { kind: last ? "continue" : "first", label: last ? "次の文法へ進む" : "はじめよう", sub: `「${nx.it.short}」段階${nx.stage}（${STAGE_NAMES[nx.stage - 1]}）`, go: stageGo(nx.it, nx.stage) };
+  if (nx && nx.task) return { kind: "task", label: "今日の課題を始める", sub: `「${nx.task.name}」`, go: () => { renderTaskView.back = renderHome; renderTaskView(nx.task.id); } };
+  return { kind: "done" };
+}
+function mainActionHTML(m) {
+  if (m.kind === "done") return `<div class="main-go done">🎉 すべての文法をマスターしました！</div>`;
+  return `<button class="main-go ${m.kind === "task" ? "task" : ""}" id="mainGo"><span class="mg-ico">${m.kind === "task" ? "📌" : "▶️"}</span>
+    <span class="mg-text"><span class="mg-label">${esc(m.label)}</span><span class="mg-sub">${esc(m.sub)}</span></span><span class="mg-go">›</span></button>`;
+}
 function nextStep() {
   const st = taskChecker();
   for (const t of sortTasks(myTasks(), st)) {
@@ -3645,6 +3704,51 @@ function parseClaude(data) {
 /*__AI_SHARED_END__*/
 
 /* 段階1の穴埋め：points の文に {答え|別解@グループ} があれば穴埋め形式 */
+/* 段階1の穴埋めを、その場で判定する（サーバーと同じ部分）
+   書き起こしの中に、すべての（　）の答えが「答えを入れた文の前後4文字ずつ」といっしょに、読む順番どおりに出てきたときだけ「全部正解」とする。
+   1つでもはっきりしない空欄（答えが1文字・順番が入れかわってよい・見つからない など）があれば false を返し、AI にまかせる（まちがいの判定はしない） */
+function s1Norm(x) {
+  return String(x || "").normalize("NFKC").toLowerCase()
+    .replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x60))
+    .replace(/[\s、。，．,.!！?？「」『』（）()［］\[\]・:：;；"'“”‘’〜~\-ー]/g, "");
+}
+// 送れる形：空欄ごとに、書き起こしの中でさがす文字列。
+// 答えを入れた文のうち「答え＋前後4文字ずつ」（となりの答えもふくむ）。シートの決まった文にも出てくる形は使わない
+function s1LocalSpec(f) {
+  const fixed = f.parts.map((seg) => seg.filter((x) => typeof x === "string").map(s1Norm).join("|")).join("|");
+  const spec = [];
+  f.parts.forEach((seg) => {
+    let line = ""; const at = [];
+    seg.forEach((x) => { const t = typeof x === "string" ? s1Norm(x) : s1Norm(x.alts[0]); if (typeof x !== "string") at.push([x, line.length, line.length + t.length]); line += t; });
+    at.forEach(([x, a, b]) => {
+      const group = x.g && x.mates && x.mates.length > 1;
+      const pats = [];
+      // 順番が入れかわってよい空欄は、その場では判定しない（AI にまかせる）
+      if (!group) x.alts.map(s1Norm).filter((alt) => alt.length >= 2).forEach((alt) => {
+        // 答えを入れた文から、答えの前後4文字ずつ
+        const pre = line.slice(Math.max(0, a - 4), a), post = line.slice(b, b + 4);
+        const p = pre + alt + post;
+        if (!fixed.includes(p)) pats.push([p, pre.length, alt.length]);
+      });
+      spec.push({ id: x.id, pats });
+    });
+  });
+  return spec;
+}
+function s1LocalAllMet(spec, text) {
+  const t = s1Norm(text);
+  if (!t || !spec || !spec.length) return false;
+  let from = 0; // 空欄は読む順番どおりに出てくること
+  for (const b of spec) {
+    let hit = false;
+    for (const [p, off, len] of b.pats || []) {
+      const i = t.indexOf(p, Math.max(0, from - off)); // 前の4文字は、前の答えと重なってよい
+      if (i >= 0) { from = i + off + len; hit = true; break; }
+    }
+    if (!hit) return false; // この空欄はたしかめられない → AI にまかせる
+  }
+  return true;
+}
 function s1Fill(s1) {
   const lines = ((s1 && s1.points) || []).map((p) => String(p.text || ""));
   if (!lines.some((t) => /\{[^{}]+\}/.test(t))) return null;
@@ -3705,7 +3809,7 @@ function buildTranslateRequest(q, grammar, text) {
 /* ---------- データの保存先（本番: Apps Script ／ お試し: この端末） ---------- */
 class AuthError extends Error {}
 // 読みこむだけの通信：返ってくる前に別の画面へ移っていたら、その結果は使わない（「もどる」が効かないように見えるのを防ぐ）
-const STALE_DROP = new Set(["getDashboard", "getStudents", "getStudentDetail", "getMistakeStats", "getReports", "getTeachers", "getSentStamps", "picQueue", "ranking", "storyPeers", "judge", "transcribe"]);
+const STALE_DROP = new Set(["getDashboard", "getStudents", "getStudentDetail", "getMistakeStats", "getReports", "getTeachers", "getSentStamps", "picQueue", "ranking", "storyPeers", "judge", "transcribe", "transcribeJudge"]);
 const remoteApi = (callFn) => ({
   async call(action, args) {
     const seq = navSeq;
@@ -3732,6 +3836,7 @@ const remoteApi = (callFn) => ({
   saveSettings(s) { return this.call("saveSettings", s); },
   judge(req) { return this.call("judge", req); },
   async transcribe(blob) { return this.call("transcribe", { b64: await blobToBase64(blob), mime: blob.type || "audio/webm" }); },
+  async transcribeJudge(blob, a) { return this.call("transcribeJudge", Object.assign({ b64: await blobToBase64(blob), mime: blob.type || "audio/webm" }, a)); },
   dashboard() { return this.call("getDashboard"); },
   saveProfile(p) { return this.call("saveProfile", p); },
   buy(id) { return this.call("buy", { id }); },
@@ -3878,7 +3983,7 @@ function demoSummary(email, h, pf, r) {
     streak: rw.streak, bestStreak: rw.bestStreak, badges: Array.from(rw.badges), mastered: rw.mastered, progress: computeProgress(h), masteredAt: mm, due, assigned: eff.assigned, taskList: eff.myTasks || [], taskStates, story: storyDone(h), storyGoal: eff.storyGoal || null, dayCounts: days, total: h.length };
 }
 // 通信の待ち時間の上限（秒）。時間のかかる処理（PDF・Word からの問題づくりなど）は長め
-const API_TIMEOUT = { judge: 90, transcribe: 90, importSentences: 360, saveSet: 360, seedContent: 180, getReports: 120 };
+const API_TIMEOUT = { judge: 90, transcribe: 90, transcribeJudge: 150, importSentences: 360, saveSet: 360, seedContent: 180, getReports: 120 };
 // 混み合ったとき（Google の同時実行の上限・一時的なエラー）は、少し待って自動で送り直す
 const API_WRITES = new Set(["saveResult", "saveProfile", "buy", "omikuji", "savePic", "sendStamp", "saveSettings", "importRoster", "adminUpdateStudent", "saveTeacher", "removeTeacher", "seedContent", "setItemUse", "setItemOrder", "saveSet", "deleteSet", "judgePic", "markStampsRead", "importSentences"]);
 const API_NO_RETRY = new Set(["importSentences", "saveSet", "seedContent"]); // 時間のかかる処理は送り直さない
@@ -3991,6 +4096,13 @@ const api = MODE === "api" ? remoteApi(apiWithRetry) : MODE === "gas" ? remoteAp
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error((data.error && data.error.message) || ("通信エラー " + res.status));
     return parseClaude(data);
+  },
+  async transcribeJudge(blob, a) {
+    const { text } = await this.transcribe(blob);
+    if (!text) return { text: "" };
+    if (a.spec && s1LocalAllMet(a.spec, text)) return { text, local: true };
+    try { return { text, judge: await this.judge(Object.assign({}, a.req, { user: String(a.req.user).split(a.ph).join(text) })) }; }
+    catch (e) { return { text, judgeError: e.message }; }
   },
   async transcribe(blob) {
     const key = lsGet("eg_eleven_key", "");
@@ -4462,6 +4574,7 @@ function renderHome() {
   const freeList = CONTENT.filter((it) => !isAssigned(it.id));
   const rw = rewardState(state.history);
   const nx = nextStep();
+  const main = mainAction();
   const posNow = positionOf(state.progress);
   const pf = state.profile, lv = rw.level;
   const unread = state.tstamps.filter((s) => !s.seen).length;
@@ -4511,12 +4624,12 @@ function renderHome() {
           <span class="stat"><b>👑 ${rw.mastered}</b><small>マスター</small></span>
         </div>
       </section>
+      ${mainActionHTML(main)}
       <div class="home-grid">
         ${taskPanel}
         <nav class="entry-grid" aria-label="メニュー">${tiles.join("")}</nav>
       </div>
       <section class="home-more">
-        ${nextGoalHTML()}
         <button class="stamp-card" id="toCard" aria-label="スタンプ帳を見る">
           <span class="sc-head"><span>スタンプカード${rw.cards ? `（${rw.cards}枚うめた）` : ""}</span><span class="sc-more">${rw.todayDone ? "今日のスタンプ ゲット！" : "今日も1回練習しよう"}</span></span>
           <span class="slots">${slots}</span>
@@ -4542,6 +4655,7 @@ function renderHome() {
   $("#toRewards").onclick = renderRewards;
   $("#toCard").onclick = renderRewards;
   if ($("#goNext")) $("#goNext").onclick = () => (nx.task ? renderTaskView(nx.task.id) : nx.stage === 1 ? renderStage1(nx.i) : startQuiz(nx.i, nx.stage));
+  if ($("#mainGo")) $("#mainGo").onclick = main.go;
   if ($("#logout")) $("#logout").onclick = () => { lsSet("eg_token", ""); renderLogin("ログアウトしました。"); };
   // 画像のアバターが確認待ち・使えないとき
   if (pf.avatar && pf.avatar.b === "pic" && pf.myPic && pf.myPic.status === "承認待ち" && $("#meAv")) $("#meAv").insertAdjacentHTML("beforeend", `<span class="pic-wait-tag">確認待ち</span>`);
@@ -4621,23 +4735,73 @@ function renderTaskView(tid, back) {
   if ($("#goMaster")) $("#goMaster").onclick = (e) => { if (e.currentTarget.getAttribute("aria-disabled") === "true") return toast(`🔒 ${m.list.length}つの文法をすべてマスターすると挑戦できます。`); startMaster(m); };
 }
 // 自由練習（課題になっていない文法。中1〜中3）
+// 文字の比べ方：全角・半角、カタカナ・ひらがな、大文字・小文字、空白のちがいは気にしない
+const foldText = (x) => String(x || "").normalize("NFKC").toLowerCase().replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x60)).replace(/[\s・（）()／/〜~]/g, "");
+// 苦手：まちがえたままの問題の数（文法ごと）
+function weakCounts() {
+  const n = {};
+  (state.mistakes || []).forEach((m) => { const x = QINDEX[m.qid]; const id = x && x.it ? x.it.id : String(m.qid || "").split("-")[0]; if (id) n[id] = (n[id] || 0) + 1; });
+  return n;
+}
 function renderFree() {
   itemBack = renderFree; curTask = null;
   const free = CONTENT.map((it, i) => [it, i]).filter(([it]) => !isAssigned(it.id));
   const list = free.length ? free : CONTENT.map((it, i) => [it, i]);
+  let mode = "all", q = "";
+  try { mode = sessionStorage.getItem("eg_free_mode") || "all"; } catch (e) {}
+  const modes = [["all", "すべて"], ["todo", "未クリア"], ["weak", "苦手"], ["recent", "最近"]];
   render(`${header("自由練習", true)}
     <main class="wrap">
       <p class="lead">好きな文法をえらぼう。段階1〜4をすべてクリアすると、その文法はマスターです。中3の文法まで、先に練習してもかまいません。</p>
-      <div class="items">${GRADES.map((g) => {
-        const L = list.filter(([it]) => gradeOf(it) === g);
-        if (!L.length) return "";
-        const started = L.some(([it]) => itemProg(it.id).attempts.some((n) => n > 0));
-        return `<details class="grade-box free" ${started || g === 1 ? "open" : ""}><summary>中${g}の文法（${L.length}）</summary>${L.map(([it, i]) => itemCardHTML(it, i)).join("")}</details>`;
-      }).join("")}</div>
+      <div class="free-tools">
+        <input type="search" id="freeQ" class="free-search" placeholder="🔍 文法の名前でさがす（例：過去形、can、比較）" autocomplete="off" enterkeyhint="search">
+        <div class="free-chips" role="group" aria-label="しぼりこみ">${modes.map(([k, l]) => `<button data-m="${k}" class="${k === mode ? "on" : ""}">${l}</button>`).join("")}</div>
+      </div>
+      <div id="freeList"></div>
       ${footerNote()}
     </main>`);
   bindBack(renderHome);
-  $$(".item-card").forEach((b) => (b.onclick = () => renderItem(+b.dataset.i)));
+  const draw = () => {
+    const box = $("#freeList");
+    const weak = weakCounts(), lastAt = {};
+    state.history.forEach((r) => { if (r.stage >= 1 && r.stage <= 4) lastAt[r.itemId] = r.timestamp; });
+    // 検索・絞りこみのときは、課題に入っている文法もふくめて全部からさがす
+    const all = CONTENT.map((it, i) => [it, i]);
+    const key = foldText(q);
+    const hitQ = ([it]) => !key || foldText(it.title + " " + it.short + " " + gradeOf(it) + "-" + itemNo(it)).includes(key);
+    const card = ([it, i], why) => itemCardHTML(it, i).replace('<span class="item-title">', `<span class="item-title">`).replace("</span><span class=\"dots\">", `${!isAssigned(it.id) || !free.length ? "" : `<span class="task-tag">📌課題</span>`}${why ? `<span class="why">${esc(why)}</span>` : ""}</span><span class="dots">`);
+    let html = "";
+    if (mode === "all" && !key) {
+      html = GRADES.map((g) => {
+        const L = list.filter(([it]) => gradeOf(it) === g);
+        if (!L.length) return "";
+        const started = L.some(([it]) => itemProg(it.id).attempts.some((n) => n > 0));
+        return `<details class="grade-box free" ${started || g === 1 ? "open" : ""}><summary>中${g}の文法（${L.length}）</summary>${L.map((x) => card(x)).join("")}</details>`;
+      }).join("");
+    } else {
+      let L = (mode === "all" ? all : all).filter(hitQ), why = () => "";
+      if (mode === "todo") L = L.filter(([it]) => clearedCount(it.id) < 4);
+      if (mode === "weak") {
+        L = L.filter(([it]) => weak[it.id] || (itemProg(it.id).attempts.some((n) => n > 0) && clearedCount(it.id) < 4 && itemProg(it.id).attempts.reduce((a, b) => a + b, 0) >= 3))
+          .sort((a, b) => (weak[b[0].id] || 0) - (weak[a[0].id] || 0));
+        why = ([it]) => (weak[it.id] ? `まちがえたままの問題 ${weak[it.id]}問` : "なかなかクリアできていない");
+      }
+      if (mode === "recent") {
+        L = L.filter(([it]) => lastAt[it.id]).sort((a, b) => String(lastAt[b[0].id]).localeCompare(String(lastAt[a[0].id]))).slice(0, 15);
+        why = ([it]) => `最後に練習：${fmtDate(lastAt[it.id])}`;
+      }
+      const empty = { todo: "未クリアの文法はありません。すごい！", weak: "いまは苦手な文法はありません。", recent: "まだ練習した文法がありません。", all: "見つかりませんでした。" }[mode];
+      html = `<p class="free-count">${L.length ? `${L.length}こ` : ""}</p><div class="items">${L.map((x) => card(x, why(x))).join("") || `<p class="center hint">${key ? "見つかりませんでした。ほかのことばでさがしてみよう。" : empty}</p>`}</div>`;
+    }
+    box.innerHTML = html;
+    $$("#freeList .item-card").forEach((b) => (b.onclick = () => renderItem(+b.dataset.i)));
+  };
+  $("#freeQ").addEventListener("input", (e) => { q = e.target.value; draw(); });
+  $$(".free-chips button").forEach((b) => (b.onclick = () => {
+    mode = b.dataset.m; try { sessionStorage.setItem("eg_free_mode", mode); } catch (e) {}
+    $$(".free-chips button").forEach((x) => x.classList.toggle("on", x === b)); draw();
+  }));
+  draw();
 }
 
 /* ===== 画像・お絵かきでアバターを作る =====
@@ -5329,7 +5493,9 @@ function renderStage1(i) {
   renderStage1Browser(i);
 }
 async function judgeStage1(i, text, segAlts) {
-  const it = CONTENT[i];
+  const it = CONTENT[i], f = s1Fill(it.stage1);
+  // すべての（　）がその場でたしかめられたら、AI を待たずに合格
+  if (f && s1LocalAllMet(s1LocalSpec(f), text)) return finishStage1(i, text, new Set(f.blanks.map((b) => b.id)), "", "local");
   $("#result").innerHTML = `<div class="judging"><span class="spinner"></span>判定しています…</div>`;
   let r;
   try { r = await api.judge(buildStage1Request(it, text, segAlts)); }
@@ -5388,11 +5554,16 @@ function renderStage1Rec(i) {
       if (!r.spoke || r.blob.size < 1000) return again(SR_ERRORS["no-speech"] + (r.levelOk ? "（マイクに近づいて、はっきり話してみよう）" : ""));
       busy = true; lock();
       hint.textContent = "";
-      tEl.innerHTML = `<span class="judging"><span class="spinner"></span>文字に起こしています…</span>`;
-      const { text } = await api.transcribe(r.blob);
+      tEl.innerHTML = `<span class="judging"><span class="spinner"></span>文字に起こして判定しています…</span>`;
+      // 文字起こし → その場の判定 → （必要なときだけ）AI の判定 を、サーバーで1回の通信でまとめて行う
+      const f = s1Fill(s1), PH = "\u0000書き起こし\u0000";
+      const res = await api.transcribeJudge(r.blob, { req: buildStage1Request(it, PH, null), ph: PH, spec: f ? s1LocalSpec(f) : null });
+      const text = res.text || "";
       if (!text) return again(SR_ERRORS["no-speech"]);
       tEl.innerHTML = `<span>${esc(text)}</span>`;
-      await judgeStage1(i, text, null);
+      if (res.local && f) return finishStage1(i, text, new Set(f.blanks.map((b) => b.id)), "", "local");
+      if (res.judgeError || !res.judge) return showSelfCheck(i, text, res.judgeError || "判定できませんでした");
+      finishStage1(i, text, new Set((res.judge.points || []).filter((p) => p.met).map((p) => p.id)), res.judge.feedback || "", "ai");
     } catch (e) {
       recording = null;
       const m = String(e && (e.name || "")).includes("NotAllowed") ? SR_ERRORS["not-allowed"] : ("聞き取りに失敗しました：" + (e.message || e));
@@ -5472,26 +5643,78 @@ async function finishStage1(i, text, metIds, feedback, by) {
   await saveResult({ itemId: it.id, stage: 1, score, total, passed, details: [{ q: s1.question, a: text, met: Array.from(metIds), by }] });
 }
 
+/* ===== 記録の保存（待たずに次へ進める）=====
+   1) まず端末の中で、進み具合・ポイント・スタンプを更新する（すぐに次へ進める）
+   2) 記録は「送信待ち」として端末に保存し、うしろで送る。混み合って送れないときは、あとで自動で送り直す
+      （アプリを開いたとき・次に記録するとき・ネットにつながったとき）。しるし rid があるので2回書きこまれない
+   3) サーバーが受けつけなかった記録（条件を満たしていないなど）は、端末からも取り消す */
+const pendingKey = () => "eg_pending_" + (state.email || "x");
+const pendingList = () => lsGet(pendingKey(), []);
+const newRid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+const TRANSIENT_RE = /混み合って|通信できません|時間がかかりすぎ|サーバーの応答|ログイン/;
+let syncRun = null;
+function syncPending() {
+  if (syncRun) return syncRun;
+  syncRun = (async () => {
+    let ok = true;
+    while (pendingList().length) {
+      const rec = pendingList()[0];
+      try {
+        await api.saveResult(rec);
+        lsSet(pendingKey(), pendingList().filter((x) => x.rid !== rec.rid));
+      } catch (e) {
+        if (e instanceof AuthError || TRANSIENT_RE.test(e.message || "")) { ok = false; break; } // あとで送り直す
+        // サーバーが受けつけなかった：端末の記録からも消す
+        lsSet(pendingKey(), pendingList().filter((x) => x.rid !== rec.rid));
+        state.history = state.history.filter((h) => h.rid !== rec.rid);
+        state.progress = computeProgress(state.history);
+        toast("記録できませんでした：" + e.message, 6000);
+      }
+    }
+    syncRun = null;
+    updateSyncBadge();
+    return ok;
+  })();
+  return syncRun;
+}
+// 送信待ちがあるときは、画面の右下に小さく出す
+function updateSyncBadge() {
+  let el = document.getElementById("syncBadge");
+  const n = MODE === "api" ? pendingList().length : 0;
+  if (!n) { if (el) el.remove(); return; }
+  if (!el) { el = document.createElement("button"); el.id = "syncBadge"; el.className = "sync-badge"; el.onclick = () => { el.textContent = "送っています…"; syncPending(); }; document.body.appendChild(el); }
+  el.textContent = `⏳ 送信待ちの記録 ${n}件（タップで送る）`;
+}
+window.addEventListener("online", () => { if (pendingList().length) syncPending(); });
+setInterval(() => { if (MODE === "api" && state.email && pendingList().length && !syncRun) syncPending(); }, 60000);
 async function saveResult(r) {
   const el = $("#saveState");
-  try {
-    const before = rewardState(state.history);
-    const prog = await api.saveResult(r);
-    if (prog) state.progress = prog;
-    const ts = new Date().toISOString();
-    state.history = state.history.concat([{ timestamp: ts, itemId: r.itemId, stage: r.stage, score: r.score, total: r.total, passed: r.passed, tags: r.tags || [] }]);
-    applyToMistakes(r.details, ts);
-    const { gained, after } = rewardGifts(before);
-    if (el) { el.innerHTML = `記録しました　<span class="gain">けいけん値 +${after.xp - before.xp}${gained > 0 ? `　🪙 +${gained}pt` : ""}</span>`; el.classList.add("ok"); }
-    const ci = $("#clearInfo");
-    if (ci && r.passed) {
-      const need = requiredPasses(r.stage), n = itemProg(r.itemId).passCount[r.stage - 1];
-      ci.textContent = n >= need ? (r.stage === 4 ? "🎉 この文法をマスターしました！" : `段階${r.stage}クリア！ 段階${r.stage + 1}に進めます。`)
-        : `段階${r.stage}クリアまで、あと${need - n}回合格しよう（${n}/${need}回）`;
-    }
-  } catch (e) {
-    if (el) { el.textContent = "記録できませんでした：" + e.message; el.classList.add("ng"); }
+  const before = rewardState(state.history);
+  const rec = Object.assign({ rid: newRid() }, r);
+  const ts = new Date().toISOString();
+  // 1) 端末の中で先に反映
+  state.history = state.history.concat([{ timestamp: ts, itemId: r.itemId, stage: r.stage, score: r.score, total: r.total, passed: r.passed, tags: r.tags || [], rid: rec.rid }]);
+  state.progress = computeProgress(state.history);
+  applyToMistakes(r.details, ts);
+  snapPush(state.history[state.history.length - 1]);
+  const { gained, after } = rewardGifts(before);
+  const gainHTML = `<span class="gain">けいけん値 +${after.xp - before.xp}${gained > 0 ? `　🪙 +${gained}pt` : ""}</span>`;
+  if (el) { el.innerHTML = `記録しています…　${gainHTML}`; }
+  const ci = $("#clearInfo");
+  if (ci && r.passed && r.stage >= 1 && r.stage <= 4) {
+    const need = requiredPasses(r.stage), n = itemProg(r.itemId).passCount[r.stage - 1];
+    ci.textContent = n >= need ? (r.stage === 4 ? "🎉 この文法をマスターしました！" : `段階${r.stage}クリア！ 段階${r.stage + 1}に進めます。`)
+      : `段階${r.stage}クリアまで、あと${need - n}回合格しよう（${n}/${need}回）`;
   }
+  // 2) 送信待ちに入れて、うしろで送る（待たずに次へ進んでよい）
+  lsSet(pendingKey(), pendingList().concat([rec]));
+  const ok = await syncPending();
+  const stillHere = el && document.body.contains(el);
+  const sent = !pendingList().some((x) => x.rid === rec.rid);
+  if (!stillHere) return;
+  if (sent && state.history.some((h) => h.rid === rec.rid)) { el.innerHTML = `記録しました　${gainHTML}`; el.classList.add("ok"); }
+  else if (!sent) { el.innerHTML = `この端末に保存しました（混み合っているので、あとで自動で送ります）　${gainHTML}`; el.classList.add("warn"); }
+  else { el.textContent = "記録できませんでした"; el.classList.add("ng"); }
 }
 
 /* ===== 段階2〜4：問題を順に出す ===== */
@@ -7025,36 +7248,73 @@ async function applyContent(c) {
   }
   indexQuestions();
 }
+/* 起動：前回の内容（この端末に保存）があれば、すぐにホームを表示し、うしろで最新の内容に更新する */
+const snapKey = () => { const t = String(lsGet("eg_token", "") || ""); return t ? t.slice(-24) : ""; };
+function snapSave(b) {
+  if (MODE !== "api") return;
+  try {
+    const c = b.content || {};
+    lsSet("eg_boot", { k: snapKey(), at: Date.now(), b: Object.assign({}, b, { content: { seeded: c.seeded, ver: c.ver, sets: c.sets, builtinVer: c.builtinVer, sheetUrl: c.sheetUrl } }) });
+  } catch (e) {}
+}
+// 記録したら、保存してある前回の内容にも足しておく（次に開いたときに、すぐ正しく表示するため）
+function snapPush(h) {
+  if (MODE !== "api") return;
+  const s = lsGet("eg_boot", null);
+  if (!s || s.k !== snapKey() || !s.b) return;
+  s.b.history = (s.b.history || []).concat([h]);
+  s.b.progress = state.progress; s.b.mistakes = state.mistakes; s.b.wrongs = state.wrongs;
+  lsSet("eg_boot", s);
+}
+async function applyBoot(b) {
+  state.email = b.email || "";
+  state.isAdmin = !!b.isAdmin;
+  state.viewAsStudent = state.isAdmin && !!lsGet("eg_preview", false);
+  state.history = b.history || [];
+  state.picWait = b.picWait || 0;
+  state.hasEleven = !!b.hasEleven;
+  state.profile = Object.assign({}, DEFAULT_PROFILE, b.profile || {});
+  applySettings(b.settings);
+  state.tstamps = b.tstamps || [];
+  state.mistakes = b.mistakes || [];
+  state.wrongs = b.wrongs || {};
+  state.teacher = b.teacher || null;
+  state.classes = b.classes || [];
+  // まだ送れていない記録（この端末にだけある）も足す
+  const have = new Set(state.history.map((h) => h.rid).filter(Boolean));
+  pendingList().forEach((r) => { if (!have.has(r.rid)) { state.history.push({ timestamp: new Date(parseInt(String(r.rid).slice(0, 8), 36) || Date.now()).toISOString(), itemId: r.itemId, stage: r.stage, score: r.score, total: r.total, passed: r.passed, tags: r.tags || [], rid: r.rid }); applyToMistakes(r.details, new Date().toISOString()); } });
+  state.progress = pendingList().length ? computeProgress(state.history) : (b.progress || {});
+  await applyContent(b.content);
+}
 async function init() {
-  app().innerHTML = `<div class="boot"><span class="spinner"></span>読み込んでいます…</div>`;
   if (MODE === "api" && !lsGet("eg_token", "")) return renderLogin("");
+  const snap = MODE === "api" ? lsGet("eg_boot", null) : null;
+  let shown = false, seqShown = -1;
+  if (snap && snap.k && snap.k === snapKey() && snap.b && (Date.now() - (snap.at || 0)) < 14 * 86400000) {
+    try { await applyBoot(snap.b); renderHome(); shown = true; seqShown = navSeq; } catch (e) { shown = false; }
+  }
+  if (!shown) app().innerHTML = `<div class="boot"><span class="spinner"></span>読み込んでいます…</div>`;
   try {
     const b = await api.bootstrap();
-    state.email = b.email || "";
-    state.isAdmin = !!b.isAdmin;
-    state.viewAsStudent = state.isAdmin && !!lsGet("eg_preview", false);
-    state.progress = b.progress || {};
-    state.history = b.history || [];
-    state.picWait = b.picWait || 0;
-    state.hasEleven = !!b.hasEleven;
-    state.profile = Object.assign({}, DEFAULT_PROFILE, b.profile || {});
-    applySettings(b.settings);
-    state.tstamps = b.tstamps || [];
-    state.mistakes = b.mistakes || [];
-    state.wrongs = b.wrongs || {};
-    state.teacher = b.teacher || null;
-    state.classes = b.classes || [];
-    await applyContent(b.content);
-    renderHome();
+    snapSave(b);
+    const stillHome = !shown || navSeq === seqShown;
+    await applyBoot(b);
+    // 前回の内容で表示したあと、まだホームのままなら最新の内容で表示し直す（ほかの画面に移っていたら、内容だけ新しくする）
+    if (stillHome) { const y = window.scrollY; renderHome(); if (shown) window.scrollTo(0, y); }
+    if (MODE === "api" && pendingList().length) syncPending();
+    updateSyncBadge();
   } catch (e) {
-    if (e instanceof AuthError) return renderLogin(e.message);
+    if (e instanceof AuthError) { lsSet("eg_boot", null); return renderLogin(e.message); }
     if (/名簿に登録されていない/.test(e.message)) {
+      lsSet("eg_boot", null);
       app().innerHTML = `<header class="bar"><span class="logo">ハ</span><h1>話す英文法（ハナブン）</h1></header><main class="wrap"><section class="panel login">
         <h2>まだ使えません</h2><p class="msg ng">${esc(e.message)}</p><p>先生が名簿に登録すると使えるようになります。別のアカウントでログインしている場合は、ログインし直してください。</p>
         <button class="btn primary big" id="relogin">ログインし直す</button></section></main>`;
       $("#relogin").onclick = () => { lsSet("eg_token", ""); renderLogin(""); };
       return;
     }
+    // 前回の内容で表示できているときは、そのまま使える（記録は送信待ちに入る）
+    if (shown) { toast("最新の内容を読みこめませんでした。前回の内容で表示しています。", 5000); return; }
     app().innerHTML = `<div class="boot ng">起動できませんでした：${esc(e.message)}</div>`;
   }
 }
