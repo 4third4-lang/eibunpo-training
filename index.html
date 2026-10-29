@@ -492,6 +492,12 @@ th.name { text-align: left; }
 .stamp-pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(86px, 1fr)); gap: 6px; max-height: 320px; overflow-y: auto; padding: 2px; }
 .stamp-opt { border: 3px solid transparent; border-radius: 14px; background: var(--surface-2); padding: 2px; line-height: 0; }
 .stamp-opt.active { border-color: var(--accent); background: var(--accent-soft); }
+.saved-pick { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); }
+.saved-item { display: flex; flex-direction: column; align-items: center; gap: 3px; text-align: center; }
+.saved-name { font-size: 12px; font-weight: 800; line-height: 1.3; word-break: break-all; }
+.saved-by { font-size: 11px; color: var(--muted); }
+.saved-tools { display: flex; gap: 4px; }
+.chip.danger { color: #c92a2a; }
 .maker-form { display: grid; gap: 10px; }
 .maker-form label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 800; }
 .maker-form label.check { flex-direction: row; }
@@ -3856,6 +3862,9 @@ const remoteApi = (callFn) => ({
   sendStamp(d) { return this.call("sendStamp", d); },
   updateStudent(d) { return this.call("adminUpdateStudent", d); },
   sentStamps() { return this.call("getSentStamps"); },
+  savedStamps() { return this.call("getSavedStamps"); },
+  saveSavedStamp(d) { return this.call("saveSavedStamp", d); },
+  deleteSavedStamp(id) { return this.call("deleteSavedStamp", { id }); },
   importRoster(rows) { return this.call("importRoster", { rows }); },
   studentDetail(email) { return this.call("getStudentDetail", { email }); },
   mistakeStats(opt) { return this.call("getMistakeStats", opt || {}); },
@@ -3926,6 +3935,14 @@ const demoRewardsApi = {
     const roster = lsGet("eg_roster", []).map((r) => Object.assign({ nickname: "", avatar: null, level: LEVELS[0][1], xp: 0, avail: 0, days: 0, last: "" }, r));
     return { students: [{ email: "お試しユーザー", cls: "", no: "", name: "", teacher: true, nickname: pf.nickname, avatar: pf.avatar, level: rw.level.name, xp: rw.xp, avail: rw.points.avail, days: rw.days, last: res.length ? res[res.length - 1].timestamp : "" }].concat(roster), classes: demoClasses(), scope: null };
   },
+  async savedStamps() { return { stamps: lsGet("eg_saved_stamps", []).map((s) => Object.assign({}, s, { mine: true })) }; },
+  async saveSavedStamp(d) {
+    const list = lsGet("eg_saved_stamps", []), s = { id: d.id || "ss" + Date.now().toString(36), name: String(d.name || "").slice(0, 30), kind: d.kind === "image" ? "image" : "art",
+      make: d.kind === "image" ? null : d.make, img: d.kind === "image" ? d.img : "", t: d.kind === "image" ? String(d.t || "").slice(0, 12) : "", owner: "お試しユーザー", created: new Date().toISOString() };
+    const k = list.findIndex((x) => x.id === s.id); if (k >= 0) list[k] = s; else list.push(s);
+    lsSet("eg_saved_stamps", list); return { id: s.id };
+  },
+  async deleteSavedStamp(id) { lsSet("eg_saved_stamps", lsGet("eg_saved_stamps", []).filter((x) => x.id !== id)); return { ok: true }; },
   async sendStamp(d) {
     const list = lsGet("eg_tstamps", []);
     list.push({ id: "t" + Date.now(), ts: new Date().toISOString(), by: "先生", design: d.design, msg: String(d.message || "").slice(0, 60), seen: false });
@@ -4508,6 +4525,7 @@ function stampArt(design, size) {
   if (typeof design === "string") return Art.design(design, size);
   if (design.id) return Art.design(design.id, size);
   if (design.make) { const m = design.make; return Art.stampSVG(m.a, m.t, size, { color: m.c, pose: m.po, expr: m.ex, crown: !!m.cr }); }
+  if (design.img) return Art.imageStamp(design.img, design.t || "", size);   // 先生が作った画像スタンプ
   return "";
 }
 function applySkin(id) {
@@ -6930,34 +6948,91 @@ async function renderTeachers() {
   draw(d);
 }
 
-/* ===== 先生スタンプ（作って送る） ===== */
+/* ===== 先生スタンプ（作って送る・保存しておく） ===== */
 const STAMP_COLORS = ["#e03131", "#e64980", "#f76707", "#f08c00", "#2b8a3e", "#1971c2", "#7048e8", "#495057"];
+// 画像を小さく整える（スプレッドシートの1つのセルに入る大きさにする）
+function shrinkStampImage(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const tries = [[200, 0.85, "image/webp"], [160, 0.8, "image/webp"], [128, 0.75, "image/webp"], [128, 0.7, "image/jpeg"], [96, 0.7, "image/jpeg"]];
+      for (const [sz, q, type] of tries) {
+        const cv = document.createElement("canvas"); cv.width = sz; cv.height = sz;
+        const cx = cv.getContext("2d"), w = img.naturalWidth, h = img.naturalHeight, m = Math.min(w, h);
+        if (type === "image/jpeg") { cx.fillStyle = "#fff"; cx.fillRect(0, 0, sz, sz); }
+        cx.drawImage(img, (w - m) / 2, (h - m) / 2, m, m, 0, 0, sz, sz);
+        let data = cv.toDataURL(type, q);
+        if (data.indexOf("data:" + type) !== 0) data = cv.toDataURL("image/png");
+        if (data.length <= 40000) { URL.revokeObjectURL(url); return resolve(data); }
+      }
+      URL.revokeObjectURL(url); reject(new Error("画像が大きすぎます。別の画像にしてください。"));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("画像を読み込めませんでした。")); };
+    img.src = url;
+  });
+}
+// 保存したスタンプ → 送るときの形（絵：make、画像：img）
+// 画像は「保存したスタンプのID」で送る（サーバーが送った記録にIDだけを書き、表示するときに画像をつける）
+const savedDesign = (s) => (s.kind === "image" ? { ss: s.id, img: s.img, t: s.t || "" } : { make: Object.assign({}, s.make) });
+const savedLabel = (s) => s.name || (s.kind === "image" ? (s.t || "（画像）") : (s.make && s.make.t) || "");
 async function renderTeacherStamps() {
   const SS = window.StampSet || { list: [] };
   const choices = SS.list.filter((d) => d.k !== "lv" && d.k !== "bs").sort((a, b) => (a.rules ? 1 : 0) - (b.rules ? 1 : 0));
-  const st = { mode: "pick", design: { id: (choices[0] || {}).id }, make: { a: "cat", t: "よくできました", c: "#e03131", po: "banzai", ex: "sparkle", cr: false }, to: new Set(), all: false, msg: "", students: null, sent: null };
+  const blankMake = () => ({ a: "cat", t: "よくできました", c: "#e03131", po: "banzai", ex: "sparkle", cr: false });
+  // mode：pick（絵の一覧）・saved（保存したスタンプ）・make（つくる）
+  const st = { mode: "pick", design: { id: (choices[0] || {}).id }, savedSel: "", kind: "art", make: blankMake(), img: "", imgT: "", name: "", editId: "",
+    to: new Set(), all: false, msg: "", students: null, sent: null, saved: [] };
   render(`${header("先生スタンプ", true)}<main class="wrap"><div class="judging"><span class="spinner"></span>読み込んでいます…</div></main>`);
   bindBack(renderHome);
-  try { const [a, b] = await Promise.all([api.students(), api.sentStamps()]); st.students = a.students || []; st.classes = a.classes || []; st.sent = b.stamps || []; }
-  catch (e) { $("main").innerHTML = `<div class="msg ng">読み込めませんでした：${esc(e.message)}</div>`; return; }
-  const cur = () => (st.mode === "make" ? { make: Object.assign({}, st.make) } : st.design);
+  try {
+    const [a, b, c] = await Promise.all([api.students(), api.sentStamps(), api.savedStamps().catch(() => ({ stamps: [] }))]);
+    st.students = a.students || []; st.classes = a.classes || []; st.sent = b.stamps || []; st.saved = c.stamps || [];
+    if (st.saved.length) st.mode = "saved", st.savedSel = st.saved[0].id;
+  } catch (e) { $("main").innerHTML = `<div class="msg ng">読み込めませんでした：${esc(e.message)}</div>`; return; }
+  const selSaved = () => st.saved.find((s) => s.id === st.savedSel);
+  const madeDesign = () => (st.kind === "image" ? { img: st.img, t: st.imgT } : { make: Object.assign({}, st.make) });
+  const cur = () => (st.mode === "make" ? madeDesign() : st.mode === "saved" ? (selSaved() ? savedDesign(selSaved()) : null) : st.design);
+  function startEdit(s) {
+    st.mode = "make"; st.editId = s ? s.id : ""; st.name = s ? (s.name || "") : "";
+    st.kind = s && s.kind === "image" ? "image" : "art";
+    st.make = s && s.make ? Object.assign(blankMake(), s.make) : blankMake();
+    st.img = s && s.img || ""; st.imgT = s && s.t || "";
+  }
   function draw() {
     const A = window.Art || { SPECIES: {}, POSES: {}, EXPRS: {} };
-    const designBox = st.mode === "pick"
-      ? `<div class="stamp-pick">${choices.map((d) => `<button class="stamp-opt ${st.design.id === d.id ? "active" : ""}" data-sid="${d.id}">${stampArt(d.id, 78)}</button>`).join("")}</div>`
-      : `<div class="maker-form">
+    let designBox = "";
+    if (st.mode === "pick") {
+      designBox = `<div class="stamp-pick">${choices.map((d) => `<button class="stamp-opt ${st.design.id === d.id ? "active" : ""}" data-sid="${d.id}">${stampArt(d.id, 78)}</button>`).join("")}</div>`;
+    } else if (st.mode === "saved") {
+      designBox = st.saved.length ? `<div class="stamp-pick saved-pick">${st.saved.map((s) => `<div class="saved-item ${st.savedSel === s.id ? "active" : ""}">
+          <button class="stamp-opt ${st.savedSel === s.id ? "active" : ""}" data-saved="${esc(s.id)}" title="${esc(savedLabel(s))}">${stampArt(savedDesign(s), 78)}</button>
+          <div class="saved-name">${esc(savedLabel(s))}</div>
+          ${s.mine ? `<div class="saved-tools"><button class="chip small" data-edit="${esc(s.id)}">編集</button><button class="chip small danger" data-del="${esc(s.id)}">削除</button></div>` : `<div class="saved-by">${esc(String(s.owner || "").split("@")[0])}</div>`}
+        </div>`).join("")}</div>` : `<p class="hint">まだありません。「つくる」で作って「保存する」を押すと、ここに入ります。</p>`;
+    } else {
+      designBox = `<div class="maker-form">
+          ${st.editId ? `<div class="msg ok">「${esc(st.name || "保存したスタンプ")}」を編集しています</div>` : ""}
+          <div class="seg"><button type="button" data-kind="art" class="${st.kind === "art" ? "on" : ""}">🎨 絵とことば</button><button type="button" data-kind="image" class="${st.kind === "image" ? "on" : ""}">🖼 画像</button></div>
+          ${st.kind === "art" ? `
           <label>キャラクター<select id="mkA">${Object.keys(A.SPECIES).map((k) => `<option value="${k}" ${st.make.a === k ? "selected" : ""}>${esc(A.SPECIES[k].name || k)}</option>`).join("")}</select></label>
           <label>ポーズ<select id="mkPo">${Object.keys(A.POSES).map((k) => `<option value="${k}" ${st.make.po === k ? "selected" : ""}>${esc(A.POSES[k])}</option>`).join("")}</select></label>
           <label>表情<select id="mkEx">${Object.keys(A.EXPRS).map((k) => `<option value="${k}" ${st.make.ex === k ? "selected" : ""}>${esc(A.EXPRS[k])}</option>`).join("")}</select></label>
           <label>ことば（12文字まで）<input type="text" id="mkT" maxlength="12" value="${esc(st.make.t)}"></label>
           <div class="mk-row"><div class="mk-label">ことばの色</div><div class="mk-opts">${STAMP_COLORS.map((c) => `<button type="button" class="mk-color ${st.make.c === c ? "active" : ""}" data-col="${c}" style="background:${c}" aria-label="色"></button>`).join("")}</div></div>
-          <label class="check"><input type="checkbox" id="mkCr" ${st.make.cr ? "checked" : ""}> 王冠をつける</label>
+          <label class="check"><input type="checkbox" id="mkCr" ${st.make.cr ? "checked" : ""}> 王冠をつける</label>` : `
+          <label>画像（写真や手書きのイラストなど。丸く切り抜かれます）<input type="file" id="mkImg" accept="image/*"></label>
+          <label>ことば（12文字まで・なくてもOK）<input type="text" id="mkIT" maxlength="12" value="${esc(st.imgT)}"></label>`}
+          <label>スタンプの名前（先生だけに見えます。保存するときの見分け用・30文字まで）<input type="text" id="mkName" maxlength="30" placeholder="例：1学期 皆勤賞、運動会の写真" value="${esc(st.name)}"></label>
+          <div class="btn-row"><button type="button" class="btn" id="mkSave">💾 ${st.editId ? "上書き保存" : "保存する（あとで使える）"}</button>${st.editId ? `<button type="button" class="btn" id="mkNew">新しく作る</button>` : ""}</div>
+          <div class="msg" id="mkOut"></div>
         </div>`;
+    }
     const people = st.students.map((p) => `<label class="person ${st.to.has(p.email) ? "on" : ""}"><input type="checkbox" data-to="${esc(p.email)}" ${st.to.has(p.email) || (st.all && !p.teacher) ? "checked" : ""} ${st.all ? "disabled" : ""}>${avatarHTML(p.avatar, 30)}<span>${p.cls ? `<small>${esc(p.cls)} ${esc(p.no || "")}</small>` : ""}${esc(personName(p))}${p.nickname ? `<small>${esc(p.nickname)}</small>` : ""}</span></label>`).join("");
+    const d = cur();
     $("main").innerHTML = `
       <section class="panel"><h2>1. スタンプをえらぶ・つくる</h2>
-        <div class="seg"><button data-m="pick" class="${st.mode === "pick" ? "on" : ""}">えらぶ</button><button data-m="make" class="${st.mode === "make" ? "on" : ""}">つくる</button></div>
-        <div class="stamp-editor"><div class="stamp-preview">${stampArt(cur(), 150)}</div>${designBox}</div></section>
+        <div class="seg"><button data-m="saved" class="${st.mode === "saved" ? "on" : ""}">保存したスタンプ${st.saved.length ? `（${st.saved.length}）` : ""}</button><button data-m="pick" class="${st.mode === "pick" ? "on" : ""}">絵の一覧</button><button data-m="make" class="${st.mode === "make" ? "on" : ""}">つくる</button></div>
+        <div class="stamp-editor"><div class="stamp-preview">${d ? stampArt(d, 150) : ""}</div>${designBox}</div></section>
       <section class="panel"><h2>2. 送る相手</h2>
         <label class="check"><input type="checkbox" id="toAll" ${st.all ? "checked" : ""}> 全員に送る（${st.students.filter((p) => !p.teacher).length}人）</label>
         ${(st.classes || []).length && !st.all ? `<div class="chips">${st.classes.map((c) => `<button class="chip small" data-pickcls="${esc(c)}">${esc(c)} の全員をえらぶ</button>`).join("")}</div>` : ""}
@@ -6969,9 +7044,18 @@ async function renderTeacherStamps() {
       <section class="panel"><h2>送ったスタンプ</h2>
         ${st.sent.length ? `<div class="sent-list">${st.sent.slice(0, 40).map((s) => `<div class="sent-row">${stampArt(s.design, 56)}<div><b>${fmtDate(s.ts)}</b> ${s.to.length > 3 ? `${s.to.length}人` : s.to.map((e) => esc(String(e).split("@")[0])).join("、")}${s.msg ? `<div class="hint">「${esc(s.msg)}」</div>` : ""}<div class="hint">見た人 ${s.seen} / ${s.to.length}</div></div></div>`).join("")}</div>` : `<p class="hint">まだ送っていません。</p>`}</section>
       <p class="hint">自動のスタンプ（はじめての練習・週3日練習など）は、管理者設定でオン・オフできます。</p>`;
-    $$(".seg button[data-m]").forEach((b) => (b.onclick = () => { st.mode = b.dataset.m; draw(); }));
+    $$(".seg button[data-m]").forEach((b) => (b.onclick = () => { st.mode = b.dataset.m; if (st.mode !== "make") st.editId = ""; draw(); }));
     $$("[data-sid]").forEach((b) => (b.onclick = () => { st.design = { id: b.dataset.sid }; draw(); }));
-    const upd = () => { $(".stamp-preview").innerHTML = stampArt(cur(), 150); };
+    $$("[data-saved]").forEach((b) => (b.onclick = () => { st.savedSel = b.dataset.saved; draw(); }));
+    $$("[data-edit]").forEach((b) => (b.onclick = () => { startEdit(st.saved.find((s) => s.id === b.dataset.edit)); draw(); }));
+    $$("[data-del]").forEach((b) => (b.onclick = async () => {
+      const s = st.saved.find((x) => x.id === b.dataset.del);
+      if (!s || !confirm(`「${savedLabel(s)}」を削除しますか？（もう送ったスタンプは、生徒の画面に残ります）`)) return;
+      try { await api.deleteSavedStamp(s.id); st.saved = st.saved.filter((x) => x.id !== s.id); if (st.savedSel === s.id) st.savedSel = (st.saved[0] || {}).id || ""; draw(); }
+      catch (err) { alert("削除できませんでした：" + err.message); }
+    }));
+    $$("[data-kind]").forEach((b) => (b.onclick = () => { st.kind = b.dataset.kind; draw(); }));
+    const upd = () => { const x = cur(); $(".stamp-preview").innerHTML = x ? stampArt(x, 150) : ""; };
     if ($("#mkA")) {
       $("#mkA").onchange = (e) => { st.make.a = e.target.value; upd(); };
       $("#mkPo").onchange = (e) => { st.make.po = e.target.value; upd(); };
@@ -6980,6 +7064,31 @@ async function renderTeacherStamps() {
       $("#mkCr").onchange = (e) => { st.make.cr = e.target.checked; upd(); };
       $$("[data-col]").forEach((b) => (b.onclick = () => { st.make.c = b.dataset.col; draw(); }));
     }
+    if ($("#mkImg")) {
+      $("#mkImg").onchange = async (e) => {
+        const f = e.target.files && e.target.files[0]; if (!f) return;
+        const out = $("#mkOut");
+        try { st.img = await shrinkStampImage(f); upd(); out.textContent = ""; } catch (err) { out.textContent = err.message; out.className = "msg ng"; }
+      };
+      $("#mkIT").oninput = (e) => { st.imgT = e.target.value; upd(); };
+    }
+    if ($("#mkName")) $("#mkName").oninput = (e) => { st.name = e.target.value; };
+    if ($("#mkNew")) $("#mkNew").onclick = () => { startEdit(null); draw(); };
+    if ($("#mkSave")) $("#mkSave").onclick = async (e) => {
+      const out = $("#mkOut");
+      if (st.kind === "art" && !st.make.t.trim()) { out.textContent = "ことばを入れてください。"; out.className = "msg ng"; return; }
+      if (st.kind === "image" && !st.img) { out.textContent = "画像をえらんでください。"; out.className = "msg ng"; return; }
+      e.target.disabled = true;
+      try {
+        const body = { id: st.editId, name: st.name.trim(), kind: st.kind };
+        if (st.kind === "image") { body.img = st.img; body.t = st.imgT.trim(); } else body.make = Object.assign({}, st.make);
+        const r = await api.saveSavedStamp(body);
+        const list = await api.savedStamps(); st.saved = list.stamps || [];
+        st.savedSel = r.id; st.mode = "saved"; st.editId = "";
+        draw();
+        const m2 = $("#stMsgOut"); m2.textContent = "スタンプを保存しました。「保存したスタンプ」から使えます。"; m2.className = "msg ok";
+      } catch (err) { out.textContent = "保存できませんでした：" + err.message; out.className = "msg ng"; e.target.disabled = false; }
+    };
     $("#toAll").onchange = (e) => { st.all = e.target.checked; draw(); };
     $$("[data-pickcls]").forEach((b) => (b.onclick = () => { st.students.filter((p) => p.cls === b.dataset.pickcls).forEach((p) => st.to.add(p.email)); draw(); }));
     $$("[data-to]").forEach((c) => (c.onchange = () => { if (c.checked) st.to.add(c.dataset.to); else st.to.delete(c.dataset.to); c.closest(".person").classList.toggle("on", c.checked); }));
@@ -6987,11 +7096,14 @@ async function renderTeacherStamps() {
     $("#sendSt").onclick = async (e) => {
       const m = $("#stMsgOut");
       const to = st.all ? "all" : Array.from(st.to);
+      const design = cur();
       if (to !== "all" && !to.length) { m.textContent = "送る相手をえらんでください。"; m.className = "msg ng"; return; }
-      if (st.mode === "make" && !st.make.t.trim()) { m.textContent = "ことばを入れてください。"; m.className = "msg ng"; return; }
+      if (!design) { m.textContent = "スタンプをえらんでください。"; m.className = "msg ng"; return; }
+      if (st.mode === "make" && st.kind === "art" && !st.make.t.trim()) { m.textContent = "ことばを入れてください。"; m.className = "msg ng"; return; }
+      if (st.mode === "make" && st.kind === "image") { m.textContent = st.img ? "画像のスタンプは、先に「保存する」を押してから、「保存したスタンプ」でえらんで送ってください。" : "画像をえらんでください。"; m.className = "msg ng"; return; }
       e.target.disabled = true;
       try {
-        const r = await api.sendStamp({ to, design: cur(), message: st.msg.trim() });
+        const r = await api.sendStamp({ to, design, message: st.msg.trim() });
         const b = await api.sentStamps(); st.sent = b.stamps || [];
         if (MODE === "demo") state.tstamps = lsGet("eg_tstamps", []);
         st.to.clear(); st.all = false; st.msg = "";
