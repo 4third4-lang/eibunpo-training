@@ -4137,6 +4137,20 @@ const api = MODE === "api" ? remoteApi(apiWithRetry) : MODE === "gas" ? remoteAp
 /* ---------- 音声認識・読み上げ ---------- */
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 const speechAvailable = !!SR;
+// 音声認識の機能はあるように見えても、実際には聞き取れないブラウザ（Brave・iPhone/iPad の Chrome など）
+function unreliableBrowser() {
+  const ua = navigator.userAgent || "";
+  const ios = /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  if (navigator.brave || /Brave\//.test(ua)) return "Brave";
+  if (ios && /CriOS/.test(ua)) return "iPhone・iPad の Chrome";
+  if (ios && /FxiOS/.test(ua)) return "iPhone・iPad の Firefox";
+  if (ios && /EdgiOS/.test(ua)) return "iPhone・iPad の Edge";
+  if (ios && /OPiOS|OPT\//.test(ua)) return "iPhone・iPad の Opera";
+  if (ios && /Line\/|FBAN|FBAV|Instagram|GSA\//.test(ua)) return "アプリの中のブラウザ";
+  return "";
+}
+const BAD_BROWSER = unreliableBrowser();
+const BAD_BROWSER_MSG = BAD_BROWSER ? `${BAD_BROWSER} では、音声認識がうまく動きません（声が聞き取れなかったり、通信エラーになったりします）。iPhone・iPad は Safari、パソコン・Android・Chromebook は Google Chrome で開いてください。` : "";
 
 let srLastEnd = 0; // 前の聞き取りが終わった時刻（iPad では、続けてすぐ始めると何も聞こえないことがあるため少し待つ）
 /* 音声認識を1回動かす。かならず onEnd が1回だけ呼ばれる（エラーや反応がないときも、時間で打ち切る） */
@@ -4620,7 +4634,7 @@ function renderHome() {
   const slots = Array.from({ length: STAMPS_PER_CARD }, (_, k) => `<span class="slot ${k < rw.onCard ? "on" : ""} ${k === rw.onCard - 1 && rw.todayDone ? "today" : ""}">${k < rw.onCard ? "🐾" : k + 1}</span>`).join("");
   render(`${header("話す英文法（ハナブン）")}
     <main class="wrap home">
-      ${speechAvailable ? "" : `<div class="notice small">この端末では音声認識が使えません。キーボードのマイクや文字入力で答えてください。</div>`}
+      ${speechAvailable ? (BAD_BROWSER ? `<div class="notice small">${esc(BAD_BROWSER_MSG)}</div>` : "") : `<div class="notice small">この端末では音声認識が使えません。キーボードのマイクや文字入力で答えてください。</div>`}
       <section class="me-bar">
         <button class="me-av ringed" id="meAv" aria-label="アバターを着せ替える"><span class="ring-wrap">${positionRing(posNow, 70)}</span>${avatarHTML(pf.avatar, 54)}<span class="av-edit" aria-hidden="true">✏️</span></button>
         <div class="me-info">
@@ -5400,6 +5414,7 @@ function renderItem(i) {
 function answerBlock({ lang, placeholder, multiline }) {
   const textOnly = !speechAvailable;
   return `<div class="answer">
+    ${!textOnly && BAD_BROWSER ? `<div class="notice small">${esc(BAD_BROWSER_MSG)}</div>` : ""}
     <div class="transcript" id="transcript" aria-live="polite"><span class="ph">${esc(placeholder)}</span></div>
     <div class="mic-row">
       ${textOnly ? "" : `<button class="mic" id="micBtn" aria-label="話す"><span class="mic-ico"></span></button>`}
@@ -5452,6 +5467,7 @@ function mountAnswer({ lang, continuous, silenceSec, confirm, onSubmit, onSpeech
           }
           stopUI(); setText("");
           misses++;
+          if (BAD_BROWSER && err !== "not-allowed") { setMsg(`${BAD_BROWSER} では聞き取れません。iPhone・iPad は Safari、パソコンは Chrome で開いてね` + (hasText ? "（「文字で入力する」でも答えられます）" : ""), "ng"); return; }
           setMsg((SR_ERRORS[err] || SR_ERRORS["no-speech"]) + (misses >= 2 && hasText ? "（「文字で入力する」でも答えられます）" : ""), err && err !== "no-speech" && err !== "aborted" ? "ng" : "warn");
           return;
         }
