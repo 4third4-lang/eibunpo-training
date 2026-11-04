@@ -1019,6 +1019,14 @@ button, summary, a, label, input, select, textarea, .stage-card, .item-card { to
 button:not(:disabled):active, summary:active { transform: scale(.96); filter: brightness(.93); transition: transform .05s, filter .05s; }
 .icon-btn { min-width: 44px; min-height: 44px; }
 .home-btn { font-size: 20px; padding-bottom: 0; margin-left: 6px; }
+.limit-tag { color: var(--s4); margin-left: 6px; }
+.cd-row { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+.cd-row .countdown { flex: 1; margin-top: 0; }
+.cd-num { min-width: 7.5em; text-align: right; font-weight: 700; font-size: 17px; color: var(--s4); font-variant-numeric: tabular-nums; }
+.cd-num.ok { color: var(--ok); } .cd-num.late { color: var(--ng); }
+.late-note { margin: 4px 0 10px; padding: 10px 12px; border-radius: 10px; background: var(--warn-bg); color: var(--warn); font-size: 15px; line-height: 1.6; }
+.late-tag { display: inline-block; margin-left: 6px; color: var(--ng); font-weight: 700; font-size: 13px; }
+.late-sum { margin-top: 8px; color: var(--ng); font-weight: 700; }
 .stage-card.locked { opacity: .55; }
 .btn[aria-disabled="true"] { opacity: .5; }
 .text-in summary { padding: 10px 2px; }
@@ -2760,7 +2768,6 @@ const DEFAULT_SETTINGS = {
   stageFmts: { s2: null, s3: null }, // 段階2・3で出す形式（null＝はじめの決まり：S2_DEF・S3_FMTS）
   s4Hints: false,          // 段階4（英作文）で、ヒントの単語を2・3語出す
   lenientJudge: true,      // 音声の聞きちがいをゆるく判定する（問題のポイントの語は正確に）
-  timeLimitStrict: false,  // まとめ問題・とどめの一撃の英作文：制限時間をこえたら不正解にする（false＝目標の時間として表示するだけ）
   model: "claude-haiku-5-5",
   showRanking: false,      // 生徒にランキングを見せる
   autoStamps: true,        // 条件で自動のスタンプを出す
@@ -6119,10 +6126,11 @@ function questionCard(q, stage, opt) {
       <div class="q-main en">${body}</div></section>`;
   }
   const hints = opt && opt.hints ? hintWords(q) : [];
-  return `<section class="q-card s${stage}"><div class="q-label">${stage === 3 ? "英語で言おう" : "すぐに英語で！"}</div>
+  const lim = state.settings.stage4.timeLimitSec;
+  return `<section class="q-card s${stage}"><div class="q-label">${stage === 3 ? "英語で言おう" : `すぐに英語で！ <b class="limit-tag">⏱ ${lim}秒以内に話し始めよう</b>`}</div>
     <div class="q-main ja">${esc(q.ja)}</div>
     ${hints.length ? `<div class="q-hints"><span class="hint-label">ヒント</span>${hints.map((h) => `<span class="hint-w">${esc(h)}</span>`).join("")}<small>単語の形が変わることもあります</small></div>` : ""}
-    ${stage === 4 ? `<div class="countdown"><div class="countdown-bar" id="cd"></div></div>` : ""}</section>`;
+    ${stage === 4 ? `<div class="cd-row"><div class="countdown"><div class="countdown-bar" id="cd"></div></div><span class="cd-num" id="cdNum">のこり ${lim}秒</span></div>` : ""}</section>`;
 }
 
 function renderQuestion() {
@@ -6156,17 +6164,20 @@ function renderQuestion() {
   if (stage === 4) {
     const begin = () => {
       shownAt = performance.now();
-      const bar = $("#cd");
+      const bar = $("#cd"), num = $("#cdNum");
       const tick = setInterval(() => {
         const el = (performance.now() - shownAt) / 1000;
         if (bar) bar.style.width = Math.max(0, 100 - (el / limit) * 100) + "%";
-        if (latency != null) { clearInterval(tick); if (bar) bar.classList.add(latency <= limit ? "ok" : "late"); }
-        else if (el >= limit) { clearInterval(tick); if (bar) bar.classList.add("late"); ctl.setMsg(state.settings.timeLimitStrict ? "時間切れ！でも最後まで言ってみよう。" : "目標の時間をすぎました。正しく言えれば正解です。", "warn"); }
+        if (num && latency == null) num.textContent = el < limit ? `のこり ${Math.max(0, limit - el).toFixed(1)}秒` : "時間切れ";
+        if (latency != null) { clearInterval(tick); if (bar) bar.classList.add(latency <= limit ? "ok" : "late"); if (num) { num.textContent = latency <= limit ? `話し始め ${latency.toFixed(1)}秒 ✓` : `話し始め ${latency.toFixed(1)}秒（時間オーバー）`; num.classList.add(latency <= limit ? "ok" : "late"); } }
+        else if (el >= limit) { clearInterval(tick); if (bar) bar.classList.add("late"); if (num) num.classList.add("late"); ctl.setMsg("時間切れ！ 制限時間をすぎたので、正しく言えても不正解になります。", "warn"); }
       }, 100);
       timers.push(tick);
       // 読み上げの直後は、iPad でマイクの音が入らないことがあるので少し待つ
       if (speechAvailable) timers.push(setTimeout(() => { if (seq === navSeq) ctl.start(); }, state.settings.ttsStage4 ? 400 : 0));
     };
+    const ti = $("#textIn");
+    if (ti) ti.addEventListener("input", () => { if (latency == null && shownAt) latency = (performance.now() - shownAt) / 1000; });
     if (state.settings.ttsStage4) speak(q.ja, "ja-JP", () => { if (seq === navSeq) begin(); }); else begin();
   }
 }
@@ -6208,20 +6219,20 @@ async function judgeQuestion(q, ans, via, latency, ctl) {
     }
   }
   const over = stage === 4 && (latency == null || latency > state.settings.stage4.timeLimitSec); // 文字で答えたときは時間がはかれない
-  const late = over && !!state.settings.timeLimitStrict; // 制限時間をこえたら不正解にするのは、先生が設定でオンにしたときだけ
+  const late = over; // 制限時間（先生の設定）をこえたら、英文が正しくても不正解
   const finalCorrect = correct && !late;
   session.log.push({ qid: q.qid, st: stage, q: qText(q), a: ans.text, correct: finalCorrect, contentCorrect: correct, latency: latency == null ? null : Math.round(latency * 10) / 10, via, by });
   const extra = session.boss ? bossAfter(q, finalCorrect) : session.range ? rangeAfter(q, finalCorrect) : ""; // 総復習：記録のしるし・まちがえたときの練習と再確認
 
   const isLast = session.index + 1 >= session.qs.length;
   res.innerHTML = `<div class="panel">
-    <div class="verdict ${finalCorrect ? "ok" : "ng"}">${finalCorrect ? "○ 正解" : (correct && late ? "△ 正しいけど時間オーバー" : "× おしい")}
+    <div class="verdict ${finalCorrect ? "ok" : "ng"}">${finalCorrect ? "○ 正解" : (correct && late ? "× 時間オーバー（英文は正しい）" : "× おしい")}
       ${stage === 4 && latency != null ? `<small>話し始め ${latency.toFixed(1)}秒</small>` : ""}</div>
     ${eased && finalCorrect ? `<div class="eased-note">聞き取りの小さなちがいは、正解にしました</div>` : ""}
-    ${finalCorrect && over && latency != null ? `<div class="eased-note">目標（${state.settings.stage4.timeLimitSec}秒以内に話し始める）はこえましたが、正解です。次はもっと早く言ってみよう！</div>` : ""}
+    ${correct && late ? `<div class="late-note">⏱ 英文は正しいです。でも、${latency != null ? `話し始めるまでに <b>${latency.toFixed(1)}秒</b> かかりました` : "話し始めた時間がはかれませんでした"}（制限時間は <b>${state.settings.stage4.timeLimitSec}秒</b>）。<br>時間オーバーのため不正解です。次は早めに言ってみよう！</div>` : ""}
     ${q.listen ? `<div class="model-line"><span>聞いた英文</span><div class="model-row">${esc(q.text)}</div></div>` : ""}
     <div class="model-line"><span>正しい英文</span><div class="model-row"><b>${esc(model)}</b><button class="listen" id="listen" aria-label="お手本を聞く">🔊 お手本</button></div></div>
-    ${feedback && !(finalCorrect && feedback === "正解です！") ? `<div class="feedback">${esc(feedback)}</div>` : ""}
+    ${feedback && !((finalCorrect || late) && feedback === "正解です！") ? `<div class="feedback">${esc(feedback)}</div>` : ""}
     ${extra}
     <button class="btn primary big" id="next">${isLast ? "結果を見る" : "次へ"}</button>
   </div>`;
@@ -6267,6 +6278,10 @@ function quickTag(log) {
   const t = log.filter((l) => l.st === 4);
   return log.length && log.every((l) => l.correct) && t.length >= 3 && t.every((l) => l.latency != null && l.latency <= 2) ? ["quick"] : [];
 }
+
+// 結果の一覧：制限時間のある英作文の時間（時間オーバーで不正解なら、はっきり書く）
+const latTag = (l) => l.st !== 4 ? "" : l.contentCorrect && !l.correct ? `<span class="late-tag">⏱ 時間オーバー${l.latency != null ? `（${l.latency}秒）` : ""}・英文は正しい</span>` : l.latency != null ? `（${l.latency}秒）` : "";
+const lateSummary = (log) => { const n = log.filter((l) => l.st === 4 && l.contentCorrect && !l.correct).length; return n ? `<div class="late-sum">⏱ 時間オーバーで不正解：${n}問（英文は正しい）。制限時間は ${state.settings.stage4.timeLimitSec}秒です。</div>` : ""; };
 
 /* ===== 復習（まちがえた問題だけ） ===== */
 const reviewItems = () => (state.mistakes || []).map((m) => ({ m, x: QINDEX[m.qid] })).filter((e) => e.x);
@@ -6373,7 +6388,7 @@ function startMaster(m) {
         <div class="q-main ja">まとめ問題にチャレンジ！</div>
         <ul class="rules">
           <li>全部で <b>${session.qs.length}問</b>。${MASTER_FORMAT_NOTE}</li>
-          <li>英作文（日本語→英語）の問題は <b>${state.settings.stage4.timeLimitSec}秒以内</b>に話し始めよう。${state.settings.timeLimitStrict ? "" : "（目標の時間です。こえても、正しく言えれば正解）"}</li>
+          <li>英作文（日本語→英語）の問題は <b>${state.settings.stage4.timeLimitSec}秒以内</b>に話し始めよう。（こえると、英文が正しくても不正解）</li>
           <li><b>${pct(Math.min(1, Math.max(0.1, Number(m.pass) || 0.8)))}%</b> 以上正解で、課題クリア！</li>
         </ul>
       </section>
@@ -6394,9 +6409,10 @@ async function renderMasterResult() {
         <div class="big-score">${score}<span>/${total}</span></div>
         <div class="verdict ${passed ? "ok" : "ng"}">${passed ? "🏅 合格！課題クリア" : "もう少し！"}</div>
         <div class="sub">課題（マスターモード）「${esc(m.name)}」　合格ライン ${pct(pass)}%</div>
+        ${lateSummary(log)}
       </section>
       <ol class="log">${log.map((l) => `<li class="${l.correct ? "ok" : "ng"}"><span class="mark">${l.correct ? "○" : "×"}</span>
-        <span><span class="lq">${esc(l.q)}</span><span class="la">${esc(l.a)}${l.latency != null && l.st === 4 ? `（${l.latency}秒）` : ""}</span></span></li>`).join("")}</ol>
+        <span><span class="lq">${esc(l.q)}</span><span class="la">${esc(l.a)}${latTag(l)}</span></span></li>`).join("")}</ol>
       <div class="save" id="saveState">記録しています…</div>
       <div class="btn-row"><button class="btn primary" id="again">もう一度挑戦する</button><button class="btn" id="toMaster">課題にもどる</button></div>
       ${footerNote()}
@@ -6804,7 +6820,6 @@ function renderSettings() {
         ${chk("confirm", s.confirmBeforeSubmit, "段階2〜4で、聞き取った文を確認してから答える")}
         ${chk("auto4", s.autoSubmitStage4, "まとめ問題・とどめの一撃の英作文（制限時間あり）は、確認なしで自動で答える")}
         ${chk("tts4", s.ttsStage4, "まとめ問題・とどめの一撃の英作文（制限時間あり）で、日本語を読み上げる")}
-        ${chk("strict4", s.timeLimitStrict, "まとめ問題・とどめの一撃の英作文で、制限時間をこえたら不正解にする（オフのときは目標の時間として表示し、正しければ正解。文字で答えたときも正解）")}
         <h2>生徒の登録</h2>
         ${chk("rosterOnly", s.rosterOnly, "名簿に登録した生徒だけ使えるようにする（名簿は「生徒一覧」で登録します）")}
         <p class="hint">オフのときは、学校のアカウントを持つ人ならだれでも使えます（はじめて開いた人は自動で生徒一覧に入ります）。先生はいつでも使えます。</p>
@@ -6848,7 +6863,6 @@ function renderSettings() {
       s4Hints: $("#s4hints").checked,
       lenientJudge: $("#lenient").checked,
       ttsStage4: $("#tts4").checked,
-      timeLimitStrict: $("#strict4").checked,
       model: $("#model").value.trim() || DEFAULT_SETTINGS.model,
       showRanking: $("#showRank").checked,
       autoStamps: $("#autoSt").checked,
@@ -8214,7 +8228,7 @@ function startStoryBattle(k) {
         <h2>${esc(K.monster)} があらわれた！</h2>
         <ul class="rules">
           <li>全部で <b>${session.qs.length}問</b>。「${esc(it.short)}」と、これまでの王国の文法がまざって出る。</li>
-          <li>段階2・3の問題と、英作文（<b>${state.settings.stage4.timeLimitSec}秒以内</b>に話し始めるのが目標${state.settings.timeLimitStrict ? "。こえると不正解" : "。こえても、正しく言えれば正解"}）。</li>
+          <li>段階2・3の問題と、制限時間のある英作文（<b>${state.settings.stage4.timeLimitSec}秒以内</b>に話し始める。こえると、英文が正しくても不正解）。</li>
           <li><b>${session.story.need}問</b>正解すると、${esc(K.monster)} をたおせる！</li>
         </ul>
       </section>
@@ -8242,7 +8256,8 @@ async function renderStoryResult() {
         <h2>${passed ? `${esc(s.K.monster)} をたおした！` : `${esc(s.K.monster)} は、まだ立っている…`}</h2>
         ${passed ? `<div class="restored">${castleSVG("done", (STORY.continents[gradeOf(s.it) - 1] || {}).color || "#2f9e44", 70)}<p><b>王国「${esc(s.K.name)}」がもどった！</b></p><p>${storyText(s.K.episode)}</p></div>` : `<p class="hint">あと${s.need - score}問で、たおせた。もう一度いどもう！</p>`}
       </section>
-      <ol class="log">${log.map((l) => `<li class="${l.correct ? "ok" : "ng"}"><span class="mark">${l.correct ? "○" : "×"}</span><span><span class="lq">${esc(l.q)}</span><span class="la">${esc(l.a)}</span></span></li>`).join("")}</ol>
+      ${lateSummary(log)}
+      <ol class="log">${log.map((l) => `<li class="${l.correct ? "ok" : "ng"}"><span class="mark">${l.correct ? "○" : "×"}</span><span><span class="lq">${esc(l.q)}</span><span class="la">${esc(l.a)}${latTag(l)}</span></span></li>`).join("")}</ol>
       <div class="save" id="saveState">記録しています…</div>
       <div class="btn-row">${passed ? `<button class="btn primary" id="readNew">📜 物語の続きを読む</button>` : `<button class="btn primary" id="again">もう一度いどむ</button>`}<button class="btn" id="toStoryR">ストーリーモードへ</button></div>
       ${footerNote()}
