@@ -1018,6 +1018,7 @@ table.dash th.mcol, table.dash td.mcol { border-left: 2px solid var(--gold); }
 button, summary, a, label, input, select, textarea, .stage-card, .item-card { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 button:not(:disabled):active, summary:active { transform: scale(.96); filter: brightness(.93); transition: transform .05s, filter .05s; }
 .icon-btn { min-width: 44px; min-height: 44px; }
+.home-btn { font-size: 20px; padding-bottom: 0; margin-left: 6px; }
 .stage-card.locked { opacity: .55; }
 .btn[aria-disabled="true"] { opacity: .5; }
 .text-in summary { padding: 10px 2px; }
@@ -2759,6 +2760,7 @@ const DEFAULT_SETTINGS = {
   stageFmts: { s2: null, s3: null }, // 段階2・3で出す形式（null＝はじめの決まり：S2_DEF・S3_FMTS）
   s4Hints: false,          // 段階4（英作文）で、ヒントの単語を2・3語出す
   lenientJudge: true,      // 音声の聞きちがいをゆるく判定する（問題のポイントの語は正確に）
+  timeLimitStrict: false,  // まとめ問題・とどめの一撃の英作文：制限時間をこえたら不正解にする（false＝目標の時間として表示するだけ）
   model: "claude-haiku-5-5",
   showRanking: false,      // 生徒にランキングを見せる
   autoStamps: true,        // 条件で自動のスタンプを出す
@@ -4628,11 +4630,21 @@ function header(title, backFn) {
   const sw = state.isAdmin ? `<span class="view-switch" role="group" aria-label="画面の切りかえ">
       <button class="${state.viewAsStudent ? "" : "on"}" data-view="admin">管理者画面</button><button class="${state.viewAsStudent ? "on" : ""}" data-view="student">生徒画面</button></span>` : "";
   return `${state.isAdmin && state.viewAsStudent ? `<div class="preview-bar">生徒の画面を表示しています（先生だけに見える表示です）</div>` : ""}<header class="bar">
-    ${backFn ? `<button class="icon-btn" id="backBtn" aria-label="もどる">‹</button>` : `<span class="logo">ハ</span>`}
+    ${backFn ? `<button class="icon-btn" id="backBtn" aria-label="もどる">‹</button><button class="icon-btn home-btn" id="homeBtn" aria-label="トップページにもどる" title="トップページにもどる">🏠</button>` : `<span class="logo">ハ</span>`}
     <h1>${esc(title)}</h1>
     ${sw}
     <span class="who">${MODE === "demo" ? '<span class="badge">お試し</span>' : esc(state.email.split("@")[0])}</span>
   </header>`;
+}
+// トップページ（ホーム）へ一気にもどる。総復習・ラスボスの途中なら、「もどる」と同じように記録を先に送る
+function goHome() {
+  const onQuiz = !!document.querySelector(".q-card"), R = session && session.range, B = session && session.boss;
+  try {
+    if (onQuiz && R) { if ((R.ev || []).some((e) => e.m !== "!")) flushRangeDraft().catch(() => {}); else lsSet("eg_range_draft", null); }
+    if (onQuiz && B && lsGet("eg_boss_draft", null)) flushBossDraft().catch(() => {});
+  } catch (e) {}
+  if (typeof curTask !== "undefined") curTask = null;
+  renderHome();
 }
 function setView(student) { state.viewAsStudent = student; lsSet("eg_preview", student); renderHome(); }
 function footerNote() {
@@ -4640,6 +4652,7 @@ function footerNote() {
 }
 function bindBack(fn) {
   const b = $("#backBtn"); if (b) b.onclick = fn;
+  const h = $("#homeBtn"); if (h) h.onclick = goHome;
   $$(".view-switch button").forEach((v) => (v.onclick = () => setView(v.dataset.view === "student")));
 }
 
@@ -6148,7 +6161,7 @@ function renderQuestion() {
         const el = (performance.now() - shownAt) / 1000;
         if (bar) bar.style.width = Math.max(0, 100 - (el / limit) * 100) + "%";
         if (latency != null) { clearInterval(tick); if (bar) bar.classList.add(latency <= limit ? "ok" : "late"); }
-        else if (el >= limit) { clearInterval(tick); if (bar) bar.classList.add("late"); ctl.setMsg("時間切れ！でも最後まで言ってみよう。", "warn"); }
+        else if (el >= limit) { clearInterval(tick); if (bar) bar.classList.add("late"); ctl.setMsg(state.settings.timeLimitStrict ? "時間切れ！でも最後まで言ってみよう。" : "目標の時間をすぎました。正しく言えれば正解です。", "warn"); }
       }, 100);
       timers.push(tick);
       // 読み上げの直後は、iPad でマイクの音が入らないことがあるので少し待つ
@@ -6167,7 +6180,8 @@ async function judgeQuestion(q, ans, via, latency, ctl) {
   if (stage === 2) {
     correct = matchesAny(cands, stage2Answers(q));
     // 聞きちがいをゆるく：問題のポイントの語・文法の語は正確に、それ以外の音の近い聞きちがいは正解に
-    if (!correct && lenientOn() && lenientAny(q, cands, q.type === "choice" ? [stage2Model(q)] : stage2Answers(q))) correct = eased = true;
+    if (!correct && lenientOn() && (lenientAny(q, cands, q.type === "choice" ? [stage2Model(q)] : stage2Answers(q))
+      || (q.type === "choice" && cands.some((c) => c && soundToks(c).join(" ") === soundToks(q.answer).join(" "))))) correct = eased = true;
     model = stage2Model(q);
   } else {
     if (matchesAny(cands, q.answers)) {
@@ -6193,7 +6207,8 @@ async function judgeQuestion(q, ans, via, latency, ctl) {
       }
     }
   }
-  const late = stage === 4 && (latency == null || latency > state.settings.stage4.timeLimitSec);
+  const over = stage === 4 && (latency == null || latency > state.settings.stage4.timeLimitSec); // 文字で答えたときは時間がはかれない
+  const late = over && !!state.settings.timeLimitStrict; // 制限時間をこえたら不正解にするのは、先生が設定でオンにしたときだけ
   const finalCorrect = correct && !late;
   session.log.push({ qid: q.qid, st: stage, q: qText(q), a: ans.text, correct: finalCorrect, contentCorrect: correct, latency: latency == null ? null : Math.round(latency * 10) / 10, via, by });
   const extra = session.boss ? bossAfter(q, finalCorrect) : session.range ? rangeAfter(q, finalCorrect) : ""; // 総復習：記録のしるし・まちがえたときの練習と再確認
@@ -6203,6 +6218,7 @@ async function judgeQuestion(q, ans, via, latency, ctl) {
     <div class="verdict ${finalCorrect ? "ok" : "ng"}">${finalCorrect ? "○ 正解" : (correct && late ? "△ 正しいけど時間オーバー" : "× おしい")}
       ${stage === 4 && latency != null ? `<small>話し始め ${latency.toFixed(1)}秒</small>` : ""}</div>
     ${eased && finalCorrect ? `<div class="eased-note">聞き取りの小さなちがいは、正解にしました</div>` : ""}
+    ${finalCorrect && over && latency != null ? `<div class="eased-note">目標（${state.settings.stage4.timeLimitSec}秒以内に話し始める）はこえましたが、正解です。次はもっと早く言ってみよう！</div>` : ""}
     ${q.listen ? `<div class="model-line"><span>聞いた英文</span><div class="model-row">${esc(q.text)}</div></div>` : ""}
     <div class="model-line"><span>正しい英文</span><div class="model-row"><b>${esc(model)}</b><button class="listen" id="listen" aria-label="お手本を聞く">🔊 お手本</button></div></div>
     ${feedback && !(finalCorrect && feedback === "正解です！") ? `<div class="feedback">${esc(feedback)}</div>` : ""}
@@ -6357,7 +6373,7 @@ function startMaster(m) {
         <div class="q-main ja">まとめ問題にチャレンジ！</div>
         <ul class="rules">
           <li>全部で <b>${session.qs.length}問</b>。${MASTER_FORMAT_NOTE}</li>
-          <li>英作文（日本語→英語）の問題は <b>${state.settings.stage4.timeLimitSec}秒以内</b>に話し始めよう。</li>
+          <li>英作文（日本語→英語）の問題は <b>${state.settings.stage4.timeLimitSec}秒以内</b>に話し始めよう。${state.settings.timeLimitStrict ? "" : "（目標の時間です。こえても、正しく言えれば正解）"}</li>
           <li><b>${pct(Math.min(1, Math.max(0.1, Number(m.pass) || 0.8)))}%</b> 以上正解で、課題クリア！</li>
         </ul>
       </section>
@@ -6788,6 +6804,7 @@ function renderSettings() {
         ${chk("confirm", s.confirmBeforeSubmit, "段階2〜4で、聞き取った文を確認してから答える")}
         ${chk("auto4", s.autoSubmitStage4, "まとめ問題・とどめの一撃の英作文（制限時間あり）は、確認なしで自動で答える")}
         ${chk("tts4", s.ttsStage4, "まとめ問題・とどめの一撃の英作文（制限時間あり）で、日本語を読み上げる")}
+        ${chk("strict4", s.timeLimitStrict, "まとめ問題・とどめの一撃の英作文で、制限時間をこえたら不正解にする（オフのときは目標の時間として表示し、正しければ正解。文字で答えたときも正解）")}
         <h2>生徒の登録</h2>
         ${chk("rosterOnly", s.rosterOnly, "名簿に登録した生徒だけ使えるようにする（名簿は「生徒一覧」で登録します）")}
         <p class="hint">オフのときは、学校のアカウントを持つ人ならだれでも使えます（はじめて開いた人は自動で生徒一覧に入ります）。先生はいつでも使えます。</p>
@@ -6831,6 +6848,7 @@ function renderSettings() {
       s4Hints: $("#s4hints").checked,
       lenientJudge: $("#lenient").checked,
       ttsStage4: $("#tts4").checked,
+      timeLimitStrict: $("#strict4").checked,
       model: $("#model").value.trim() || DEFAULT_SETTINGS.model,
       showRanking: $("#showRank").checked,
       autoStamps: $("#autoSt").checked,
@@ -8196,7 +8214,7 @@ function startStoryBattle(k) {
         <h2>${esc(K.monster)} があらわれた！</h2>
         <ul class="rules">
           <li>全部で <b>${session.qs.length}問</b>。「${esc(it.short)}」と、これまでの王国の文法がまざって出る。</li>
-          <li>段階2・3の問題と、制限時間のある英作文（<b>${state.settings.stage4.timeLimitSec}秒以内</b>に話し始める）。</li>
+          <li>段階2・3の問題と、英作文（<b>${state.settings.stage4.timeLimitSec}秒以内</b>に話し始めるのが目標${state.settings.timeLimitStrict ? "。こえると不正解" : "。こえても、正しく言えれば正解"}）。</li>
           <li><b>${session.story.need}問</b>正解すると、${esc(K.monster)} をたおせる！</li>
         </ul>
       </section>
