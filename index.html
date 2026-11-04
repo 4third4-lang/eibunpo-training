@@ -108,6 +108,13 @@ button:disabled { cursor: not-allowed; opacity: .5; }
 .q-main.en { font-size: 24px; letter-spacing: .01em; }
 .q-sub { color: var(--muted); font-size: 14px; margin-top: 6px; }
 .q-context { color: var(--muted); font-size: 18px; margin-bottom: 4px; }
+.fmt-pick { margin: 8px 0 10px; }
+.fmt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 2px 10px; margin-top: 4px; }
+.eased-note { font-size: 13px; color: var(--muted); margin: -4px 0 8px; }
+.q-hints { margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.q-hints .hint-label { font-size: 13px; font-weight: 700; color: var(--muted); }
+.q-hints .hint-w { padding: 3px 10px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line, #dde3ea); font-size: 17px; font-weight: 600; }
+.q-hints small { width: 100%; color: var(--muted); font-size: 12px; }
 .blank { display: inline-block; min-width: 3em; border-bottom: 3px solid var(--s2); }
 .q-main u { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 5px; text-decoration-color: var(--s2); }
 .listen-q { padding: 6px 0; }
@@ -2749,6 +2756,9 @@ const DEFAULT_SETTINGS = {
   confirmBeforeSubmit: true,
   autoSubmitStage4: true,
   ttsStage4: true,
+  stageFmts: { s2: null, s3: null }, // 段階2・3で出す形式（null＝はじめの決まり：S2_DEF・S3_FMTS）
+  s4Hints: false,          // 段階4（英作文）で、ヒントの単語を2・3語出す
+  lenientJudge: true,      // 音声の聞きちがいをゆるく判定する（問題のポイントの語は正確に）
   model: "claude-haiku-5-5",
   showRanking: false,      // 生徒にランキングを見せる
   autoStamps: true,        // 条件で自動のスタンプを出す
@@ -2797,6 +2807,239 @@ function stage2Answers(q) {
   return q.answers;
 }
 const stage2Model = (q) => q.type === "choice" ? q.text.replace("( )", q.answer) : (q.type === "order" ? q.answer : q.answers[0]);
+/* ---------- ゆるい判定：音声の聞きちがいを正解に寄せる（問題のポイントの語は正確に） ----------
+   1) 同じ音の語（by/buy・to/two など）・数字・Mt./mount など・合成語（menswear / mens wear）は同じとみなす
+   2) 正解の英文と、聞き取った英文の語を並べて対応をとり、
+      ・ポイントの語（その問題で問われている語）は、すべて正しく言えていること
+      ・まちがいの語（誤文訂正のまちがい・よけいな語・選ばなかった選択肢の語）を言っていないこと
+      ・それ以外の語の聞きちがいは、正解の語の数の 1/4 まで（音が近い語は半分に数える）
+   なら正解にする */
+const SOUND_ALIKE = [["by", "buy", "bye"], ["to", "too", "two"], ["for", "four"], ["there", "their"], ["know", "no"], ["write", "right"],
+  ["here", "hear"], ["son", "sun"], ["eight", "ate"], ["one", "won"], ["see", "sea"], ["where", "wear"], ["whole", "hole"], ["meet", "meat"],
+  ["week", "weak"], ["new", "knew"], ["hour", "our"], ["piece", "peace"], ["road", "rode"], ["wood", "would"], ["blue", "blew"],
+  ["flower", "flour"], ["sale", "sail"], ["wait", "weight"], ["way", "weigh"], ["tail", "tale"], ["pair", "pear"], ["plane", "plain"],
+  ["read", "red"], ["i", "eye"], ["be", "bee"], ["mount", "mt"], ["miss", "ms"], ["mister", "mr"], ["doctor", "dr"], ["mrs", "missus"],
+  ["okay", "ok"], ["tv", "television"], ["mom", "mum"], ["grey", "gray"], ["color", "colour"], ["favorite", "favourite"], ["center", "centre"],
+  ["theater", "theatre"], ["soccer", "football"]];
+const SOUND_KEY = {};
+SOUND_ALIKE.forEach((g) => g.forEach((w) => (SOUND_KEY[w] = g[0])));
+const FILLERS = new Set(["um", "uh", "er", "erm", "ah", "hmm", "mm", "eh"]);
+const ONES = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"];
+const TENS = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+const numWords = (n) => (n < 20 ? ONES[n] : n < 100 ? TENS[Math.floor(n / 10)] + (n % 10 ? " " + ONES[n % 10] : "") : n === 100 ? "one hundred" : String(n));
+// 比べるための語の列（同じ音の語は同じ形に）
+function rawToks(s) {
+  const t = String(s || "").replace(/(\d)\s*-\s*(\d)/g, "$1 $2").replace(/\b(\d{1,3})\b/g, (m) => (+m <= 100 ? numWords(+m) : m)).replace(/-/g, " ");
+  return normalize(t).split(" ").filter((w) => w && !FILLERS.has(w));
+}
+const soundToks = (s) => rawToks(s).map((w) => SOUND_KEY[w] || w);
+const lev = (a, b) => {
+  const m = a.length, n = b.length;
+  let p = Array.from({ length: n + 1 }, (_, j) => j);
+  for (let i = 1; i <= m; i++) { const c = [i]; for (let j = 1; j <= n; j++) c[j] = Math.min(p[j] + 1, c[j - 1] + 1, p[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); p = c; }
+  return p[n];
+};
+// 音の骨組み（日本の生徒に多い l/r・b/v・th/s のちがいは同じにする）
+function soundShape(w) {
+  let t = w.replace(/ph/g, "f").replace(/ck/g, "k").replace(/c(?=[eiy])/g, "s").replace(/c/g, "k").replace(/q/g, "k").replace(/x/g, "ks")
+    .replace(/z/g, "s").replace(/v/g, "b").replace(/l/g, "r").replace(/th/g, "s").replace(/wh/g, "w").replace(/gh/g, "");
+  t = t[0] + t.slice(1).replace(/[aeiouyw]/g, "");
+  return t.replace(/(.)\1+/g, "$1");
+}
+// 音が近い語（god/go・leaves/lives・song/sung・played/pride など）
+const nearWord = (a, b) => {
+  const d = lev(a, b); if (d <= 1 || (d === 2 && Math.min(a.length, b.length) >= 5)) return true;
+  const x = soundShape(a), y = soundShape(b), e = lev(x, y);
+  return (e === 0 && Math.min(x.length, y.length) >= 2) || (e === 1 && Math.min(x.length, y.length) >= 3);
+};
+// 同じ語の形ちがい（study/studied・clean/cleaned・make/makes など）
+const lemmaOf = (w) => w.replace(/(ies|ied)$/, "y").replace(/(ing|ed|es|s|er|est)$/, "").replace(/(.)\1$/, "$1").replace(/e$/, "");
+const sameLemma = (a, b) => a !== b && (lemmaOf(a) === lemmaOf(b) || a.startsWith(b) || b.startsWith(a)); // sleep/sleepy もふくむ
+// 2つの語の列の、共通部分以外（src にない dst の語の位置・dst にない src の語）
+function tokDiff(src, dst) {
+  const m = src.length, n = dst.length, L = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+  for (let i = m - 1; i >= 0; i--) for (let j = n - 1; j >= 0; j--) L[i][j] = src[i] === dst[j] ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
+  const added = [], removed = [];
+  let i = 0, j = 0;
+  while (i < m && j < n) { if (src[i] === dst[j]) { i++; j++; } else if (L[i + 1][j] >= L[i][j + 1]) removed.push(src[i++]); else added.push(j++); }
+  while (i < m) removed.push(src[i++]);
+  while (j < n) added.push(j++);
+  return { added, removed };
+}
+// 文法の語（並べかえでは、これらの語の位置が問われる）
+const GRAMMAR_WORDS = new Set(("a an the this that these those i you he she it we they me him her us them my your his its our their mine yours " +
+  "am is are was were be been being do does did have has had will would can could may might must shall should not no " +
+  "what who whom whose which when where why how than as to of in on at for from with by about if because while until since " +
+  "and but or so too very more most there here ever never already yet just still also each every all some any much many").split(" "));
+// 名前など（聞きまちがいが多いので、ポイントの語にしない）
+function nameToks(str) {
+  const out = new Set();
+  String(str || "").replace(/[.!?]/g, " . ").split(/\s+/).forEach((w, k, a) => {
+    const c = w.replace(/[^A-Za-z']/g, "");
+    if (c && /^[A-Z]/.test(c) && c !== "I" && !/^I'/.test(c) && k > 0 && a[k - 1] !== ".") soundToks(c).forEach((x) => out.add(x));
+  });
+  PROPER_WORDS.forEach((w) => { if (/^[A-Z][a-z]/.test(w) && !/\.$/.test(w)) soundToks(w).forEach((x) => { if (String(str).indexOf(w) >= 0) out.add(x); }); });
+  return out;
+}
+// 問題の答え1つについて：正解の語の列・ポイントの語の位置・言ってはいけない語
+function judgeSpec(q, ans) {
+  const E = soundToks(ans), names = nameToks(ans);
+  let key = new Set(), bad = new Set();
+  const addKeys = (idx) => idx.forEach((k) => { if (!names.has(E[k])) key.add(k); });
+  const fmt = q.ja ? "和英" : fmtOf(q);
+  if (q.ja) { /* 日本語→英語：文法の語は正確に。内容の語は音の近い聞きちがいだけ（形のちがいはだめ）。それ以外は AI が判定 */ }
+  else if (q.type === "choice") {
+    const others = (q.options || []).filter((o) => o !== q.answer);
+    if (fmt === "続きを選ぶ" && others.length) {
+      others.forEach((o) => { const d = tokDiff(soundToks(q.text.replace("( )", o)), E); addKeys(d.added); d.removed.forEach((w) => bad.add(w)); });
+    } else {
+      addKeys(tokDiff(soundToks(q.text.replace("( )", " ")), E).added);
+      others.forEach((o) => soundToks(o).forEach((w) => bad.add(w)));
+    }
+  } else if (q.type === "order") {
+    addKeys(E.map((w, k) => (GRAMMAR_WORDS.has(w) ? k : -1)).filter((k) => k >= 0));
+    const aw = soundToks(q.answer), ww = (q.words || []).map((w) => soundToks(w)).flat();
+    if (fmt === "並べかえ＋1語") { const left = aw.slice(); ww.forEach((w) => { const k = left.indexOf(w); if (k >= 0) left.splice(k, 1); else bad.add(w); }); }
+    if (fmt === "並べかえ−1語") { const left = ww.slice(); E.forEach((w, k) => { const i = left.indexOf(w); if (i >= 0) left.splice(i, 1); else addKeys([k]); }); }
+  } else {
+    const d = tokDiff(soundToks(q.text || ""), E);
+    addKeys(d.added); d.removed.forEach((w) => bad.add(w));
+  }
+  E.forEach((w) => bad.delete(w)); // 答えにある語は「言ってはいけない語」にしない
+  return { E, key, bad, names };
+}
+// 正解の語の列 E と、聞き取った語の列 S を対応させる（合成語は 1語＝2語 で対応）
+function alignToks(E, S, Er, Sr) {
+  Er = Er || E; Sr = Sr || S;
+  const m = E.length, n = S.length, INF = 1e9;
+  const D = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(INF)), B = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(null));
+  D[0][0] = 0;
+  for (let i = 0; i <= m; i++) for (let j = 0; j <= n; j++) {
+    const d = D[i][j]; if (d >= INF) continue;
+    const go = (ii, jj, c, op) => { if (ii <= m && jj <= n && d + c < D[ii][jj]) { D[ii][jj] = d + c; B[ii][jj] = [i, j, op]; } };
+    if (i < m && j < n) go(i + 1, j + 1, E[i] === S[j] ? 0 : 1, E[i] === S[j] ? "eq" : "sub");
+    if (i < m && j + 1 < n && (E[i] === S[j] + S[j + 1] || Er[i] === Sr[j] + Sr[j + 1])) go(i + 1, j + 2, 0, "eq");
+    if (i + 1 < m && j < n && (E[i] + E[i + 1] === S[j] || Er[i] + Er[i + 1] === Sr[j])) go(i + 2, j + 1, 0, "eq2");
+    if (i < m) go(i + 1, j, 1, "del");
+    if (j < n) go(i, j + 1, 1, "ins");
+  }
+  const ops = [];
+  for (let i = m, j = n; i || j;) { const b = B[i][j]; ops.push({ op: b[2], i: b[0], j: b[1] }); i = b[0]; j = b[1]; }
+  return ops.reverse();
+}
+// ゆるい判定：said（聞き取った英文）が、答え ans に「聞きちがいの範囲で」一致するか
+function lenientOk(q, said, ans) {
+  const { E, key, bad, names } = judgeSpec(q, ans), S = soundToks(said);
+  if (!E.length || !S.length) return false;
+  const Er = rawToks(ans), Sr = rawToks(said);
+  if (E.join(" ") === S.join(" ") || E.join("") === S.join("") || Er.join("") === Sr.join("")) return true; // 同じ音の語・合成語のちがいだけ
+  let cost = 0;
+  for (const o of alignToks(E, S, Er, Sr)) {
+    if (o.op === "eq" || o.op === "eq2") continue;
+    if (o.op === "sub" || o.op === "del") {
+      // ポイントの語・文法の語（冠詞・be動詞・前置詞など）は正確に
+      if (key.has(o.i) || GRAMMAR_WORDS.has(E[o.i])) return false;
+      if (o.op === "del") { if (!names.has(E[o.i])) return false; cost += 1; continue; } // 言いもらしは名前だけ許す
+      if (bad.has(S[o.j]) || GRAMMAR_WORDS.has(S[o.j])) return false;
+      // 内容の語（名詞・動詞など）：名前か、音の近い語なら聞きちがいとみなす
+      if (!names.has(E[o.i]) && (!nearWord(E[o.i], S[o.j]) || (q.ja && sameLemma(E[o.i], S[o.j])))) return false;
+      cost += 0.5;
+    } else {
+      // よけいな語：日本語→英語では許さない。文法の語・言ってはいけない語も許さない
+      if (q.ja || bad.has(S[o.j]) || GRAMMAR_WORDS.has(S[o.j]) || (q.type === "order" && E.includes(S[o.j]))) return false; // 並べかえで同じ語をもう一度＝順番のまちがい
+      cost += 1;
+    }
+  }
+  return cost <= Math.max(1, Math.floor(E.length / 4));
+}
+// 候補（聞き取りの候補すべて）× 答え（別解すべて）
+function lenientAny(q, cands, answers) {
+  return cands.some((c) => c && answers.some((a) => lenientOk(q, c, a)));
+}
+const lenientOn = () => !state.settings || state.settings.lenientJudge !== false;
+/* ---------- 段階4のヒント：答えの文から内容の語を2・3語（原形・辞書の形で） ---------- */
+const HINT_STOP = new Set(("a an the this that these those i you he she it we they me him her us them my your his its our their mine yours ours theirs " +
+  "am is are was were be been being do does did have has had will would can could may might must shall should not no yes " +
+  "what who whom whose which when where why how than as to of in on at for from with by about into over under after before " +
+  "if because while until since and but or so too very more most there here ever never already yet just still also each every " +
+  "all some any much many one ones lot lots well really then now today tomorrow yesterday ago please let lets oh ok okay some something " +
+  "anything everything nothing someone everyone anyone nobody up down out off again only even both either neither other another such " +
+  "cannot hers s t d ll ve re m").split(" "));
+const IRREG = {
+  went: "go", gone: "go", had: "have", has: "have", did: "do", done: "do", saw: "see", seen: "see", ate: "eat", eaten: "eat",
+  took: "take", taken: "take", made: "make", came: "come", wrote: "write", written: "write", spoke: "speak", spoken: "speak",
+  gave: "give", given: "give", got: "get", gotten: "get", bought: "buy", taught: "teach", thought: "think", brought: "bring",
+  caught: "catch", sold: "sell", told: "tell", found: "find", left: "leave", felt: "feel", kept: "keep", slept: "sleep", met: "meet",
+  sent: "send", built: "build", spent: "spend", lost: "lose", ran: "run", swam: "swim", swum: "swim", sang: "sing", sung: "sing",
+  began: "begin", begun: "begin", drank: "drink", drunk: "drink", broke: "break", broken: "break", chose: "choose", chosen: "choose",
+  forgot: "forget", forgotten: "forget", knew: "know", known: "know", grew: "grow", grown: "grow", threw: "throw", thrown: "throw",
+  flew: "fly", flown: "fly", drew: "draw", drawn: "draw", wore: "wear", worn: "wear", stood: "stand", understood: "understand",
+  sat: "sit", won: "win", held: "hold", heard: "hear", said: "say", paid: "pay", rode: "ride", ridden: "ride", drove: "drive",
+  driven: "drive", fell: "fall", fallen: "fall", hid: "hide", hidden: "hide", woke: "wake", woken: "wake", became: "become",
+  shot: "shoot", stole: "steal", stolen: "steal", lent: "lend", meant: "mean", led: "lead", fed: "feed", fought: "fight",
+  children: "child", men: "man", women: "woman", feet: "foot", teeth: "tooth", mice: "mouse", better: "good", best: "good",
+  worse: "bad", worst: "bad", bigger: "big", biggest: "big", hotter: "hot", hottest: "hot", sadder: "sad", saddest: "sad",
+  thinner: "thin", fatter: "fat", wetter: "wet", taller: "tall", tallest: "tall", lived: "live", loved: "love", liked: "like",
+  used: "use", moved: "move", closed: "close", danced: "dance", arrived: "arrive", decided: "decide", hoped: "hope", smiled: "smile",
+  changed: "change", saved: "save", practiced: "practice", believed: "believe", invited: "invite", shared: "share", baked: "bake",
+  named: "name", tasted: "taste", cooking: "cook", making: "make", writing: "write", coming: "come", having: "have",
+  living: "live", taking: "take", using: "use", dancing: "dance", riding: "ride", driving: "drive", giving: "give", leaving: "leave",
+  smiling: "smile", closing: "close", moving: "move", skating: "skate", skated: "skate", hiking: "hike", hiked: "hike", saving: "save",
+  dying: "die", lying: "lie", tying: "tie", glasses: "glasses", goes: "go", potatoes: "potato", tomatoes: "tomato", heroes: "hero", tired: "tired", interested: "interested", interesting: "interesting", exciting: "exciting", excited: "excited", boring: "boring", bored: "bored", surprised: "surprised", surprising: "surprising", worried: "worried", amazing: "amazing", news: "news", people: "people", clothes: "clothes",
+};
+const IES_NOUN = new Set(["movie", "cookie", "pie", "tie", "lie", "brownie", "rookie", "calorie", "zombie"]);
+const ADJ = new Set("big tall old young long short small large fast high hot cold easy busy happy early heavy pretty nice new cheap strong warm cool kind smart cute late hard deep wide near low slow quick bright dark clean rich poor great funny sad angry famous popular beautiful interesting difficult important expensive useful exciting".split(" "));
+function baseForm(w) {
+  const x = w.toLowerCase();
+  if (IRREG[x]) return IRREG[x];
+  if (/(?:ss|us|is|ous)$/.test(x) || x.length <= 3) return x;
+  if (/ies$/.test(x)) return IES_NOUN.has(x.slice(0, -1)) ? x.slice(0, -1) : x.slice(0, -3) + "y";
+  if (/ied$/.test(x)) return x.slice(0, -3) + "y";
+  if (/(?:ch|sh|x|ss|zz)es$/.test(x)) return x.slice(0, -2);
+  if (/(?:ing|ed)$/.test(x)) {
+    const st = x.replace(/(?:ing|ed)$/, "");
+    if (st.length < 2) return x;
+    if (/([b-df-hj-np-tv-z])\1$/.test(st) && !/[lsfz]$/.test(st)) return st.slice(0, -1); // stopped → stop・running → run
+    if (/(?:[^e]at|iz|v|[^aeiou]c|[^n]g|ur|dg|bl|pl|tl|kl|gl)$/.test(st)) return st + "e"; // created → create・changed → change
+    return st;
+  }
+  if (/(?:er|est)$/.test(x)) {
+    const st = x.replace(/(?:er|est)$/, "");
+    for (const c of [st, st + "e", st.replace(/i$/, "y"), st.replace(/([b-df-hj-np-tv-z])\1$/, "$1")]) if (ADJ.has(c)) return c;
+    return x;
+  }
+  if (/s$/.test(x) && !/ss$/.test(x)) return x.slice(0, -1);
+  return x;
+}
+// 答えの文から、ヒントの語を2・3語（文の順番のまま）
+function hintWords(q) {
+  const ans = String(((q && q.answers) || [])[0] || "");
+  const seen = new Set(), list = [];
+  ans.split(/[\s,.!?;:—―\-"]+/).forEach((raw, k) => {
+    const w = raw.replace(/[^A-Za-z']/g, "");
+    if (!w || /'/.test(w) && !/'s$/.test(w)) return;
+    const bare = w.replace(/'s$/, "");
+    const lower = bare.toLowerCase();
+    if (HINT_STOP.has(lower) || NUM_WORDS.indexOf(lower) >= 0) return;
+    const name = /^[A-Z]/.test(bare) && (k > 0 || PROPER_WORDS.indexOf(bare) >= 0) && bare !== "I";
+    const b = name ? bare : baseForm(lower);
+    if (seen.has(b.toLowerCase())) return;
+    seen.add(b.toLowerCase());
+    list.push({ w: b, k, len: b.length, name });
+  });
+  // 内容の語が1つ以下のときは、be動詞（be）・have・疑問詞もヒントにする（短い文でも2語に）
+  if (list.length < 2) {
+    ans.split(/[\s,.!?;:—―\-"]+/).forEach((raw, k) => {
+      const l = raw.replace(/[^A-Za-z']/g, "").toLowerCase().replace(/'s$/, "");
+      const b = /^(am|is|are|was|were|been|be|i'm|you're|we're|they're|isn't|aren't|wasn't|weren't)$/.test(l) ? "be" : /^(have|has|had)$/.test(l) ? "have" : /^(what|who|whose|which|where|when|why|how)$/.test(l) ? l : "";
+      if (b && !seen.has(b) && list.length < 2) { seen.add(b); list.push({ w: b, k, len: 0, name: false }); }
+    });
+  }
+  const want = list.length >= 5 ? 3 : Math.min(list.length, list.length >= 3 ? 3 : 2);
+  // 名前より、名詞・動詞などを優先（長い語から）
+  const pick = list.slice().sort((a, b) => (a.name - b.name) || (b.len - a.len)).slice(0, want);
+  return pick.sort((a, b) => a.k - b.k).map((x) => x.w);
+}
 
 /* ---------- 進捗の計算（記録から各項目・各段階の合格を求める） ---------- */
 function computeProgress(results) {
@@ -3694,7 +3937,8 @@ const SYSTEM_TRANSLATE = `あなたは日本の中学1年生の英作文（和�
 採点のルール:
 - 日本語の意味を正しく表した、文法的に正しい英文なら correct=true。正解例と表現が違っても、意味と文法が正しければ correct=true。
 - 大文字・小文字、句読点の有無は採点しない。短縮形（I'm, don't など）も正しい。
-- 音声認識による同音語の誤り（to/too/two, there/their, I/eye, for/four など）は、明らかに聞き取りの問題であれば正しいものとして扱う。
+- 音声認識による聞きまちがいは、正しいものとして扱う：同音語（to/too/two, there/their, by/buy, for/four など）、発音の近い語（日本の生徒に多い l/r・b/v・th/s の混同。例：loved→robbed, play→pray, rice→lice）、人名・地名のつづりのちがい、数字の書き方。文全体の意図がはっきりしていれば correct=true。
+- ただし、練習している文法の部分（時制・動詞の形・三単現の s・冠詞・be動詞・語順など）の誤りは、聞きまちがいとみなさず correct=false。
 - be動詞の抜けや余分なbe動詞（I am play など）、語順、単数・複数、冠詞 a/an の抜けなどの文法の誤りは correct=false。
 - 文の一部しか言っていないなど、意味が大きく足りない場合も correct=false。
 - corrected には生徒の答えを生かした正しい英文を1つ書く（正解なら生徒の文を整えたもの）。
@@ -4174,7 +4418,7 @@ let srLastEnd = 0; // 前の聞き取りが終わった時刻（iPad では、�
 function listen({ lang, continuous, silenceSec, maxSec, onInterim, onSpeechStart, onEnd, onError }) {
   try { if (window.speechSynthesis && speechSynthesis.speaking) speechSynthesis.cancel(); } catch (e) {} // 読み上げ中ならとめる（読み上げの声を聞き取らないように）
   const r = new SR();
-  r.lang = lang; r.interimResults = true; r.continuous = !!continuous; r.maxAlternatives = 3;
+  r.lang = lang; r.interimResults = true; r.continuous = !!continuous; r.maxAlternatives = 5;
   const sep = lang.startsWith("ja") ? "" : " ";
   let finals = [], segAlts = [], alts = [], lastInterim = "", started = false, errCode = "", ended = false, silent = false;
   let silenceTimer = 0, errTimer = 0, stopTimer = 0, maxTimer = 0, startTimer = 0;
@@ -4194,7 +4438,10 @@ function listen({ lang, continuous, silenceSec, maxSec, onInterim, onSpeechStart
     if (silent) return;
     let text = finals.filter(Boolean).join(sep).trim();
     if (!text && lastInterim) text = lastInterim.trim();
-    const all = [text].concat(continuous ? [] : alts).filter(Boolean);
+    // 区切りが2つ以上あるときは、区切りごとの候補を入れかえた「文全体の候補」を作る
+    const segs = finals.filter(Boolean), combos = [];
+    if (!continuous && segs.length > 1) segAlts.forEach((A, k) => (A || []).slice(1).forEach((a) => { const parts = finals.slice(); parts[k] = a; combos.push(parts.filter(Boolean).join(sep).trim()); }));
+    const all = [text].concat(continuous ? [] : segs.length > 1 ? combos.slice(0, 20) : alts).filter(Boolean);
     onEnd && onEnd({ text, alts: Array.from(new Set(all)), segAlts: segAlts.filter(Boolean), errored: !!errCode, error: errCode, heard: started });
   };
   r.onspeechstart = markStart;
@@ -5772,16 +6019,29 @@ function fmtOf(q) {
 }
 // 段階3で出す、むずかしい形式（それ以外の形式は段階2）
 const S3_FMTS = new Set(["誤文訂正", "並べかえ＋1語", "並べかえ−1語", "聞いて変える", "同じ意味", "2文を1文に", "下線部"]);
+const ALL_FMTS = ["選択", "語形", "並べかえ", "主語・時制", "ヒント穴うめ", "続きを選ぶ", "書きかえ", "誤文訂正", "並べかえ＋1語", "並べかえ−1語", "聞いて変える", "同じ意味", "2文を1文に", "下線部"];
+const S2_DEF = new Set(ALL_FMTS.filter((f) => !S3_FMTS.has(f)));
+// 段階2・3で出す形式（先生が「設定」で選んだもの。選んでいなければ、はじめの決まり）
+function stageFmtSet(st) {
+  const sf = ((state.settings || {}).stageFmts || {})["s" + st];
+  return Array.isArray(sf) && sf.length ? new Set(sf) : st === 2 ? S2_DEF : S3_FMTS;
+}
 const isHardQ = (q) => S3_FMTS.has(fmtOf(q));
-const playStage = (x) => (x.stage === 2 ? (isHardQ(x.q) ? 3 : 2) : 4); // QINDEX の問題を、いまの段階の番号で
+const playStage = (x) => { // QINDEX の問題を、いまの段階の番号で
+  if (x.stage !== 2) return 4;
+  const f = fmtOf(x.q), in2 = stageFmtSet(2).has(f), in3 = stageFmtSet(3).has(f);
+  return in3 && !in2 ? 3 : in2 ? 2 : isHardQ(x.q) ? 3 : 2;
+};
 // 段階ごとの問題（set＝課題で選ばれた PDF・Word の問題セット。その段階の問題がセットになければアプリの問題）
 function stagePool(it, st, set) {
   const pick = (L, f) => { const a = (L || []).filter(f); return a; };
   if (st === 2 || st === 3) {
-    const f = st === 2 ? (q) => !isHardQ(q) : isHardQ;
+    const F = stageFmtSet(st), D = st === 2 ? S2_DEF : S3_FMTS;
+    const f = (q) => F.has(fmtOf(q)), fd = (q) => D.has(fmtOf(q));
     const fromSet = set ? pick(set.q[2], f) : [];
-    const L = fromSet.length ? fromSet : pick(it.stage2.questions, f);
-    return L.length ? L : (set && (set.q[2] || []).length ? set.q[2] : it.stage2.questions); // その形式の問題がなければ、形式を問わず
+    let L = fromSet.length ? fromSet : pick(it.stage2.questions, f);
+    if (!L.length) L = pick(it.stage2.questions, fd); // 選んだ形式の問題がこの文法になければ、はじめの決まりの形式
+    return L.length ? L : (set && (set.q[2] || []).length ? set.q[2] : it.stage2.questions); // それもなければ、形式を問わず
   }
   // 段階4：日本語→英語（同じ日本語は1つだけ）
   const seen = new Set(), uniq = (L) => L.filter((q) => (seen.has(q.ja) ? false : (seen.add(q.ja), true)));
@@ -5822,7 +6082,7 @@ function quizHeader() {
     <div class="progress-text">${index + 1} / ${qs.length}</div>${session.story ? storyBattleBar() : ""}`;
 }
 
-function questionCard(q, stage) {
+function questionCard(q, stage, opt) {
   if (stage === 2) {
     if (q.type === "choice") {
       return `<section class="q-card s2"><div class="q-label">${q.fmt === "続きを選ぶ" ? "続きとして正しいほうをえらんで、文全体を言おう" : "( ) に入るものをえらんで、文全体を言おう"}</div>
@@ -5845,8 +6105,10 @@ function questionCard(q, stage) {
       ${q.context ? `<div class="q-context">${esc(q.context)}</div>` : ""}
       <div class="q-main en">${body}</div></section>`;
   }
+  const hints = opt && opt.hints ? hintWords(q) : [];
   return `<section class="q-card s${stage}"><div class="q-label">${stage === 3 ? "英語で言おう" : "すぐに英語で！"}</div>
     <div class="q-main ja">${esc(q.ja)}</div>
+    ${hints.length ? `<div class="q-hints"><span class="hint-label">ヒント</span>${hints.map((h) => `<span class="hint-w">${esc(h)}</span>`).join("")}<small>単語の形が変わることもあります</small></div>` : ""}
     ${stage === 4 ? `<div class="countdown"><div class="countdown-bar" id="cd"></div></div>` : ""}</section>`;
 }
 
@@ -5857,7 +6119,7 @@ function renderQuestion() {
   render(`${quizHeader()}
     <main class="wrap">
       ${session.boss ? `<div class="review-tag">${bossTagHTML(q)}</div>` : session.range ? `<div class="review-tag">${rangeTagHTML(q)}</div>` : session.review || session.master || session.story ? `<div class="review-tag">${esc(q._from || "")}</div>` : ""}
-      ${questionCard(q, stage).replace(/^<section class="q-card s\d/, (m) => (session.review || session.master || session.story || session.range || session.boss ? m : m.slice(0, -1) + session.stage))}
+      ${questionCard(q, stage, { hints: stage === 3 && session.stage === 4 && !(session.review || session.master || session.story || session.range || session.boss) && !!state.settings.s4Hints }).replace(/^<section class="q-card s\d/, (m) => (session.review || session.master || session.story || session.range || session.boss ? m : m.slice(0, -1) + session.stage))}
       ${answerBlock({ lang: "en-US", placeholder: stage === 4 ? "聞き取り中に英語で言おう" : "マイクをタップして英語で言おう", multiline: false })}
       <div id="result"></div>
     </main>`);
@@ -5900,13 +6162,18 @@ async function judgeQuestion(q, ans, via, latency, ctl) {
   const stage = q._st || session.stage;
   ctl.disable();
   const res = $("#result");
-  let correct = false, model = "", feedback = "", by = "local";
+  let correct = false, model = "", feedback = "", by = "local", eased = false;
+  const cands = ans.alts.concat([ans.text]);
   if (stage === 2) {
-    correct = matchesAny(ans.alts.concat([ans.text]), stage2Answers(q));
+    correct = matchesAny(cands, stage2Answers(q));
+    // 聞きちがいをゆるく：問題のポイントの語・文法の語は正確に、それ以外の音の近い聞きちがいは正解に
+    if (!correct && lenientOn() && lenientAny(q, cands, q.type === "choice" ? [stage2Model(q)] : stage2Answers(q))) correct = eased = true;
     model = stage2Model(q);
   } else {
-    if (matchesAny(ans.alts.concat([ans.text]), q.answers)) {
+    if (matchesAny(cands, q.answers)) {
       correct = true; model = q.answers[0]; feedback = "正解です！";
+    } else if (lenientOn() && lenientAny(q, cands, q.answers)) {
+      correct = eased = true; model = q.answers[0]; feedback = "正解です！";
     } else {
       res.innerHTML = `<div class="judging"><span class="spinner"></span>判定しています…</div>`;
       try {
@@ -5935,6 +6202,7 @@ async function judgeQuestion(q, ans, via, latency, ctl) {
   res.innerHTML = `<div class="panel">
     <div class="verdict ${finalCorrect ? "ok" : "ng"}">${finalCorrect ? "○ 正解" : (correct && late ? "△ 正しいけど時間オーバー" : "× おしい")}
       ${stage === 4 && latency != null ? `<small>話し始め ${latency.toFixed(1)}秒</small>` : ""}</div>
+    ${eased && finalCorrect ? `<div class="eased-note">聞き取りの小さなちがいは、正解にしました</div>` : ""}
     ${q.listen ? `<div class="model-line"><span>聞いた英文</span><div class="model-row">${esc(q.text)}</div></div>` : ""}
     <div class="model-line"><span>正しい英文</span><div class="model-row"><b>${esc(model)}</b><button class="listen" id="listen" aria-label="お手本を聞く">🔊 お手本</button></div></div>
     ${feedback && !(finalCorrect && feedback === "正解です！") ? `<div class="feedback">${esc(feedback)}</div>` : ""}
@@ -6507,7 +6775,13 @@ function renderSettings() {
         ${[1, 2, 3, 4].map((k) => `<div class="row"><span>段階${k}（${STAGE_NAMES[k - 1]}）</span>${num("r" + k, requiredPasses(k), 1, 10, 1, "回")}</div>`).join("")}
         <p class="hint">段階4をクリアすると、その項目は「マスター」になります。</p>
         <p class="hint">※各段階の問題の数より多い出題数にした場合は、ある問題すべてを出題します。</p>
-        <p class="hint">段階2＝選択・語形・並べかえ・主語・時制・ヒント穴うめ・続きを選ぶ・書きかえ／段階3＝誤文訂正・並べかえ（1語よけい・1語たりない）・聞いて変える・同じ意味・2文を1文に・下線部／段階4＝日本語→英語（時間制限なし）。段階2・3は、形式が均等になるように出ます。</p>
+        <h2>段階2〜4の問題</h2>
+        <p class="hint">段階2・3で出す形式を選んでください（いくつでも。両方で同じ形式を選ぶこともできます）。選んだ形式から、均等になるように出ます。その文法に選んだ形式の問題がないときは、はじめの決まりの形式から出ます。</p>
+        <div class="fmt-pick"><b>段階2（基本の問題）</b><div class="fmt-grid">${ALL_FMTS.map((f) => `<label class="check"><input type="checkbox" data-fmt2="${esc(f)}" ${stageFmtSet(2).has(f) ? "checked" : ""}> ${esc(f)}</label>`).join("")}</div></div>
+        <div class="fmt-pick"><b>段階3（発展の問題）</b><div class="fmt-grid">${ALL_FMTS.map((f) => `<label class="check"><input type="checkbox" data-fmt3="${esc(f)}" ${stageFmtSet(3).has(f) ? "checked" : ""}> ${esc(f)}</label>`).join("")}</div></div>
+        <div class="btn-row"><button class="btn small" id="fmtDefault">形式をはじめの決まりにもどす</button></div>
+        ${chk("s4hints", s.s4Hints, "段階4（英作文）で、ヒントの単語を2・3語出す（原形で表示し、「単語の形が変わることもあります」と表示します）")}
+        ${chk("lenient", s.lenientJudge !== false, "音声の聞きちがいをゆるく判定する（問題で問われている語と、冠詞・be動詞・前置詞などの文法の語は正確に。名詞・動詞などの音の近い聞きちがいや、人名・同じ音の語は正解にします）")}
         <h2>進め方</h2>
         ${chk("lock", s.lockProgression, "前の段階に合格しないと次の段階に進めない")}
         ${chk("allowText", s.allowText, "音声のほかに文字入力も使えるようにする")}
@@ -6553,6 +6827,9 @@ function renderSettings() {
       allowText: $("#allowText").checked,
       confirmBeforeSubmit: $("#confirm").checked,
       autoSubmitStage4: $("#auto4").checked,
+      stageFmts: { s2: pickFmts(2), s3: pickFmts(3) },
+      s4Hints: $("#s4hints").checked,
+      lenientJudge: $("#lenient").checked,
       ttsStage4: $("#tts4").checked,
       model: $("#model").value.trim() || DEFAULT_SETTINGS.model,
       showRanking: $("#showRank").checked,
@@ -6562,13 +6839,25 @@ function renderSettings() {
       picApproval: $("#picAp").checked
     });
   };
+  // 選んだ形式（はじめの決まりと同じなら null）
+  const pickFmts = (st) => {
+    const v = $$(`[data-fmt${st}]`).filter((c) => c.checked).map((c) => c.dataset["fmt" + st]);
+    const D = st === 2 ? S2_DEF : S3_FMTS;
+    return v.length === D.size && v.every((f) => D.has(f)) ? null : v;
+  };
+  $("#fmtDefault").onclick = () => {
+    $$("[data-fmt2]").forEach((c) => (c.checked = S2_DEF.has(c.dataset.fmt2)));
+    $$("[data-fmt3]").forEach((c) => (c.checked = S3_FMTS.has(c.dataset.fmt3)));
+  };
   const keepKey = () => {
     if ($("#apikey")) lsSet("eg_claude_key", $("#apikey").value.trim());
     if ($("#elevenkey")) { lsSet("eg_eleven_key", $("#elevenkey").value.trim()); state.hasEleven = !!$("#elevenkey").value.trim(); }
   };
   $("#saveSet").onclick = async () => {
+    const m = $("#setMsg");
+    if (![2, 3].every((st) => $$(`[data-fmt${st}]`).some((c) => c.checked))) { m.textContent = "段階2・段階3で出す形式を、それぞれ1つ以上選んでください。"; m.className = "msg ng"; return; }
     const ns = collect(); keepKey();
-    const m = $("#setMsg"); m.textContent = "保存しています…"; m.className = "msg";
+    m.textContent = "保存しています…"; m.className = "msg";
     try { await api.saveSettings(ns); applySettings(ns); m.textContent = "保存しました"; m.className = "msg ok"; }
     catch (e) { m.textContent = "保存できませんでした：" + e.message; m.className = "msg ng"; }
   };
