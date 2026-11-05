@@ -2800,7 +2800,7 @@ const CONTRACTIONS = [
 ];
 function normalize(s) {
   let t = String(s || "").toLowerCase().replace(/[’‘`´]/g, "'");
-  t = t.replace(/\b([a-z])\.([a-z])\.?/g, "$1$2"); // T.V. → tv
+  t = t.replace(/(?<![a-z'])([a-z])\.([a-z])(?![a-z])\.?/g, "$1$2"); // T.V. → tv（"isn't.It is" のような文のつなぎ目はくっつけない）
   for (const [re, rep] of CONTRACTIONS) t = t.replace(re, rep);
   t = t.replace(/\b\d+\b/g, (n) => NUM_WORDS[+n] || n);
   t = t.replace(/[^a-z0-9' ]+/g, " ").replace(/'/g, "").replace(/\s+/g, " ").trim();
@@ -2811,11 +2811,52 @@ const matchesAny = (cands, answers) => {
   return cands.some((c) => c && A.includes(normalize(c)));
 };
 function stage2Answers(q) {
-  if (q.type === "choice") return [q.text.replace("( )", q.answer), q.answer];
+  if (q.type === "choice") return withReplyOnly([q.text.replace("( )", q.answer), q.answer]);
   if (q.type === "order") return [q.answer].concat(q.alts || []);
-  return q.answers;
+  return withReplyOnly(q.answers);
+}
+// 「Can Mr. Yano use this computer well? ― No, he can't.」のような会話の問題は、答えの部分（― のあと）だけ言っても正解
+function withReplyOnly(list) {
+  const out = list.slice();
+  list.forEach((a) => { const i = String(a).lastIndexOf("―"); if (i > 0) { const r = a.slice(i + 1).trim(); if (r.split(/\s+/).length >= 2 && !out.includes(r)) out.push(r); } });
+  return out;
+}
+/* 並べかえ：示された語を条件どおりに使っているか（ふつう＝全部／−1語＝全部＋1語／＋1語＝1語だけ使わない）
+   条件どおりで、用意した答えとちがう文（ふつうの文⇔疑問文、おぎなう語のちがいなど）は AI に文法を確かめてもらう */
+function orderFits(q, c) {
+  const ww = (q.words || []).map((w) => soundToks(w)).flat(), left = soundToks(c).slice();
+  if (!ww.length || !left.length) return false;
+  let miss = 0;
+  ww.forEach((w) => { const k = left.indexOf(w); if (k >= 0) left.splice(k, 1); else miss++; });
+  if (q.fmt === "並べかえ−1語") return miss === 0 && left.length === 1;
+  if (q.fmt === "並べかえ＋1語") return miss === 1 && left.length === 0;
+  return miss === 0 && left.length === 0;
+}
+function buildOrderRequest(q, grammar, text) {
+  const kind = q.fmt === "並べかえ−1語" ? "1語たりない（示された語をすべて使い、1語だけおぎなう）" : q.fmt === "並べかえ＋1語" ? "1語よけい（示された語のうち1語だけ使わない）" : "ふつうの並べかえ（示された語をすべて使う）";
+  return { kind: "order", system: SYSTEM_ORDER,
+    user: `練習している文法: ${grammar || ""}\n問題の種類: ${kind}\n示された語: ${(q.words || []).join(" / ")}` + (q.context ? `\n日本語の意味: ${q.context}` : "") +
+      `\n正解例: ${[q.answer].concat(q.alts || []).join(" / ")}\n\n生徒の答え（書き起こし）:\n"""${text}"""` };
 }
 const stage2Model = (q) => q.type === "choice" ? q.text.replace("( )", q.answer) : (q.type === "order" ? q.answer : q.answers[0]);
+// 段階2・3の形式の問題の判定（ふつうの練習・おみくじ・総復習で共通）
+async function judgeStage2(q, cands, res) {
+  let correct = matchesAny(cands, stage2Answers(q)), eased = false, model = stage2Model(q), feedback = "", by = "local";
+  // 聞きちがいをゆるく：問題のポイントの語・文法の語は正確に、それ以外の音の近い聞きちがいは正解に
+  if (!correct && lenientOn() && (lenientAny(q, cands, q.type === "choice" ? [stage2Model(q)] : stage2Answers(q))
+    || (q.type === "choice" && cands.some((c) => c && soundToks(c).join(" ") === soundToks(q.answer).join(" "))))) correct = eased = true;
+  // 並べかえ：示された語を条件どおりに使った別の正しい文（ふつうの文⇔疑問文など）も正解に
+  const fit = !correct && q.type === "order" ? cands.find((c) => c && orderFits(q, c)) : null;
+  if (fit) {
+    if (res) res.innerHTML = `<div class="judging"><span class="spinner"></span>判定しています…</div>`;
+    try {
+      const r = await api.judge(buildOrderRequest(q, q.grammar, fit));
+      if (r && r.correct) { correct = true; by = "ai"; model = r.corrected || model; feedback = r.feedback || ""; }
+      else if (r && r.feedback) feedback = r.feedback;
+    } catch (e) { /* AIが使えないときは、いままでどおりの判定 */ }
+  }
+  return { correct, eased, model, feedback, by };
+}
 /* ---------- ゆるい判定：音声の聞きちがいを正解に寄せる（問題のポイントの語は正確に） ----------
    1) 同じ音の語（by/buy・to/two など）・数字・Mt./mount など・合成語（menswear / mens wear）は同じとみなす
    2) 正解の英文と、聞き取った英文の語を並べて対応をとり、
@@ -3906,6 +3947,12 @@ const AI_SCHEMAS = {
     required: ["points", "feedback"],
     additionalProperties: false
   },
+  order: {
+    type: "object",
+    properties: { correct: { type: "boolean" }, corrected: { type: "string" }, feedback: { type: "string" } },
+    required: ["correct", "corrected", "feedback"],
+    additionalProperties: false
+  },
   translate: {
     type: "object",
     properties: { correct: { type: "boolean" }, corrected: { type: "string" }, feedback: { type: "string" } },
@@ -3940,6 +3987,21 @@ const SYSTEM_FILL = `あなたは日本の中学生の英文法の学習を採�
   化けやすい例: be動詞→「B動詞」「ビー動詞」「美動詞」／am→「アム」「編む」「あむ」「M」／is→「イズ」「伊豆」「いず」「居ず」／are→「アー」「アール」「ある」「R」「RR」／not→「ノット」「のっと」「乗っと」／do→「ドゥー」「ドゥ」「土」「度」／does→「ダズ」／don't→「ドント」「丼と」／I→「アイ」「愛」「藍」「i」／you→「ユー」「U」「優」／he→「ヒー」「ひい」／she→「シー」「C」／it→「イット」／we→「ウィー」／they→「ゼイ」「ぜい」／this→「ディス」／s→「エス」「S」「ズ」／es→「イーエス」「ES」／y→「ワイ」「Y」／ies→「アイイーエス」／複数形→「複数系」、主語→「趣向」「首語」、否定文→「否定分」、疑問文→「疑問分」、原形→「原型」など。
 - 「別の聞き取り候補」が付いている場合は、それも参考にして生徒が言おうとした内容を判断する。
 - feedback は中学生にわかる、です・ます調の日本語で2〜3文（100字以内）。できている点をまずほめ、まちがえた空欄の正しい言葉を1〜2つ伝える。
+- 出力は指定されたJSONのみ。` + AI_GUARD;
+const SYSTEM_ORDER = `あなたは日本の中学生の英語の「並べかえ問題」を採点する英語の先生です。
+生徒は、示された語を並べかえて英文を口頭で言いました。入力はその音声認識の書き起こしです（大文字・句読点は信頼できません）。
+問題の条件:
+- 「ふつうの並べかえ」：示された語をすべて1回ずつ使う。
+- 「1語たりない」：示された語をすべて使い、自分で1語だけおぎなう。
+- 「1語よけい」：示された語のうち1語だけを使わず、残りをすべて使う。
+- 示された語の形（speak / speaks など）は変えない。
+採点のルール:
+- 条件を守り、文法的に正しく自然な英文なら correct=true。正解例と語順・おぎなった語がちがっても（ふつうの文と疑問文のちがい、命令文の please の位置、おぎなう語のちがいなど）、条件どおりで正しい英文なら correct=true。
+- 日本語の意味が示されている場合だけ、その意味に合うことも条件にする。
+- 大文字・小文字、句読点の有無、短縮形（can't, I'm など）は採点しない。疑問文の ? がなくてもよい。
+- 文法の誤り（動詞の形、三単現の s、be動詞、冠詞、語順のくずれなど）があれば correct=false。
+- corrected には生徒の答えを生かした正しい英文を1つ書く（正解なら生徒の文を整えたもの）。
+- feedback は中学生にわかる、です・ます調の日本語で1〜2文（60字以内）。正解が正解例とちがうときは「この並べ方も正しいです」のように伝える。
 - 出力は指定されたJSONのみ。` + AI_GUARD;
 const SYSTEM_TRANSLATE = `あなたは日本の中学1年生の英作文（和文英訳）を採点する英語の先生です。
 生徒は日本語の文を見て、英語で口頭で答えました。入力はその音声認識の書き起こしです（大文字・句読点は信頼できません）。
@@ -4370,7 +4432,7 @@ const api = MODE === "api" ? remoteApi(apiWithRetry) : MODE === "gas" ? remoteAp
         "anthropic-version": "2023-06-01",
         "anthropic-dangerous-direct-browser-access": "true" // お試しモード（先生のPC）でだけブラウザから直接呼ぶため
       },
-      body: JSON.stringify(claudeBody(req, state.settings.model))
+      body: JSON.stringify(claudeBody(req, String(state.settings.model || "").toLowerCase()))
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error((data.error && data.error.message) || ("通信エラー " + res.status));
@@ -5514,7 +5576,7 @@ async function judgeOmikuji(q, st, ans, ctl, O) {
   const res = $("#result");
   let correct = false, model = "", feedback = "";
   const said = ans.alts.concat([ans.text]);
-  if (st === 2) { correct = matchesAny(said, stage2Answers(q)); model = stage2Model(q); }
+  if (st === 2) ({ correct, model, feedback } = await judgeStage2(q, said, res));
   else if (matchesAny(said, q.answers)) { correct = true; model = q.answers[0]; }
   else {
     res.innerHTML = `<div class="judging"><span class="spinner"></span>判定しています…</div>`;
@@ -6189,11 +6251,7 @@ async function judgeQuestion(q, ans, via, latency, ctl) {
   let correct = false, model = "", feedback = "", by = "local", eased = false;
   const cands = ans.alts.concat([ans.text]);
   if (stage === 2) {
-    correct = matchesAny(cands, stage2Answers(q));
-    // 聞きちがいをゆるく：問題のポイントの語・文法の語は正確に、それ以外の音の近い聞きちがいは正解に
-    if (!correct && lenientOn() && (lenientAny(q, cands, q.type === "choice" ? [stage2Model(q)] : stage2Answers(q))
-      || (q.type === "choice" && cands.some((c) => c && soundToks(c).join(" ") === soundToks(q.answer).join(" "))))) correct = eased = true;
-    model = stage2Model(q);
+    ({ correct, eased, model, feedback, by } = await judgeStage2(q, cands, res));
   } else {
     if (matchesAny(cands, q.answers)) {
       correct = true; model = q.answers[0]; feedback = "正解です！";
@@ -6863,7 +6921,7 @@ function renderSettings() {
       s4Hints: $("#s4hints").checked,
       lenientJudge: $("#lenient").checked,
       ttsStage4: $("#tts4").checked,
-      model: $("#model").value.trim() || DEFAULT_SETTINGS.model,
+      model: $("#model").value.trim().toLowerCase() || DEFAULT_SETTINGS.model, // 大文字が入ると AI の判定が失敗するので小文字にそろえる
       showRanking: $("#showRank").checked,
       autoStamps: $("#autoSt").checked,
       omikuji: $("#omk").checked,
@@ -6895,7 +6953,7 @@ function renderSettings() {
   };
   $("#testAi").onclick = async () => {
     keepKey();
-    const prevModel = state.settings.model; state.settings.model = $("#model").value.trim() || prevModel;
+    const prevModel = state.settings.model; state.settings.model = $("#model").value.trim().toLowerCase() || prevModel;
     const m = $("#aiMsg"); m.textContent = "テスト中…"; m.className = "msg";
     try {
       const r = await api.judge(buildTranslateRequest({ ja: "私は生徒です。", answers: ["I am a student."] }, "be動詞", "I am student"));
