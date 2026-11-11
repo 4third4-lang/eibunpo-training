@@ -144,7 +144,7 @@ button:disabled { cursor: not-allowed; opacity: .5; }
 .msg { font-size: 14px; margin-top: 8px; min-height: 0; }
 .msg:empty { display: none; }
 .msg.ok { color: var(--ok); } .msg.ng { color: var(--ng); } .msg.warn { color: var(--warn); font-weight: 700; }
-.confirm { display: flex; gap: 10px; margin-top: 12px; }
+.confirm { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
 .text-in { margin-top: 14px; }
 .text-in summary { color: var(--muted); font-size: 14px; cursor: pointer; }
 .text-row { display: flex; gap: 8px; margin-top: 8px; align-items: flex-start; }
@@ -1018,6 +1018,8 @@ table.dash th.mcol, table.dash td.mcol { border-left: 2px solid var(--gold); }
 button, summary, a, label, input, select, textarea, .stage-card, .item-card { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 button:not(:disabled):active, summary:active { transform: scale(.96); filter: brightness(.93); transition: transform .05s, filter .05s; }
 .icon-btn { min-width: 44px; min-height: 44px; }
+.confirm .edit-lab { display: block; width: 100%; font-size: 13px; color: var(--muted); margin-bottom: 4px; }
+.confirm #editIn { display: block; width: 100%; box-sizing: border-box; font-size: 17px; padding: 8px 10px; border: 1px solid var(--line, #ccd); border-radius: 10px; margin-bottom: 8px; font-family: inherit; }
 .home-btn { font-size: 20px; padding-bottom: 0; margin-left: 6px; }
 .limit-tag { color: var(--s4); margin-left: 6px; }
 .cd-row { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
@@ -5769,6 +5771,8 @@ function answerBlock({ lang, placeholder, multiline }) {
     </div>
     <div class="msg" id="msg"></div>
     <div class="confirm hidden" id="confirmRow">
+      <label class="edit-lab" for="editIn">聞き取りがちがうところは、ここで直してから答えられます</label>
+      <textarea id="editIn" rows="2" autocapitalize="off" autocomplete="off" spellcheck="false"></textarea>
       <button class="btn primary" id="submitBtn">これで答える</button>
       <button class="btn" id="retryBtn">言い直す</button>
     </div>
@@ -5820,13 +5824,19 @@ function mountAnswer({ lang, continuous, silenceSec, confirm, onSubmit, onSpeech
         }
         stopUI(); misses = 0;
         current = res; setText(res.text, false);
-        if (confirm) conf.classList.remove("hidden"); else { done = true; onSubmit(current, "voice"); }
+        if (confirm) { conf.classList.remove("hidden"); const ed = $("#editIn"); if (ed) ed.value = res.text; } else { done = true; onSubmit(current, "voice"); }
       }
     });
   }
   function stop() { byUser = true; if (rec) rec.stop(); else stopUI(); }
   if (mic) mic.onclick = () => (listening && rec && rec.active ? stop() : start());
-  $("#submitBtn").onclick = () => { conf.classList.add("hidden"); done = true; onSubmit(current, "voice"); };
+  // 聞き取った文を手で直したときは、直した文で判定する（声で答えたのと同じあつかい）
+  $("#submitBtn").onclick = () => {
+    const ed = $("#editIn"), v = ed ? ed.value.trim() : "";
+    if (ed && !v) { setMsg("答えが空です。直してから「これで答える」を押してね。", "warn"); ed.focus(); return; }
+    conf.classList.add("hidden"); done = true;
+    if (ed && v !== String(current.text || "").trim()) { setText(v, false); onSubmit({ text: v, alts: [v] }, "voice"); } else onSubmit(current, "voice");
+  };
   $("#retryBtn").onclick = () => { conf.classList.add("hidden"); setText(""); start(); };
   const ti = $("#textIn"), ts = $("#textSubmit");
   if (ti && ts) {
