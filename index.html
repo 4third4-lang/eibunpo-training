@@ -8370,6 +8370,8 @@ function studentTaskState(st, t) {
 const taskTargets = (t, students) => students.filter((st) => taskForStudent(t, st.cls, st.email));
 let taskAdminCache = null; // 学習記録のデータ（進み具合の表示用）
 
+// 課題の画面のフォルダ：はじめは閉じて表示し、先生が開いたフォルダだけ（この画面を開いている間）開いたままにする
+const TK_OPEN_F = new Set();
 async function renderTaskAdmin(opt) {
   opt = opt || {};
   const s = state.rawSettings, tasks = s.tasks || [], folders = (s.folders || []).slice();
@@ -8394,6 +8396,7 @@ async function renderTaskAdmin(opt) {
     </div>`;
   const sgScopes = [["", "全クラス共通"]].concat(classes.map((c) => [c, c]));
   const sgOf = (c) => (c ? ((s.classTasks || {})[c] || {}).storyGoal : s.storyGoal) || null;
+  setTimeout(() => document.querySelectorAll(".tk-folder").forEach((d) => d.addEventListener("toggle", () => { if (d.open) TK_OPEN_F.add(d.dataset.fid); else TK_OPEN_F.delete(d.dataset.fid); })), 0);
   render(`${header("課題", true)}
     <main class="wrap wide" ${taskAdminCache || opt.noLoad ? "data-ready" : ""}>
       <div class="toolbar"><button class="btn primary" id="tkNew">＋ 新しい課題を作る</button>
@@ -8403,7 +8406,7 @@ async function renderTaskAdmin(opt) {
       ${folders.length ? folders.map((f) => {
         const L = tasks.filter((t) => (known[t.folder] ? t.folder : "") === f.id && shown(t));
         const all = tasks.filter((t) => (known[t.folder] ? t.folder : "") === f.id).length;
-        return `<details class="tk-folder" open><summary><span class="tkf-name">📁 ${esc(f.name)}</span><span class="tkf-n">${all}つ</span>
+        return `<details class="tk-folder" data-fid="${esc(f.id)}"${TK_OPEN_F.has(f.id) ? " open" : ""}><summary><span class="tkf-name">📁 ${esc(f.name)}</span><span class="tkf-n">${all}つ</span>
           ${f.id ? `<span class="tkf-btns"><button class="link-btn small" data-frename="${esc(f.id)}">名前を変える</button><button class="link-btn small" data-fup="${esc(f.id)}">▲</button><button class="link-btn small" data-fdown="${esc(f.id)}">▼</button><button class="link-btn small danger" data-fdel="${esc(f.id)}">削除</button></span>` : ""}</summary>
           ${L.length ? L.map(row).join("") : `<p class="hint">${all ? "このクラスの課題はありません。" : "まだ課題がありません。"}</p>`}
           ${f.id ? `<button class="btn small" data-newin="${esc(f.id)}">＋ このフォルダに課題を作る</button>` : ""}</details>`;
